@@ -95,19 +95,19 @@ const Properties = props => {
                     </div>
                 </form>
             </div>
-            { props.contribution.type === 'Note' &&
-            (<div>
+            {/* { props.contribution.type === 'Note' &&
+                (<div>
                 <label className="mt-1 mr-1 font-weight-bold">Riseabove:</label>
-                    {
-                    (props.contribution.type === 'Note' && props.contribution.data && props.contribution.data.riseabove && props.contribution.data.riseabove.viewId) ?
+                {
+                (props.contribution.type === 'Note' && props.contribution.data && props.contribution.data.riseabove && props.contribution.data.riseabove.viewId) ?
 
-                    "This note has riseabove view. Please look it at 'Read' tab."
-                    :
+                "This note has riseabove view. Please look it at 'Read' tab."
+                :
 
-                    <button type="submit" className="btn btn-primary btn-sm" onClick={makeRiseAbove()}>MakeRiseabove</button>
-                    }
-            </div>)
-            }
+                <button type="submit" className="btn btn-primary btn-sm" onClick={makeRiseAbove()}>MakeRiseabove</button>
+                }
+                </div>)
+                } */}
         </div>
 
     )

@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Modal, Button, Form, ProgressBar} from 'react-bootstrap'
 import { fetchAttachments } from '../../store/noteReducer.js'
 import { FileDrop } from 'react-file-drop';
+import {url as serverUrl} from '../../store/api.js'
 import './AttachPanel.css'
 
 import {postAttachment, uploadFile, putObject, postLink} from '../../store/api.js'
@@ -36,16 +37,18 @@ const AttachPanel = props => {
                     var height = img.naturalHeight || img.height;
                     file.width = width;
                     file.height = height;
-                    createAttachment(file, true);
+                    createAttachment(file, 'image');
                 };
                 img.src = _URL.createObjectURL(file);
+            }else if (file.type.startsWith('video')){
+                createAttachment(file, 'video')
             }else{
-                createAttachment(file, false)
+                createAttachment(file, 'link')
             }
         });
     }
 
-    const createAttachment = async (file, isImage) => {
+    const createAttachment = async (file, type) => {
         try {
             const attachRes = await postAttachment(author.communityId, author._id)
             const uploadRes = await uploadFile(file, onUploadProgress)
@@ -65,14 +68,16 @@ const AttachPanel = props => {
             await postLink(props.noteId, attachment._id, 'attach')
             //TODO updateFromConnections
             if (props.inlineAttach){
-                const data_mce_src = 'http://localhost:8000'+newAttachment.data.url;
+                const data_mce_src = `${serverUrl}${newAttachment.data.url}`;
                 const title = newAttachment.title;
                 let html = '';
-                if (isImage) {
+                if (type==='image') {
                     html = '<img class="inline-attachment ' + attachment._id + '" src="' + data_mce_src +'" width="100px" alt="' + title + '" data-mce-src="' + data_mce_src + '">';
+                } else if (type==='video') {
+                    html = `<video controls="controls" width="300" height="150"> <source src="${data_mce_src}" type="video/mp4" /></video>`
                 } else {
                     html ='<a class="inline-attachment ' + attachment._id + '" href="' + data_mce_src + '" target="_blank" download>';
-                    html += '<img src="http://localhost:8000/manual_assets/kf6images/03-toolbar-attachment.png" alt="' + title + '">' + title + '</a>';
+                    html += `<img src="${serverUrl}/manual_assets/kf6images/03-toolbar-attachment.png" alt="` + title + '">' + title + '</a>';
                 }
                 props.onNewInlineAttach(html)
             } else {
