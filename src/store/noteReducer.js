@@ -205,7 +205,7 @@ export const postContribution = (contribId, dialogId) => async (dispatch, getSta
         // TODO if isGoogleDoc
         // const isNewNote = contrib.status === 'unsaved'
         contrib.status = 'active'
-        const jq = await postProcess(contrib.data.body, contrib._id, [], [])
+        const jq = await postProcess(contrib.data.body, contrib._id, contrib.toLinks, contrib.fromLinks)
         dispatch(fetchLinks(contribId, 'from'))
         dispatch(fetchLinks(contribId, 'to'))
 
