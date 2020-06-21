@@ -151,7 +151,7 @@ export const newNote = (view, communityId, authorId) => dispatch => {
     const newN = createNote(communityId, authorId, mode);
 
     return api.postContribution(communityId, newN).then((res) => {
-        const note = {attachments: [], fromLinks:[], toLinks:[], records: [], ...res.data}
+        const note = {attachments: [], fromLinks:[], toLinks:[], records: [], group: null, ...res.data}
         const pos = {x: 100, y:100}
         api.postLink(view._id, note._id, 'contains', pos)
 

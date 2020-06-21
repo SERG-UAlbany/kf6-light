@@ -9,7 +9,7 @@ import {editNote, removeDrawing, editSvgDialog,
         fetchAttachments, setWordCount, fetchRecords } from '../../store/noteReducer.js'
 import {openDrawDialog} from '../../store/dialogReducer.js'
 import { scaffoldWordCount } from '../../store/kftag.service.js'
-import { dateFormatOptions } from '../../store/globalsReducer.js'
+import { dateFormatOptions, fetchCommGroups } from '../../store/globalsReducer.js'
 import './Note.css'
 
 class Note extends React.Component {
@@ -85,6 +85,8 @@ class Note extends React.Component {
     onTabSelected(tab) {
         if (tab === 'history'){ //Refresh records
             this.props.fetchRecords(this.props.note._id)
+        }if (tab === 'author'){ //Refresh groups, and authors?
+            this.props.fetchCommGroups(this.props.note.communityId)
         }
     }
 
@@ -108,7 +110,7 @@ class Note extends React.Component {
                             onEditorSetup={this.onEditorSetup}
                         ></WriteTab>
                     </Tab>
-                    <Tab eventKey="contact" title="author(s)">
+                    <Tab eventKey="author" title="author(s)">
                         <AuthorTab contribId={this.props.noteId}/>
                     </Tab>
                     <Tab eventKey='history' title='history'><History records={this.props.note.records}/></Tab>
@@ -131,7 +133,7 @@ const mapStateToProps = (state, ownProps) => {
 }
 
 const mapDispatchToProps = { editNote, openDrawDialog, setWordCount,
-                             removeDrawing, editSvgDialog, fetchAttachments, fetchRecords}
+                             removeDrawing, editSvgDialog, fetchAttachments, fetchRecords, fetchCommGroups}
 
 export default connect(
     mapStateToProps,

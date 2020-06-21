@@ -6,7 +6,6 @@ const Properties = props => {
         props.onChange({permission: evt.target.value})
     }
     //TODO
-    const makeRiseAbove = () => {}
     const isTemplateChange = (evt) => {
         props.onChange({data: {isTemplate: evt.target.checked}})
     }

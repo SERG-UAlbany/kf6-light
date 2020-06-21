@@ -1,15 +1,20 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Col, Row } from 'react-bootstrap'
-import {addContribAuthor, removeContribAuthor} from '../../store/noteReducer.js'
+import {addContribAuthor, removeContribAuthor, editNote} from '../../store/noteReducer.js'
 import { addNotification } from '../../store/notifier.js'
 import AuthorSelect from '../authorSelect/AuthorSelect'
+import Select from 'react-select'
+
 const AuthorTab = props => {
     const contribution = useSelector((state) => state.notes[props.contribId])
     const authors = useSelector((state) => contribution.authors.map((auth) => state.users[auth]))
     const communityAuthors = useSelector((state) => state.users)
-    const dispatch = useDispatch()
+    const groups = useSelector((state) => state.globals.community.groups)
+    const group_options = groups.map((g) => ({value: g.title, label: g.title}))
 
+    const [g, setG] = useState(contribution.group)
+    const dispatch = useDispatch()
     const removeAuthor = (author, idx) => {
         if (idx === 0) {
             addNotification({title: 'Error!', type:'danger', message:'cannot remove the Primary Author'})
@@ -26,6 +31,15 @@ const AuthorTab = props => {
         }
     }
 
+    const selectGroup = (selected) => {
+        setG(selected)
+        dispatch(editNote({_id: contribution._id, group: selected}))
+    }
+
+    //TODO
+    const isEditable = () => {
+        return true
+    }
     return (
                 <div className="authorTab mt-2" style={{height: '100%'}}>
                     <Row>
@@ -54,22 +68,17 @@ const AuthorTab = props => {
                     </Row>
                     <Row>
                         <Col>
-                            {/* <h5>Group:</h5>
-                                <div style="padding-left: 1.875rem;">
+                            <h5>Group:</h5>
+                            <div>
                                 {
-                                isEditable()?
-                                <select ng-model="selected.group" ng-options="g.title for g in community.groupsArray" ng-change="updateDirtyStatus()">
-                                <option value="">Please select</option>
-                                </select>
-                                :
-                                {selected.group.title}
+                                    isEditable()?
+                                    <form method="" id="" action="">
+                                        <Select value={g} options={group_options} onChange={selectGroup} isClearable={true}/>
+                                    </form>
+                                    :
+                                    <div>{contribution.group.title}</div>
                                 }
-                                <div ng-show="selected.group._id" style="padding: 0.625rem 0.625rem;">
-                                click
-                                <a ng-href="contribution/{{contribution.group}}" target="{{contribution.group}}">here</a>
-                                to check member(s)
-                                </div>
-                                </div> */}
+                            </div>
                         </Col>
                     </Row>
                 </div>
