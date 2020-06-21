@@ -4,6 +4,7 @@ import WriteTab from '../writeTab/WriteTab'
 import History from '../historyTab/History'
 import Properties from '../propertiesTab/Properties'
 import AuthorTab from '../authorsTab/AuthorTab'
+import Annotator from '../annotator/Annotator'
 import { connect } from 'react-redux'
 import {editNote, removeDrawing, editSvgDialog,
         fetchAttachments, setWordCount, fetchRecords } from '../../store/noteReducer.js'
@@ -99,8 +100,9 @@ class Note extends React.Component {
                     Last modified: {formatter.format(new Date(this.props.note.modified))}
                 </div>
                 <Tabs defaultActiveKey="write" transition={false} onSelect={this.onTabSelected}>
-                    <Tab eventKey="home" title="read">
-                        <div  dangerouslySetInnerHTML={{__html: this.props.note.data.body}} />
+                    <Tab eventKey="read" title="read">
+                        <Annotator containerId={this.props.dlgId} content={this.props.note.data.body}>
+                        </Annotator>
                     </Tab>
                     <Tab eventKey="write" title="write">
                         <WriteTab

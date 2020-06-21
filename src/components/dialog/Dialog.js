@@ -10,6 +10,7 @@ const dialog_style = {
 const Dialog = props => {
     return (
             <Rnd
+                id={`contrib-dialog-${props.id}`}
                 className={"contrib-dialog"}
                 style={{...dialog_style, ...props.style}}
                 default={{
