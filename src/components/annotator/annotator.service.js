@@ -14,7 +14,9 @@ import 'tinymce/plugins/insertdatetime';
 import 'tinymce/plugins/link';
 import 'tinymce/plugins/code';
 
-export const setKFPlugin = (elem, annotatorHandler) => {
+export const setKFPlugin = (elem, annotatorHandler, uname) => {
+    console.log("uname")
+    console.log(uname)
     Annotator.Plugin.KFPlugin = function( /*element*/ ) {
         return {
             pluginInit: function() {
@@ -204,4 +206,18 @@ export const setKFPlugin = (elem, annotatorHandler) => {
     elem.annotator('addPlugin', 'KFPlugin');
     elem.annotator('addPlugin', 'Tags');
     elem.annotator('addPlugin', 'RichText');
+
+    if (uname) {
+        console.log("adding plugin")
+        elem.annotator('addPlugin', 'Permissions', {
+            user: uname,
+            permissions: {
+                read: [uname],
+                update: [uname],
+                delete: [uname],
+                admin: [uname]
+            },
+            showEditPermissionsCheckbox: false
+        });
+    }
 }

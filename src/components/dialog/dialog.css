@@ -19,6 +19,12 @@
     padding: 0 0.5rem;
 }
 
+.dlg-card-body > div{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
 .dlg-card-footer {
     padding: 0 1.25rem;
     background-color: white;

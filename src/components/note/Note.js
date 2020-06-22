@@ -101,7 +101,7 @@ class Note extends React.Component {
                 </div>
                 <Tabs defaultActiveKey="write" transition={false} onSelect={this.onTabSelected}>
                     <Tab eventKey="read" title="read">
-                        <Annotator containerId={this.props.dlgId} content={this.props.note.data.body}>
+                        <Annotator containerId={this.props.dlgId} content={this.props.note.data.body} author={this.props.author}>
                         </Annotator>
                     </Tab>
                     <Tab eventKey="write" title="write">

@@ -27,7 +27,7 @@ class Annotator extends React.Component {
             displayEditor: this.displayEditor,
             displayViewer: this.displayViewer,
             annotatorInitialized: this.annotatorInitialized
-        })
+        }, this.props.author.userName)
         this.dlg = $(`#contrib-dialog-${this.props.containerId}`)
     }
     annotationCreated(annotation){
@@ -65,7 +65,7 @@ class Annotator extends React.Component {
         this.observer.observe(adder, { attributes: true, attributeOldValue: true });
     }
     displayEditor(editor, annotation){
-        console.log("display editor")
+        /* $(editor.element.find(".annotator-controls")).off() */
     }
     fixPopupLocation(popup){
         const dlgOffset = this.dlg.offset()
