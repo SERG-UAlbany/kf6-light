@@ -30,6 +30,9 @@ export const postContribution = (communityId, obj) => {
 export const getCommunity = (communityId) => {
     return axios.get(`${apiUrl}/communities/${communityId}`);//, {mode: 'cors'});
 }
+export const getGroups = async (communityId) => {
+    return (await axios.get(`${apiUrl}/communities/${communityId}/groups`)).data
+}
 
 //Links
 export const getLinks = async (objectId, direction, type) => {
