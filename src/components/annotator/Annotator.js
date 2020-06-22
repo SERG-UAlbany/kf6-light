@@ -45,12 +45,27 @@ class Annotator extends React.Component {
         $element.attr('title', 'Annotation');
         $element.addClass('tooltip1');
         $element.append('<span class="tooltiptext">Annotation</span>');
-        document.kfeditor = this.annotator.editor
-        /* annotator.editor.element */
+        document.annotator = this.annotator
+        const adder = annotator.adder.get(0)
+        this.observer = new MutationObserver(function(mutationsList){
+            /* console.log(mutationsList) */
+            for(let mutation of mutationsList) {
+                if (mutation.type === 'attributes') {
+                    //mutation.oldValue.startsWith("display: none") && 
+                    if( adder.style.display !== 'none'){
+                        /* console.log("Adder visible!") */
+                        this.fixPopupLocation(annotator.adder)
+                        this.observer.takeRecords()
+                        return
+                    }
+                }
+            }
+        }.bind(this));
+        //TODO disconnect? when?
+        this.observer.observe(adder, { attributes: true, attributeOldValue: true });
     }
     displayEditor(editor, annotation){
         console.log("display editor")
-        /* this.fixPopupLocation(editor.element) */
     }
     fixPopupLocation(popup){
         const dlgOffset = this.dlg.offset()
@@ -67,7 +82,7 @@ class Annotator extends React.Component {
 
     render() {
         return (
-            <div ref={this.contentRef} onMouseUp={this.onMouseUp}>
+            <div ref={this.contentRef}>
                 <div dangerouslySetInnerHTML={{__html: this.props.content}}>
                 </div>
             </div>
