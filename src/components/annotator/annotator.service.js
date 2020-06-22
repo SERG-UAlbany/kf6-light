@@ -1,6 +1,19 @@
 /*global Annotator*/
 /*global $*/
-/*global tinymce*/
+import tinymce from 'tinymce/tinymce';
+
+// Default icons are required for TinyMCE 5.3 or above
+import 'tinymce/icons/default';
+
+// A theme is also required
+import 'tinymce/themes/silver';
+// Any plugins you want to use has to be imported
+import 'tinymce/plugins/media';
+import 'tinymce/plugins/image';
+import 'tinymce/plugins/insertdatetime';
+import 'tinymce/plugins/link';
+import 'tinymce/plugins/code';
+
 export const setKFPlugin = (elem, annotatorHandler) => {
     Annotator.Plugin.KFPlugin = function( /*element*/ ) {
         return {
@@ -114,13 +127,13 @@ export const setKFPlugin = (elem, annotatorHandler) => {
 
 
             annotator.subscribe("annotationEditorShown", function(){
-                $(annotator.editor.element).find('.mce-tinymce')[0].style.display='block';
-                $(annotator.editor.element).find('.mce-container').css('z-index',3000000000);
+                // $(annotator.editor.element).find('.mce-tinymce')[0].style.display='block';
+                // $(annotator.editor.element).find('.mce-container').css('z-index',3000000000);
                 // annotator.editor.checkOrientation();
             });
             annotator.subscribe("annotationEditorHidden", function(){
-                $(annotator.editor.element).find('.mce-tinymce')[0].style.display='none';
-                $(annotator.editor.element).find("#annoSide").remove();
+                // $(annotator.editor.element).find('.mce-tinymce')[0].style.display='none';
+                // $(annotator.editor.element).find("#annoSide").remove();
             });
 
             //set listener for tinymce;
@@ -190,5 +203,5 @@ export const setKFPlugin = (elem, annotatorHandler) => {
 
     elem.annotator('addPlugin', 'KFPlugin');
     elem.annotator('addPlugin', 'Tags');
-    // elem.annotator('addPlugin', 'RichText');
+    elem.annotator('addPlugin', 'RichText');
 }

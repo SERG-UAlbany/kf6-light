@@ -1,5 +1,6 @@
 import React from 'react';
 import * as annotPlugins from './annotator.service'
+import './annotator.css'
 /*global $*/
 class Annotator extends React.Component {
 
@@ -40,11 +41,12 @@ class Annotator extends React.Component {
     }
     annotatorInitialized(annotator){
         this.annotator = annotator
-        console.log(annotator.adder)
         var $element = $('div.annotator-adder');
         $element.attr('title', 'Annotation');
         $element.addClass('tooltip1');
         $element.append('<span class="tooltiptext">Annotation</span>');
+        document.kfeditor = this.annotator.editor
+        /* annotator.editor.element */
     }
     displayEditor(editor, annotation){
         console.log("display editor")
