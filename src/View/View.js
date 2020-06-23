@@ -8,11 +8,11 @@ import * as api from '../store/api.js';
 import {newNote, openContribution} from '../store/noteReducer.js'
 import { connect } from 'react-redux'
 import DialogHandler from '../components/dialogHandler/DialogHandler.js'
-import NoteContent from '../reusable/noteContent'
+import NoteContent from '../components/NoteContent/NoteContent'
 import { fetchAuthor, fetchView, fetchCommunity, setCommunityId, setViewId} from '../store/globalsReducer.js'
 import { fetchAuthors } from '../store/userReducer.js';
-import Authors from '../reusable/authors.js';
-import './view.css';
+import Author from '../components/Author/Author';
+import './View.css';
 const _ = require('lodash');
 
 class View extends Component {
@@ -672,7 +672,7 @@ class View extends Component {
                                             </Col>
                                         </Row>
                                     <Row className="primary-600 sz-075 pd-05">
-                                        <Col><Authors authorId ={obj._to.authors}/>&nbsp; {obj._to.created}</Col>
+                                        <Col><Author authorId ={obj._to.authors}/>&nbsp; {obj._to.created}</Col>
                                         <Col md="2">
                                             <Button onClick={()=>this.buildOn(obj.to)}>BuildOn</Button>
                                         </Col>
@@ -699,7 +699,7 @@ class View extends Component {
                                                                 </Col>
                                                                 </Row>
                                                             <Row className="primary-600 sz-075 pd-05">
-                                                                <Col><Authors authorId ={obj[0]._to.authors}/>&nbsp; {obj[0]._to.created}</Col>
+                                                                <Col><Author authorId ={obj[0]._to.authors}/>&nbsp; {obj[0]._to.created}</Col>
                                                                 <Col md="2">
                                                                     <Button onClick={()=>this.buildOn(obj[0].to)}>BuildOn</Button>
                                                                 </Col>
@@ -727,7 +727,7 @@ class View extends Component {
                                                                 </Col>
                                                                 </Row>
                                                             <Row className="primary-600 sz-075 pd-05 border-left border-primary">
-                                                                <Col><Authors authorId ={subObj._from.authors}/>&nbsp; {subObj._from.created}
+                                                                <Col><Author authorId ={subObj._from.authors}/>&nbsp; {subObj._from.created}
                                                                 </Col>
                                                                 <Col md="2">
                                                                     <Button onClick={()=>this.buildOn(subObj.from)}>BuildOn</Button>
@@ -760,7 +760,7 @@ class View extends Component {
                                                 </Col>
                                                 </Row>
                                                 <Row className="primary-600 sz-075 pd-05 border-left border-primary">
-                                                    <Col><Authors authorId ={obj._from.authors}/>&nbsp; {obj._from.created}</Col>
+                                                    <Col><Author authorId ={obj._from.authors}/>&nbsp; {obj._from.created}</Col>
                                                     <Col md="2">
                                                         <Button onClick={()=>this.buildOn(obj.from)}>BuildOn</Button>
                                                     </Col>
@@ -793,7 +793,7 @@ class View extends Component {
                                         </Col>
                                         </Row>
                                     <Row className="primary-600 sz-075 pd-05">
-                                        <Col><Authors authorId ={obj._to.authors}/>&nbsp; {obj._to.created}
+                                        <Col><Author authorId ={obj._to.authors}/>&nbsp; {obj._to.created}
                                         </Col>    
                                         <Col md="2">
                                             <Button onClick={()=>this.buildOn(obj.to)}>BuildOn</Button>
@@ -839,7 +839,7 @@ class View extends Component {
                                             </Col>
                                         </Row>
                                     <Row className="primary-600 sz-075 pd-05">
-                                        <Col><Authors authorId ={obj._to.authors}/>&nbsp; {obj._to.created}
+                                        <Col><Author authorId ={obj._to.authors}/>&nbsp; {obj._to.created}
                                         </Col>
                                         <Col md="2">
                                             <Button onClick={()=>this.buildOn(obj.to)}>BuildOn</Button>
@@ -863,7 +863,7 @@ class View extends Component {
                                             </Col>
                                             </Row>
                                         <Row className="primary-600 sz-075 pd-05">
-                                            <Col><Authors authorId ={obj.authors}/>&nbsp; {obj.created}</Col>
+                                            <Col><Author authorId ={obj.authors}/>&nbsp; {obj.created}</Col>
                                             <Col md="2">
                                                 <Button onClick={()=>this.buildOn(obj._id)}>BuildOn</Button>
                                             </Col>

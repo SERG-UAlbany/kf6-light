@@ -1,15 +1,17 @@
 import React, {useEffect} from 'react';
 import { HashRouter as Router, Route} from 'react-router-dom';
-import ReactNotification from 'react-notifications-component'
-import Login from './account/login';
-import SignUp from './account/signup';
-import CommunityManager from './communityManager';
-import TopNavbar from './reusable/topNavbar';
-import View from './view/view';
+import ReactNotification from 'react-notifications-component';
+
+import Login from './Account/Login';
+import SignUp from './Account/SignUp';
+import CommunityManager from './CommunityManager/CommunityManager';
+import TopNavbar from './TopNavBar/TopNavbar';
+import View from './View/View';
 import NewNote from './components/newNote/NewNote'
-import ChangePassword from './account/change-password';
+import ChangePassword from './Account/ChangePassword';
 import TestComponent from './components/test/TestComponent'
 import { setToken } from './store/api.js'
+
 import 'react-notifications-component/dist/theme.css'
 import './App.css';
 

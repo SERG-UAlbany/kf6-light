@@ -5,7 +5,7 @@ import {Form, FormGroup, Input, Alert} from 'reactstrap';
 import Axios from 'axios';
 
 import './NoteContent.css';
-import {apiUrl} from '../store/api.js';
+import {apiUrl} from '../../store/api.js';
 
 class NoteContent extends Component{
     noteList = [];

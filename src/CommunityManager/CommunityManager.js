@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import Axios from 'axios';
 import {Container, Col, Row, Form, FormGroup, Label, Input} from 'reactstrap';
 import { Button } from 'react-bootstrap';
-import {apiUrl} from './store/api.js'
+import {apiUrl} from '../store/api.js'
 import { connect } from 'react-redux'
-import { setCommunityId, setViewId } from './store/globalsReducer.js'
+import { setCommunityId, setViewId } from '../store/globalsReducer.js'
 
 class CommunityManager extends Component {
 
