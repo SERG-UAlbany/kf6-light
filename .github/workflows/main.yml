@@ -41,7 +41,7 @@ jobs:
     - name: Deploy to server
       uses: easingthemes/ssh-deploy@v2.0.7
       env:
-        SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+        SSH_PRIVATE_KEY: ${{ secrets.KF6_LIGHT_IKIT_STAGE_PRIVATE_KEY }}
         ARGS: "-rltgoDzvO"
         SOURCE: "./kf6-light-build.zip"
         REMOTE_HOST: kf6-stage.ikit.org
