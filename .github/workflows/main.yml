@@ -37,7 +37,7 @@ jobs:
       
     - name: Zip the build folder
       run: zip -rq kf6-light-build.zip build/
-      
+      # Creates the direcotry at target if it does not exist
     - name: copy file via ssh 
       uses: appleboy/scp-action@master
       with:
@@ -46,7 +46,7 @@ jobs:
         key: ${{ secrets.KF6_LIGHT_IKIT_STAGE_PRIVATE_KEY }}
         port: 22
         source: "kf6-light-build.zip"
-        target: "/tmp/kf6-light-build.zip"
+        target: "/tmp"
 
     
     # Deploy - script
@@ -59,7 +59,5 @@ jobs:
         port: 22
         script: | 
           whoami
-          unzip -q /tmp/kf6-light-build.zip -d /var/www/html/kf6-light
-          pwd
-          ls -al
+          sudo unzip -o /tmp/kf6-light-build.zip/kf6-light-build.zip -d /var/www/html/kf6-light
           
