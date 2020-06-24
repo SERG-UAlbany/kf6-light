@@ -59,6 +59,7 @@ jobs:
         port: 22
         script: | 
           whoami
-          cd /tmp
-          unzip -q kf6-light-build.zip
+          unzip -q /tmp/kf6-light-build.zip -d /var/www/html/kf6-light
+          pwd
+          ls -al
           
