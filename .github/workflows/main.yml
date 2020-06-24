@@ -46,7 +46,7 @@ jobs:
         key: ${{ secrets.KF6_LIGHT_IKIT_STAGE_PRIVATE_KEY }}
         port: 22
         source: "kf6-light-build.zip"
-        target: "/tmp"
+        target: "tmp"
 
     
     # Deploy - script
@@ -59,5 +59,5 @@ jobs:
         port: 22
         script: | 
           whoami
-          sudo unzip -o /tmp/kf6-light-build.zip/kf6-light-build.zip -d /var/www/html/kf6-light
+          sudo unzip -o ~/kf6-light-build.zip/kf6-light-build.zip -d /var/www/html/kf6-light
           
