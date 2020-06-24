@@ -33,7 +33,7 @@ jobs:
       run: npm install
     # Build React app.
     - name: Create React - prod build
-      run: npm run build
+      run: CI=false npm run build
       
     - name: Zip the build folder
       run: zip -rq kf6-light-build.zip build/
