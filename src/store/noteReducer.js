@@ -22,9 +22,7 @@ export const addContribAuthor = createAction('ADD_CONTRIB_AUTHOR')
 export const setAnnotation = createAction('SET_ANNOTATION')
 export const setAnnotationsLoaded = createAction('SET_ANNOTATIONS_LOADED')
 export const removeAnnotation = createAction('REMOVE_ANNOTATION')
-// export const postContribution = createAction('POST_CONTRIBUTION')
 
-// let noteCounter = 0
 const initState = {drawing: '', attachments: {}}
 
 export const noteReducer = createReducer(initState, {
@@ -162,7 +160,22 @@ const createNote = (communityId, authorId, contextMode, fromId, content) => {
 
 export const newNote = (view, communityId, authorId) => dispatch => {
     const mode = {permission: view.permission, group: view.group, _groupMembers: view._groupMembers }
-    const newN = createNote(communityId, authorId, mode);
+
+    const newN = sessionStorage.getItem("buildOn") === null ? createNote(communityId, authorId, mode) : // IF IT'S A BUILDON, THEN CREATE BUILDON LINK
+    {
+            "authors" : authorId,
+            "buildson" : sessionStorage.getItem("buildOn"),
+            "communityId" : communityId,
+            data : {
+                "body" : "",
+            },
+            "permission" : view.permission,
+            "status": "unsaved",
+            "title": "",
+            "type": "Note",
+            "_groupMembers": [],
+    };
+    if(newN){sessionStorage.removeItem("buildOn")};
 
     return api.postContribution(communityId, newN).then((res) => {
         const note = {attachments: [],
@@ -172,7 +185,6 @@ export const newNote = (view, communityId, authorId) => dispatch => {
                       annos: {},
                       group: null,
                       ...res.data}
-        note.data.body = " Vel fringilla est ullamcorper eget nulla facilisi etiam dignissim diam quis enim lobortis scelerisque fermentum dui faucibus in. Egestas pretium aenean pharetra, magna ac placerat vestibulum, lectus mauris ultrices eros!   At tempor commodo, ullamcorper a lacus vestibulum sed arcu non odio euismod lacinia at quis risus sed vulputate odio ut! Sed nisi lacus, sed viverra tellus in hac habitasse platea?    Sit amet luctus venenatis, lectus magna fringilla urna, porttitor rhoncus. A erat nam at lectus urna duis convallis convallis tellus, id interdum velit laoreet id donec ultrices tincidunt arcu, non.     Enim blandit volutpat maecenas volutpat blandit aliquam etiam erat velit, scelerisque in. Lacus vestibulum sed arcu non odio euismod lacinia at quis risus sed vulputate odio ut enim blandit volutpat.     Mattis enim ut tellus elementum sagittis vitae et leo duis ut diam quam nulla porttitor massa! Risus commodo viverra maecenas accumsan, lacus vel facilisis volutpat, est velit egestas dui, id.     A cras semper auctor neque, vitae tempus quam pellentesque nec nam aliquam sem et? In nibh mauris, cursus mattis molestie a, iaculis at erat pellentesque adipiscing commodo elit, at imperdiet!     Eget duis at tellus at urna condimentum mattis pellentesque id nibh tortor, id aliquet lectus proin. At tempor commodo, ullamcorper a lacus vestibulum sed arcu non odio euismod lacinia at.    Mollis nunc sed id semper. Consectetur libero, id faucibus nisl tincidunt eget nullam non nisi est, sit amet facilisis magna etiam tempor, orci eu lobortis elementum, nibh tellus molestie nunc.    Ac orci phasellus egestas tellus rutrum tellus pellentesque eu tincidunt tortor aliquam nulla facilisi cras! Tempus imperdiet nulla malesuada pellentesque elit eget gravida cum sociis natoque penatibus et magnis dis.     Tristique sollicitudin nibh sit amet commodo nulla facilisi nullam vehicula ipsum a arcu cursus vitae congue mauris rhoncus aenean vel elit scelerisque mauris pellentesque! A, condimentum vitae sapien pellentesque habitant?"
         const pos = {x: 100, y:100}
         api.postLink(view._id, note._id, 'contains', pos)
 

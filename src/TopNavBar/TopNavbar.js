@@ -14,7 +14,7 @@ class TopNavbar extends Component {
         userName: null,
         token : sessionStorage.getItem('token'),
         myViews : [],
-        viewId : sessionStorage.getItem('viewId'),
+        viewId : sessionStorage.getItem('viewId') ? sessionStorage.getItem('viewId') : '',
         viewTitle : sessionStorage.getItem("viewTitle")? sessionStorage.getItem("viewTitle") :'welcome',
         communityId : sessionStorage.getItem('communityId'),
     };
@@ -31,6 +31,7 @@ class TopNavbar extends Component {
     };
 
     // GET FULL NAME
+    /* HAVE A CONDITION WHEN USER IS LOGGED IN, THEN ONLY IT SHOWS THE NAME */
     Axios.get(`${apiUrl}/users/me`, config)
             .then(
                 result=>{
@@ -43,20 +44,22 @@ class TopNavbar extends Component {
                     }).catch(
                     error=>{
                     });
-    
-    //GET USER'S VIEWS
-    var viewUrl= `${apiUrl}/communities/`+this.state.communityId+"/views";
 
-    Axios.get(viewUrl, config)
-    .then(
-        result=>{
+    //GET USER'S VIEWS
+    if(this.state.communityId){
+      var viewUrl= `${apiUrl}/communities/${this.state.communityId}/views`;
+
+      Axios.get(viewUrl, config)
+      .then(
+          result=>{
             this.setState({
-                myViews: result.data
+              myViews: result.data
             })
-        }).catch(
-            error=>{
-                // alert(error);
-            });
+          }).catch(
+              error=>{
+                  // alert(error);
+              });
+    }
   }
 
     logout(){
@@ -86,7 +89,7 @@ class TopNavbar extends Component {
         headers: { Authorization: `Bearer ${this.state.token}` }
       };
 
-      var viewUrl= `${apiUrl}/objects/`+ target.value;
+      var viewUrl= `${apiUrl}/objects/${target.value}`;
 
       Axios.get(viewUrl, config)
         .then(
@@ -127,7 +130,7 @@ class TopNavbar extends Component {
                     {/* <Label>Select Community</Label> */}
                         <Input type="select" name="viewId" value={this.state.viewId} onChange={this.handleChange}>{
                             this.state.myViews.map((obj) => {
-                                return <option key={obj.title} value={obj._id}> {obj.title} </option>
+                                return <option key={obj._id} value={obj._id}> {obj.title} </option>
                             })
                         }</Input>
                     </FormGroup>

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import Axios from 'axios';
 import {Container, Col, Form, FormGroup, Label, Input, Button} from 'reactstrap';
+import {apiUrl} from '../store/api.js';
 
 class SignUp extends Component {
     constructor() {
@@ -40,7 +41,7 @@ class SignUp extends Component {
         console.log(this.state);
 
         Axios.post(
-            'https://kf6-stage.ikit.org/api/users',
+          `${apiUrl}/users`,
             this.state)
             .then((response)=>{
                 console.log(response.data.token);

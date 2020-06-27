@@ -75,6 +75,10 @@ body {
   margin-top: 6rem !important;
 }
 
+.mrg-1-bot{
+  margin-bottom: 1rem !important;
+}
+
 /* PADDING */
 
 .pd-05 {
@@ -109,6 +113,9 @@ body {
   padding: 64rem !important;
 }
 
+.pd-2-right{
+  padding-right: 2rem !important;
+}
 
 .pd-2-left {
   padding-left: 2rem !important;
@@ -151,6 +158,8 @@ body {
   z-index: 1 !important;
 }
 
+/* PRIMARY BACKGROUND */
+
 .primary-bg-50{
   background-color: #FAFAFA !important;
 }
@@ -179,7 +188,6 @@ body {
   background-color: #757575 !important;
 }
 
-
 .primary-bg-700{
   background-color: #616161 !important;
 }
@@ -192,8 +200,60 @@ body {
   background-color: #212121 !important;
 }
 
+/* PRIMARY FONT COLOR */
+.primary-50{
+  color: #FAFAFA !important;
+}
+
+.primary-100{
+  color: #F5F5F5 !important;
+}
+
+.primary-200{
+  color: #EEEEEE !important;
+}
+
+.primary-300{
+  color: #E0E0E0 !important;
+}
+
+.primary-400{
+  color: #BDBDBD !important;
+}
+
+.primary-500{
+  color: #9E9E9E !important;
+}
+
+.primary-600{
+  color: #757575 !important;
+}
+
+.primary-700{
+  color: #616161 !important;
+}
+
+.primary-800{
+  color: #424242 !important;
+}
+
+.primary-900{
+  color: #212121 !important;
+}
+
+
+
 
 /* SIZE */
+
+.sz-05{
+  font-size: 0.5rem !important;
+}
+
+.sz-075{
+  font-size: 0.75rem !important;
+}
+
 .sz-1{
   font-size: 1rem !important;
 }

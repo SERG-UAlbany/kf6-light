@@ -25,3 +25,33 @@
 .dropdown-menu{
     z-index: 1000 !important;
 }
+
+.v-scroll{
+    height: 86vh !important;
+    overflow-y: scroll !important;
+}
+
+.mrg-1-min{
+    margin-top: -1rem !important;
+}
+
+.pd-2-right{
+    padding-right: 2rem !important;
+}
+
+.scaffold-title{
+    width: 280px !important;
+    padding: 0.25rem !important;
+    background-color: rgb(233, 174, 66);
+    margin-bottom: 1rem !important;
+    list-style: none !important;
+    border-radius: 0.5rem !important;
+}
+
+.white{
+    color: white !important;
+}
+
+.pd-left{
+    padding-left : -2px !important; 
+}

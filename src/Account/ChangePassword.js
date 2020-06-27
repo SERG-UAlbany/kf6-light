@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import Axios from 'axios';
 import {Container, Col, Form, FormGroup, Label, Input, Button} from 'reactstrap';
+import {apiUrl} from '../store/api.js';
 
 class ChangePassword extends Component {
     token= sessionStorage.getItem("token");
@@ -37,7 +37,7 @@ class ChangePassword extends Component {
             headers: { Authorization: `Bearer ${this.token}` }
         };
 
-        var changePasswdUrl= "https://kf6-stage.ikit.org/api/users/"+sessionStorage.getItem("userId")+"/password";
+        var changePasswdUrl= `${apiUrl}/users/${sessionStorage.getItem("userId")}/password`;
 
         //LOGIN RETURNS TOKEN
         Axios.put(changePasswdUrl,this.state,config)
