@@ -13,6 +13,7 @@ class Annotator extends React.Component {
         this.displayEditor = this.displayEditor.bind(this)
         this.displayViewer = this.displayViewer.bind(this)
         this.fixPopupLocation = this.fixPopupLocation.bind(this)
+        this.editorHidden = this.editorHidden.bind(this)
         this.dlg = null
     }
 
@@ -21,23 +22,18 @@ class Annotator extends React.Component {
         annotatedElem.annotator()
 
         annotPlugins.setKFPlugin(annotatedElem, {
-            annotationCreated: this.annotationCreated,
-            annotationUpdated: this.annotationUpdated,
-            annotationDeleted: this.annotationDeleted,
+            annotationCreated: this.props.onCreate,
+            annotationUpdated: this.props.onUpdate,
+            annotationDeleted: this.props.onDelete,
             displayEditor: this.displayEditor,
             displayViewer: this.displayViewer,
-            annotatorInitialized: this.annotatorInitialized
+            annotatorInitialized: this.annotatorInitialized,
+            editorHidden: this.editorHidden
         }, this.props.author.userName)
         this.dlg = $(`#contrib-dialog-${this.props.containerId}`)
     }
-    annotationCreated(annotation){
-        console.log("AnnotationCreated")
-    }
-    annotationUpdated(annotation) {
-        console.log("Annotation Updated")
-    }
-    annotationDeleted(annotation) {
-        console.log("Annotation deleted")
+    editorHidden(editor, annotation){
+        $(editor.element.find(".annotator-controls")).off()
     }
     annotatorInitialized(annotator){
         this.annotator = annotator
@@ -48,12 +44,10 @@ class Annotator extends React.Component {
         document.annotator = this.annotator
         const adder = annotator.adder.get(0)
         this.observer = new MutationObserver(function(mutationsList){
-            /* console.log(mutationsList) */
             for(let mutation of mutationsList) {
                 if (mutation.type === 'attributes') {
                     //mutation.oldValue.startsWith("display: none") && 
                     if( adder.style.display !== 'none'){
-                        /* console.log("Adder visible!") */
                         this.fixPopupLocation(annotator.adder)
                         this.observer.takeRecords()
                         return
@@ -64,8 +58,10 @@ class Annotator extends React.Component {
         //TODO disconnect? when?
         this.observer.observe(adder, { attributes: true, attributeOldValue: true });
     }
+
     displayEditor(editor, annotation){
-        /* $(editor.element.find(".annotator-controls")).off() */
+        /* $(editor.element.find(".annotator-controls")).off()*/
+
     }
     fixPopupLocation(popup){
         const dlgOffset = this.dlg.offset()
@@ -74,10 +70,6 @@ class Annotator extends React.Component {
     }
     displayViewer(viewer, annotation){
         this.fixPopupLocation(viewer.element)
-    }
-    onMouseUp(evt){
-        /* var $element = $('div.annotator-adder');
-         * console.log($element.css('display')) */
     }
 
     render() {
