@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Navbar, Nav, Button } from 'react-bootstrap';
 import {Col, Form, FormGroup, Input} from 'reactstrap';
-import { removeToken } from '../store/api.js'
+import { removeToken, apiUrl} from '../store/api.js'
 import Axios from 'axios';
 
 class TopNavbar extends Component {
@@ -31,13 +31,13 @@ class TopNavbar extends Component {
     };
 
     // GET FULL NAME
-    Axios.get("https://kf6-stage.ikit.org/api/users/me", config)
+    Axios.get(`${apiUrl}/users/me`, config)
             .then(
                 result=>{
                     this.setState({
                         userName: result.data.firstName+ " "+ result.data.lastName,
                      })
-                     
+
                      sessionStorage.setItem("userId", result.data._id);
 
                     }).catch(
@@ -45,14 +45,14 @@ class TopNavbar extends Component {
                     });
     
     //GET USER'S VIEWS
-    var viewUrl= "https://kf6-stage.ikit.org/api/communities/"+this.state.communityId+"/views";
+    var viewUrl= `${apiUrl}/communities/`+this.state.communityId+"/views";
 
     Axios.get(viewUrl, config)
     .then(
         result=>{
-          this.setState({
-            myViews: result.data
-          })
+            this.setState({
+                myViews: result.data
+            })
         }).catch(
             error=>{
                 // alert(error);
@@ -86,7 +86,7 @@ class TopNavbar extends Component {
         headers: { Authorization: `Bearer ${this.state.token}` }
       };
 
-      var viewUrl= "https://kf6-stage.ikit.org/api/objects/"+ target.value;
+      var viewUrl= `${apiUrl}/objects/`+ target.value;
 
       Axios.get(viewUrl, config)
         .then(
