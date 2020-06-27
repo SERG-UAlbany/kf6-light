@@ -175,7 +175,7 @@ class View extends Component {
                         viewLinks: sortedLinks, 
                         noteData : noteData,
                     });
-                    console.log("state link and data", this.state.viewLinks, this.state.noteData);
+                    // console.log("state link and data", this.state.viewLinks, this.state.noteData);
                     this.noteData1 = noteData;
         
                 }).catch(
@@ -197,12 +197,16 @@ class View extends Component {
                             && (obj._from.type === "Note" && obj._from.status === "active")) {
                                 return obj;
                         }
+                        else {
+                            return null;
+                        }
                     });
 
                     filteredBuildOn.map(obj=>{
                         this.from.push(obj.from);
                         this.to.push(obj.to);
                         this.hierarchyNote.push(obj);
+                        return null;
                     });
 
                     try {
@@ -226,7 +230,7 @@ class View extends Component {
                         this.setState({
                             hNotes : this.hierarchyNote
                         })
-                        console.log("HNOTES", this.state.hNotes);
+                        // console.log("HNOTES", this.state.hNotes);
                         
                     }                      
                 }).catch(
@@ -244,7 +248,7 @@ class View extends Component {
                         authors : result.data,
                     });
 
-                    console.log("this.state.authors",this.state.authors);
+                    // console.log("this.state.authors",this.state.authors);
 
 
                 }).catch(
@@ -255,12 +259,10 @@ class View extends Component {
             //GET SCAFFOLDS
             let scaffoldIds =[];
             let scaffolds = [];
-            let scaffoldsCopy = [];
-            let scaffoldTitles = [];
             api.getCommunity(this.state.communityId).then(
                 res=>{
                     scaffoldIds = res.data.scaffolds
-                    console.log("res", scaffoldIds);
+                    // console.log("res", scaffoldIds);
                     
                     scaffoldIds.forEach(id => {
                         // CALL COMMNITY LINK / VIEW LINK  ID THEN SEARCH IN CONTENT  
@@ -283,7 +285,7 @@ class View extends Component {
         let target = e.target;
         let name = target.name;
         let value = target.value;
-        console.log(name,value);        
+        // console.log(name,value);        
 
         this.setState({
             [name]: value
@@ -292,9 +294,9 @@ class View extends Component {
 
     handleSubmit(e) {
         e.preventDefault();
-        console.log('The form was submitted with:');
-        console.log(this.state.communitySelect);
-        console.log('ADD view:',this.state.addView);
+        // console.log('The form was submitted with:');
+        // console.log(this.state.communitySelect);
+        // console.log('ADD view:',this.state.addView);
     }
 
     handleChangeView = (e) => {
@@ -324,7 +326,7 @@ class View extends Component {
         Axios.post(addViewUrl,query,config)
             .then(
                 result=>{
-                    console.log("Successful",result);
+                    // console.log("Successful",result);
                     
                 }
             ).catch(
@@ -340,7 +342,7 @@ class View extends Component {
     }
 
     newContribution(){
-        console.log("New Contribution onclick works");
+        // console.log("New Contribution onclick works");
         this.setState({
             showContribution: true,
             showCommunity: false,
@@ -350,7 +352,7 @@ class View extends Component {
     }
 
     newNote(){
-        console.log("New Note onclick works");
+        // console.log("New Note onclick works");
         this.setState({
             showNote: true,
             showView: false,
@@ -359,20 +361,22 @@ class View extends Component {
     }
 
     newView(){
-        console.log("New View onclick works"); 
+        // console.log("New View onclick works"); 
         this.setState({
             showView: true,
             showRiseAbove : false,
-            showNote : false, 
+            showNote : false,
+            showModel: true, 
         })
     }
 
     newRiseAbove(){
-        console.log("New RiseAbove onclick works");
+        // console.log("New RiseAbove onclick works");
         this.setState({
             showView: false,
             showNote : false,
             showRiseAbove : true,
+            showModel: true,
         }) 
     }
     
@@ -407,14 +411,17 @@ class View extends Component {
                     this.setState({
                         noteContnetList : this.noteContnetNew,
                     })
-                    console.log("STATE DATA", this.state.noteContnetList);
+                    // console.log("STATE DATA", this.state.noteContnetList);
                     
                 }
+                return null;
             });
             
         } else {
             this.noteContnetNew.filter(obj => obj._id.includes(id)).map(filteredObj => {
-                this.noteContnetNew.pop(filteredObj)});
+                this.noteContnetNew.pop(filteredObj)
+                return null;
+            });
             this.setState({
                 noteContnetList : this.noteContnetNew,
             })
@@ -434,7 +441,8 @@ class View extends Component {
                         noteContnetList : [...noteArray],
                     });
                     // this.refs[id]
-                    console.log("Check refs",this.refs[id]);
+                    // console.log("Check refs",this.refs[id]);
+                    return null;
                     
                 });
             }
@@ -444,12 +452,13 @@ class View extends Component {
 
 
     filterNotes = (query) => {
-        console.log("filterNotes", query);
+        // console.log("filterNotes", query);
         let filteredResults=[];
         filteredResults = this.noteData1.filter(function (obj) {
             if (obj.data && obj.data.English){                      
                 return obj.data.English.includes(query);
             }
+            return null;
         });
         this.setState({
             filteredData : filteredResults,
@@ -459,7 +468,7 @@ class View extends Component {
 
 
     changeView(viewObj){
-        console.log("viewId",viewObj.obj._id);
+        // console.log("viewId",viewObj.obj._id);
         this.setState({
             viewId: viewObj.obj._id,
         })
@@ -491,6 +500,7 @@ class View extends Component {
                 case "title":
                     this.state.viewLinks.filter(obj => obj._to.title.includes(this.state.query)).map(filteredObj => {
                         filteredResults.push(filteredObj);
+                        return null;
                     })
                     break;
                 
@@ -502,20 +512,24 @@ class View extends Component {
                         else if(obj.data && obj.data.body){
                             return obj.data.body.includes(event.target.value);
                         }
+                        else {
+                            return null;
+                        }
                     });
                     
                     break;
                 
                 case "author":
-                    console.log("Author", this.state.query);
-                    console.log("State authors", this.state.authors);
+                    // console.log("Author", this.state.query);
+                    // console.log("State authors", this.state.authors);
                     var authorId =[];
 
                     this.state.authors.map(obj=>{
                         if(obj.firstName.toLowerCase().includes(this.state.query.toLowerCase()) || obj.lastName.toLowerCase().includes(this.state.query.toLowerCase())){
-                            console.log("Matched", obj._id);
+                            // console.log("Matched", obj._id);
                             authorId.push(obj._id);   
                         }
+                        return null;
                     });
                     
                     authorId.forEach(element => {
@@ -534,7 +548,9 @@ class View extends Component {
                             element.map(
                                 obj =>{
                                     scaffoldTitle.push(obj._to.title);
+                                    return null;
                                 });
+                                return null;
                         }
                     );
 
@@ -590,15 +606,11 @@ class View extends Component {
                                         </Dropdown.Item>
 
                                         <Dropdown.Item onClick={()=>this.newView()}>
-                                            <Link onClick={()=>this.handleShow(true)}>
                                                 new View
-                                            </Link>
                                         </Dropdown.Item>
                                         
                                         <Dropdown.Item onClick={()=>this.newRiseAbove()}>
-                                            <Link onClick={()=>this.handleShow(true)}>
                                                 New RiseAbove
-                                            </Link>
                                         </Dropdown.Item>
                                     </DropdownButton>
                                 </Col>
@@ -715,7 +727,7 @@ class View extends Component {
                                                         <Col md="1">
                                                         </Col>
                                                         <Col>
-                                                            {obj[0] && obj[0]._to && obj[0]._to.title && subObj._from && subObj._from.created ?(<>
+                                                            {obj[0] && obj[0]._to && obj[0]._to.title && subObj && subObj._from && subObj._from.created ?(<>
                                                             <Row className="pd-05 border-left border-primary">
                                                                 <Col className="primary-800 font-weight-bold">{subObj._from.title}</Col>
                                                                 <Col md="2">
@@ -776,11 +788,11 @@ class View extends Component {
                             }
                             
                             )}                            
-                        {this.state.viewLinks.map((obj) => {
+                        {this.state.viewLinks.map((obj, i) => {
                             return <>
                             {obj && obj._to.title?    
                                 (<>
-                                <Row key={obj._to} value={obj.to} className="mrg-05-top">
+                                <Row key={i} value={obj.to} className="mrg-05-top">
                                     <Col className="primary-bg-200 rounded mrg-1-bot">
                                     <Row className="pd-05">
                                         <Col className="primary-800 font-weight-bold"> {obj._to.title}</Col>
@@ -822,11 +834,11 @@ class View extends Component {
                             }
                         </Row>
 
-                        {this.state.filteredData.map((obj) => {
+                        {this.state.filteredData.map((obj, i) => {
                             return <>
                             {obj._to && obj._to.title?    
                                 (<>
-                                <Row key={obj._to} value={obj.to} className="mrg-05-top">
+                                <Row key={i} value={obj.to} className="mrg-05-top">
                                     <Col className="primary-bg-200 rounded mrg-1-bot">
                                     <Row className="pd-05">
                                         <Col className="primary-800 font-weight-bold"> {obj._to.title}</Col>
@@ -850,7 +862,7 @@ class View extends Component {
                                 </>)
                                 :(<>
                                     {obj._id ? (<>
-                                        <Row key={obj._id} value={obj._id} className="mrg-05-top">
+                                        <Row key={i} value={obj._id} className="mrg-05-top">
                                         <Col className="primary-bg-200 rounded mrg-1-bot">
                                         <Row className="pd-05">
                                             <Col className="primary-800 font-weight-bold"> {obj.title}</Col>
@@ -905,8 +917,8 @@ class View extends Component {
                         <Modal.Title>Contributions</Modal.Title>
                         </Modal.Header>
                         <Modal.Body style={{'max-height': 'calc(100vh - 300px)', 'overflow-y': 'auto'}}>
-                            {this.state.hNotes.map((obj) => {
-                                return <Row key={obj._to.title} value={obj.to} className="mrg-05-top">
+                            {this.state.hNotes.map((obj, i) => {
+                                return <Row key={i} value={obj.to} className="mrg-05-top">
                                     <Col className="mr-auto">
                                         <Row className="indigo"> {obj._to.title}</Row>
                                         <Row> {obj.to}</Row>
@@ -917,8 +929,8 @@ class View extends Component {
                                 </Row>
                             })}                            
 
-                            {this.state.viewLinks.map((obj) => {
-                            return <Row key={obj._to.title} value={obj.to} className="mrg-05-top">
+                            {this.state.viewLinks.map((obj, i) => {
+                            return <Row key={i} value={obj.to} className="mrg-05-top">
                                 <Col>
                                     <Row className="indigo"> {obj._to.title}</Row>
                                     <Row> {obj.to}</Row>
@@ -956,8 +968,8 @@ class View extends Component {
                         </Modal.Title>
                         </Modal.Header>
                         <Modal.Body style={{'max-height': 'calc(100vh - 210px)', 'overflow-y': 'auto'}}>
-                            {this.state.myViews.map((obj) => {
-                            return <Row key={obj.id} value={obj.title} className="mrg-05-top">
+                            {this.state.myViews.map((obj, i) => {
+                            return <Row key={i} value={obj.title} className="mrg-05-top">
                                 <Col><Link onClick={()=>this.changeView({obj})}> {obj.title} </Link></Col>
                             </Row>
                             })}

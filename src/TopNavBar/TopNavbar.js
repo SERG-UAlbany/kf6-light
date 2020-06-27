@@ -15,7 +15,7 @@ class TopNavbar extends Component {
         userName: null,
         token : sessionStorage.getItem('token'),
         myViews : [],
-        viewId : sessionStorage.getItem('viewId'),
+        viewId : sessionStorage.getItem('viewId') ? sessionStorage.getItem('viewId') : '',
         viewTitle : sessionStorage.getItem("viewTitle")? sessionStorage.getItem("viewTitle") :'welcome',
         communityId : sessionStorage.getItem('communityId'),
     };
@@ -32,6 +32,7 @@ class TopNavbar extends Component {
     };
 
     // GET FULL NAME
+    /* HAVE A CONDITION WHEN USER IS LOGGED IN, THEN ONLY IT SHOWS THE NAME */
     Axios.get(`${apiUrl}/users/me`, config)
             .then(
                 result=>{
@@ -131,7 +132,7 @@ class TopNavbar extends Component {
                     {/* <Label>Select Community</Label> */}
                         <Input type="select" name="viewId" value={this.state.viewId} onChange={this.handleChange}>{
                             this.state.myViews.map((obj) => {
-                                return <option key={obj.title} value={obj._id}> {obj.title} </option>
+                                return <option key={obj._id} value={obj._id}> {obj.title} </option>
                             })
                         }</Input>
                     </FormGroup>

@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import { Button, Row, Col,} from 'react-bootstrap';
-import ReactDOM from "react-dom";
 import Axios from 'axios';
 import {apiUrl} from '../../store/api.js';
 
@@ -34,6 +32,7 @@ class Author extends Component{
                     this.setState({
                         authorName: filteredObj.firstName + " "+ filteredObj.lastName,
                     });
+                    return null;
                 });
 
             }).catch(

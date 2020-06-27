@@ -143,8 +143,8 @@ class CommunityManager extends Component {
                 
                 <Container className="mrg-2-top">
                     <h6>My Knowledge Building Communities</h6>
-                    {this.state.registrations.map((obj) => {
-                        return <Row key={obj.id} value={obj.communityId} className="mrg-05-top">
+                    {this.state.registrations.map((obj, id) => {
+                        return <Row key={id} value={obj.communityId} className="mrg-05-top">
                             <Col>{obj._community.title}</Col>
                             <Col><Button variant="outline-secondary" onClick={()=>this.enterCommunity({obj})}>Enter Community</Button></Col>
                         </Row>

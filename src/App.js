@@ -9,14 +9,14 @@ import TopNavbar from './TopNavBar/TopNavbar';
 import View from './View/View';
 import NewNote from './components/newNote/NewNote'
 import ChangePassword from './Account/ChangePassword';
-import TestComponent from './components/test/TestComponent'
-import { setToken } from './store/api.js'
+import TestComponent from './components/test/TestComponent';
+import { setToken } from './store/api.js';
 
 import 'react-notifications-component/dist/theme.css'
 import './App.css';
 
 function App() {
-
+    
     useEffect(()=> {
         const token = sessionStorage.getItem('token');
         if (token){
