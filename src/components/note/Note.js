@@ -6,7 +6,7 @@ import Properties from '../propertiesTab/Properties'
 import AuthorTab from '../authorsTab/AuthorTab'
 import Annotator from '../annotator/Annotator'
 import { connect } from 'react-redux'
-import {editNote, removeDrawing, editSvgDialog,
+import {editNote, removeDrawing, editSvgDialog, setAnnotationsLoaded,
         fetchAttachments, setWordCount, fetchRecords,
         createAnnotation, deleteAnnotation, modifyAnnotation} from '../../store/noteReducer.js'
 import {openDrawDialog} from '../../store/dialogReducer.js'
@@ -96,8 +96,7 @@ class Note extends React.Component {
     }
 
     onAnnotationCreated(annotation) {
-        const anno = this.vm2m(annotation)
-        this.props.createAnnotation(this.props.note.communityId, this.props.note._id, this.props.author._id, anno)
+        this.props.createAnnotation(this.props.note.communityId, this.props.note._id, this.props.author._id, annotation)
     }
 
     onAnnotationDeleted(annotation){
@@ -116,26 +115,9 @@ class Note extends React.Component {
             console.error('ERROR! model couldn\'t find');
             return;
         }
-        const data = this.vm2m(annotation)
-        model.data = data;
+        model.data = annotation;
         this.props.modifyAnnotation(model, this.props.note.communityId, this.props.note._id)
     }
-    vm2m(anno) {
-        var isPublic = anno.permissions.read.length === 0;
-        if (isPublic) {
-            anno.permission = 'protected';
-        } else {
-            anno.permission = 'private';
-        }
-        var loc = anno.ranges[0];
-        if (loc.start.indexOf('/div[1]') === 0) {
-            loc.start = loc.start.substring(7);
-        }
-        if (loc.end.indexOf('/div[1]') === 0) {
-            loc.end = loc.end.substring(7);
-        }
-        return anno;
-    };
 
     render() {
         const formatter = new Intl.DateTimeFormat('default', dateFormatOptions)
@@ -149,10 +131,14 @@ class Note extends React.Component {
                     <Tab eventKey="read" title="read">
                         <Annotator containerId={this.props.dlgId}
                                    content={this.props.note.data.body}
+                                   annots={this.props.note.annos}
+                                   annotsFetched={this.props.note.annotsFetched}
                                    author={this.props.author}
                                    onCreate={this.onAnnotationCreated}
                                    onUpdate={this.onAnnotationUpdated}
-                                   onDelete={this.onAnnotationDeleted}>
+                                   onDelete={this.onAnnotationDeleted}
+                                   onAnnotsLoaded={()=>this.props.setAnnotationsLoaded({contribId:this.props.note._id, value: 0})}
+                        >
                         </Annotator>
                     </Tab>
                     <Tab eventKey="write" title="write">
@@ -187,7 +173,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = { editNote, openDrawDialog, setWordCount,
                              removeDrawing, editSvgDialog, fetchAttachments, fetchRecords,
-                             deleteAnnotation, fetchCommGroups, createAnnotation, modifyAnnotation}
+                             deleteAnnotation, fetchCommGroups, createAnnotation, modifyAnnotation, setAnnotationsLoaded}
 
 export default connect(
     mapStateToProps,

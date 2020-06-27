@@ -51,12 +51,12 @@ export const postLink = async (fromId, toId, type, data) => {
 }
 
 export const deleteLink = async (linkId) => {
-    return (await axios.delete(`${apiUrl}/links/${linkId}`).data)
+    return (await axios.delete(`${apiUrl}/links/${linkId}`)).data
 }
 
 //Object
-export const getObject = (objectId) => {
-    return axios.get(`${apiUrl}/objects/${objectId}`);
+export const getObject = async (objectId) => {
+    return (await axios.get(`${apiUrl}/objects/${objectId}`)).data
 }
 
 export const putObject = async (object, communityId, objectId) => {

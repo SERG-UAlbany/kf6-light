@@ -20,6 +20,7 @@ export const setRecords = createAction('SET_RECORDS')
 export const removeContribAuthor = createAction('REMOVE_CONTRIB_AUTHOR')
 export const addContribAuthor = createAction('ADD_CONTRIB_AUTHOR')
 export const setAnnotation = createAction('SET_ANNOTATION')
+export const setAnnotationsLoaded = createAction('SET_ANNOTATIONS_LOADED')
 export const removeAnnotation = createAction('REMOVE_ANNOTATION')
 // export const postContribution = createAction('POST_CONTRIBUTION')
 
@@ -89,6 +90,10 @@ export const noteReducer = createReducer(initState, {
     [setAnnotation]: (state, action) => {
         let contrib = state[action.payload.contribId]
         contrib.annos[action.payload.annotation._id] = action.payload.annotation
+    },
+    [setAnnotationsLoaded]: (state, action) => {
+        let contrib = state[action.payload.contribId]
+        contrib['annotsFetched'] = action.payload.value
     },
     [removeAnnotation]: (state, action) => {
         let contrib = state[action.payload.contribId]
@@ -200,9 +205,7 @@ export const attachmentUploaded = (noteId, attachment, inline, x, y) => dispatch
 
 export const fetchAttachments = (contribId) => async dispatch => {
     const link_atts = await api.getLinks(contribId, 'from', 'attach')
-    const promises = link_atts.map((attach) => api.getObject(attach.to))
-    let attachments = await Promise.all(promises)
-    attachments = attachments.map((att) => att.data)
+    const attachments = await Promise.all(link_atts.map((attach) => api.getObject(attach.to)))
     dispatch(setAttachments({contribId, attachments}))
 }
 
@@ -263,7 +266,7 @@ export const openContribution = (contribId) => async (dispatch, getState) => {
                                                             api.getLinks(contribId, 'from'),
                                                             api.getLinks(contribId, 'to')])
 
-    const note = {attachments: [], fromLinks, toLinks, records: [], annos: {}, ...contrib.data}
+    const note = {attachments: [], fromLinks, toLinks, records: [], annos: {}, ...contrib}
     const noteBody = preProcess(note.data.body, toLinks, fromLinks)
     note.data.body = noteBody
     dispatch(addNote(note))
@@ -272,6 +275,22 @@ export const openContribution = (contribId) => async (dispatch, getState) => {
                          confirmButton: 'edit',
                          noteId: note._id,
                         }))
+    //annotations
+    const annoLinks = toLinks.filter((link) => link.type === 'annotates')
+
+    const annotations = await Promise.all(
+        annoLinks.map((annLink) =>
+            api.getObject(annLink.from).then(anno => {
+                anno.data.linkId = annLink._id
+                anno.data.modelId = anno._id
+                return anno
+            })
+        )
+    )
+
+    annotations.forEach((annot) => dispatch(setAnnotation({annotation: annot, contribId})) )
+    dispatch(setAnnotationsLoaded({contribId, value: 1}))
+    //TODO load annotations with annotator
 
     if (note.status === 'active'){
          api.read(note.communityId, note._id)

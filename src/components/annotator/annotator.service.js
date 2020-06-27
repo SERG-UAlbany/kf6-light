@@ -226,3 +226,28 @@ export const setKFPlugin = (elem, annotatorHandler, uname) => {
         });
     }
 }
+
+export const vm2m = (anno) => {
+    const isPublic = anno.permissions.read.length === 0;
+    if (isPublic) {
+        anno.permission = 'protected';
+    } else {
+        anno.permission = 'private';
+    }
+    const loc = anno.ranges[0];
+    if (loc.start.indexOf('/div[1]') === 0) {
+        loc.start = loc.start.substring(7);
+    }
+    if (loc.end.indexOf('/div[1]') === 0) {
+        loc.end = loc.end.substring(7);
+    }
+    return anno;
+};
+
+export const m2vm = (anno) => {
+    const loc = Object.assign({}, anno.ranges[0]);
+    loc.start = '/div[1]' + loc.start;
+    loc.end = '/div[1]' + loc.end;
+    anno.ranges[0] = loc
+    return anno;
+};

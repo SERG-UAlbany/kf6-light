@@ -56,7 +56,7 @@ export const fetchAuthor = (communityId) => {
 export const fetchView = (viewId) => {
     return dispatch => {
         return getObject(viewId).then( res => {
-            dispatch(setView(res.data))
+            dispatch(setView(res))
         })
     }
 }
