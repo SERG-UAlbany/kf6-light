@@ -48,10 +48,10 @@ class Login extends Component {
                 this.props.history.push("/community-manager");
             })
             .catch((error)=>{
-                if(error.message){
-                    console.log(error);
-                    alert("Please enter Valid username and password");
-                }
+                // if(error.message){
+                //     console.log(error);
+                //     alert("Please enter Valid username and password");
+                // }
             }
 
             );

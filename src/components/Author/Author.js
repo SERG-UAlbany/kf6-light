@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
-import { Button, Row, Col,} from 'react-bootstrap';
-import ReactDOM from "react-dom";
 import Axios from 'axios';
-import {apiUrl} from '../store/api.js';
+import {apiUrl} from '../../store/api.js';
 
-class Authors extends Component{
+class Author extends Component{
     token = sessionStorage.getItem('token');
     constructor(props) {
         super(props);
@@ -34,6 +32,7 @@ class Authors extends Component{
                     this.setState({
                         authorName: filteredObj.firstName + " "+ filteredObj.lastName,
                     });
+                    return null;
                 });
 
             }).catch(
@@ -52,4 +51,4 @@ class Authors extends Component{
     }
 
 }
-export default Authors;
+export default Author;

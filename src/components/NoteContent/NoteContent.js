@@ -5,7 +5,7 @@ import {Form, FormGroup, Input, Alert} from 'reactstrap';
 import Axios from 'axios';
 
 import './NoteContent.css';
-import {apiUrl} from '../store/api.js';
+import {apiUrl} from '../../store/api.js';
 
 class NoteContent extends Component{
     noteList = [];
@@ -51,7 +51,6 @@ class NoteContent extends Component{
       handleChange(e) {
         e.persist();
         let target = e.target;
-        let name = target.name;
         let id = target.value;
         
         this.setState({
@@ -77,7 +76,7 @@ class NoteContent extends Component{
             };
             Axios.post(url, query, config).then(
                 res => {
-                    console.log("AZIOX POST DONE");
+                    // console.log("AZIOX POST DONE");
                     this.setState({visible:true},()=>{
                         window.setTimeout(()=>{
                           this.setState({visible:false})
@@ -104,8 +103,8 @@ class NoteContent extends Component{
                     <FormGroup>
                     {/* <Label>Select Community</Label> */}
                         <Input type="select" name="viewId" value={this.state.addView} onChange={this.handleChange}>{
-                            this.state.myViews.map((obj) => {
-                                return <option key={obj.title} key={obj.name} value={obj._id}> {obj.title} </option>
+                            this.state.myViews.map((obj, i) => {
+                                return <option key={i} value={obj._id}> {obj.title} </option>
                             })
                         }</Input>
                     </FormGroup>
