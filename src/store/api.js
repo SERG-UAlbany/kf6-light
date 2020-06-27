@@ -83,6 +83,10 @@ export const postAttachment = (communityId, authorId) => {
     return axios.post(`${apiUrl}/contributions/${communityId}`, newobj)
 }
 
+export const postContribObject = async (communityId, obj) => {
+    return (await axios.post(`${apiUrl}/contributions/${communityId}`, obj)).data
+}
+
 //Author
 export const getAuthor = (communityId) => {
     return axios.get(`${apiUrl}/authors/${communityId}/me`)
