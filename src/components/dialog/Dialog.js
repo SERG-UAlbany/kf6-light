@@ -10,11 +10,12 @@ const dialog_style = {
 const Dialog = props => {
     return (
             <Rnd
+                id={`contrib-dialog-${props.id}`}
                 className={"contrib-dialog"}
                 style={{...dialog_style, ...props.style}}
                 default={{
-                    x: 400,
-                    y: 50,
+                    x: 400 + window.pageXOffset,
+                    y: 50 + window.pageYOffset,
                     width: 920,
                     height: 500,
                 }}
@@ -28,7 +29,7 @@ const Dialog = props => {
                         <span>{props.title}</span>
                         <Button onClick={props.onClose} variant='link' size='sm' style={{marginLeft:'auto'}}>x</Button>
                     </Card.Header>
-                    <Card.Body className='dlg-card-body' style={{overflow: 'scroll'}}>
+                    <Card.Body className='dlg-card-body'>
                         {props.children}
                     </Card.Body>
                     <Card.Footer className="dlg-card-footer py-0">

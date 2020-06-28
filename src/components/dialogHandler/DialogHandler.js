@@ -51,6 +51,7 @@ const DialogHandler = props => {
         <div>{
             dialogs.dialogs.map((elt, i) =>
                 <Dialog key={elt.id}
+                        id={elt.id}
                         onMouseDown={() => onFocusDialog(elt.id)}
                         title={elt.title}
                         style={{zIndex: elt.zIndex}}
@@ -58,7 +59,7 @@ const DialogHandler = props => {
                         onConfirm={()=> onDialogConfirm(elt)}
                         confirmButton={elt.confirmButton}>
 
-                    <Note key={elt.noteId} noteId={elt.noteId} />
+                    <Note key={elt.noteId} dlgId={elt.id} noteId={elt.noteId} />
                 </Dialog>
             )
         }

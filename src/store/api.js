@@ -30,6 +30,9 @@ export const postContribution = (communityId, obj) => {
 export const getCommunity = (communityId) => {
     return axios.get(`${apiUrl}/communities/${communityId}`);//, {mode: 'cors'});
 }
+export const getGroups = async (communityId) => {
+    return (await axios.get(`${apiUrl}/communities/${communityId}/groups`)).data
+}
 
 //Links
 export const getLinks = async (objectId, direction, type) => {
@@ -48,12 +51,12 @@ export const postLink = async (fromId, toId, type, data) => {
 }
 
 export const deleteLink = async (linkId) => {
-    return (await axios.delete(`${apiUrl}/links/${linkId}`).data)
+    return (await axios.delete(`${apiUrl}/links/${linkId}`)).data
 }
 
 //Object
-export const getObject = (objectId) => {
-    return axios.get(`${apiUrl}/objects/${objectId}`);
+export const getObject = async (objectId) => {
+    return (await axios.get(`${apiUrl}/objects/${objectId}`)).data
 }
 
 export const putObject = async (object, communityId, objectId) => {
@@ -78,6 +81,10 @@ export const postAttachment = (communityId, authorId) => {
         }
     };
     return axios.post(`${apiUrl}/contributions/${communityId}`, newobj)
+}
+
+export const postContribObject = async (communityId, obj) => {
+    return (await axios.post(`${apiUrl}/contributions/${communityId}`, obj)).data
 }
 
 //Author

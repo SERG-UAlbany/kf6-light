@@ -25,12 +25,9 @@ export const fetchScaffolds = (communityId, contextId) => {
         dispatch(requestScaffold)
 
         let scaffold_promise = api.getCommunity(communityId).then( res => {
-            let promises = res.data.scaffolds.map((scaffoldId) => {
+            return Promise.all(res.data.scaffolds.map((scaffoldId) => {
                 return api.getObject(scaffoldId);
-            });
-            return Promise.all(promises).then(values =>
-                    values.map((val) => val.data)
-            )
+            }));
         });
 
         return Promise.all([scaffold_promise, api.getLinks(contextId, 'from', 'uses')]).then(async res =>{

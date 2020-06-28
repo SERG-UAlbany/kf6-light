@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import { Navbar, Nav, Button } from 'react-bootstrap';
 import {Col, Form, FormGroup, Input} from 'reactstrap';
-import { removeToken } from '../store/api.js'
+import { removeToken, apiUrl} from '../store/api.js'
 import Axios from 'axios';
-import {apiUrl} from '../store/api.js';
 
 class TopNavbar extends Component {
 
@@ -39,17 +38,17 @@ class TopNavbar extends Component {
                     this.setState({
                         userName: result.data.firstName+ " "+ result.data.lastName,
                      })
-                     
+
                      sessionStorage.setItem("userId", result.data._id);
 
                     }).catch(
                     error=>{
                     });
-    
+
     //GET USER'S VIEWS
     if(this.state.communityId){
       var viewUrl= `${apiUrl}/communities/${this.state.communityId}/views`;
-      
+
       Axios.get(viewUrl, config)
       .then(
           result=>{
@@ -61,7 +60,6 @@ class TopNavbar extends Component {
                   // alert(error);
               });
     }
-    
   }
 
     logout(){

@@ -4,23 +4,28 @@ import WriteTab from '../writeTab/WriteTab'
 import History from '../historyTab/History'
 import Properties from '../propertiesTab/Properties'
 import AuthorTab from '../authorsTab/AuthorTab'
+import Annotator from '../annotator/Annotator'
 import { connect } from 'react-redux'
-import {editNote, removeDrawing, editSvgDialog,
-        fetchAttachments, setWordCount, fetchRecords } from '../../store/noteReducer.js'
+import {editNote, removeDrawing, editSvgDialog, setAnnotationsLoaded,
+        fetchAttachments, setWordCount, fetchRecords,
+        createAnnotation, deleteAnnotation, modifyAnnotation} from '../../store/noteReducer.js'
 import {openDrawDialog} from '../../store/dialogReducer.js'
 import { scaffoldWordCount } from '../../store/kftag.service.js'
-import { dateFormatOptions } from '../../store/globalsReducer.js'
+import { dateFormatOptions, fetchCommGroups } from '../../store/globalsReducer.js'
 import './Note.css'
 
 class Note extends React.Component {
     constructor(props) {
-        super(props);
-        this.onEditorSetup = this.onEditorSetup.bind(this);
-        this.onDrawingToolOpen = this.onDrawingToolOpen.bind(this);
-        this.addDrawing = this.addDrawing.bind(this);
-        this.onNoteChange = this.onNoteChange.bind(this);
-        this.wordCount = this.wordCount.bind(this);
+        super(props)
+        this.onEditorSetup = this.onEditorSetup.bind(this)
+        this.onDrawingToolOpen = this.onDrawingToolOpen.bind(this)
+        this.addDrawing = this.addDrawing.bind(this)
+        this.onNoteChange = this.onNoteChange.bind(this)
+        this.wordCount = this.wordCount.bind(this)
         this.onTabSelected = this.onTabSelected.bind(this)
+        this.onAnnotationCreated = this.onAnnotationCreated.bind(this)
+        this.onAnnotationDeleted = this.onAnnotationDeleted.bind(this)
+        this.onAnnotationUpdated = this.onAnnotationUpdated.bind(this)
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -85,7 +90,33 @@ class Note extends React.Component {
     onTabSelected(tab) {
         if (tab === 'history'){ //Refresh records
             this.props.fetchRecords(this.props.note._id)
+        }if (tab === 'author'){ //Refresh groups, and authors?
+            this.props.fetchCommGroups(this.props.note.communityId)
         }
+    }
+
+    onAnnotationCreated(annotation) {
+        this.props.createAnnotation(this.props.note.communityId, this.props.note._id, this.props.author._id, annotation)
+    }
+
+    onAnnotationDeleted(annotation){
+        if (annotation.linkId && annotation.modelId) {
+            this.props.deleteAnnotation(annotation.linkId, this.props.note._id, annotation.modelId);
+        }
+    }
+
+    onAnnotationUpdated(annotation){
+        if (!annotation.linkId || !annotation.modelId) {
+            console.error('ERROR! annoVM doesn\'t have id on update');
+            return;
+        }
+        const model = Object.assign({}, this.props.note.annos[annotation.modelId])
+        if (!model) {
+            console.error('ERROR! model couldn\'t find');
+            return;
+        }
+        model.data = annotation;
+        this.props.modifyAnnotation(model, this.props.note.communityId, this.props.note._id)
     }
 
     render() {
@@ -97,8 +128,18 @@ class Note extends React.Component {
                     Last modified: {formatter.format(new Date(this.props.note.modified))}
                 </div>
                 <Tabs defaultActiveKey="write" transition={false} onSelect={this.onTabSelected}>
-                    <Tab eventKey="home" title="read">
-                        <div  dangerouslySetInnerHTML={{__html: this.props.note.data.body}} />
+                    <Tab eventKey="read" title="read">
+                        <Annotator containerId={this.props.dlgId}
+                                   content={this.props.note.data.body}
+                                   annots={this.props.note.annos}
+                                   annotsFetched={this.props.note.annotsFetched}
+                                   author={this.props.author}
+                                   onCreate={this.onAnnotationCreated}
+                                   onUpdate={this.onAnnotationUpdated}
+                                   onDelete={this.onAnnotationDeleted}
+                                   onAnnotsLoaded={()=>this.props.setAnnotationsLoaded({contribId:this.props.note._id, value: 0})}
+                        >
+                        </Annotator>
                     </Tab>
                     <Tab eventKey="write" title="write">
                         <WriteTab
@@ -108,7 +149,7 @@ class Note extends React.Component {
                             onEditorSetup={this.onEditorSetup}
                         ></WriteTab>
                     </Tab>
-                    <Tab eventKey="contact" title="author(s)">
+                    <Tab eventKey="author" title="author(s)">
                         <AuthorTab contribId={this.props.noteId}/>
                     </Tab>
                     <Tab eventKey='history' title='history'><History records={this.props.note.records}/></Tab>
@@ -131,7 +172,8 @@ const mapStateToProps = (state, ownProps) => {
 }
 
 const mapDispatchToProps = { editNote, openDrawDialog, setWordCount,
-                             removeDrawing, editSvgDialog, fetchAttachments, fetchRecords}
+                             removeDrawing, editSvgDialog, fetchAttachments, fetchRecords,
+                             deleteAnnotation, fetchCommGroups, createAnnotation, modifyAnnotation, setAnnotationsLoaded}
 
 export default connect(
     mapStateToProps,
