@@ -302,7 +302,6 @@ export const openContribution = (contribId) => async (dispatch, getState) => {
 
     annotations.forEach((annot) => dispatch(setAnnotation({annotation: annot, contribId})) )
     dispatch(setAnnotationsLoaded({contribId, value: 1}))
-    //TODO load annotations with annotator
 
     if (note.status === 'active'){
          api.read(note.communityId, note._id)

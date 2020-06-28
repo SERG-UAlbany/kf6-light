@@ -585,7 +585,9 @@ class View extends Component {
         this.props.newNote(this.props.view, this.props.communityId, this.props.author._id) ;       
     }
 
-
+    openNote = (contribId) => {
+        this.props.openContribution(contribId)
+    }
 
     render() {
 
@@ -806,9 +808,10 @@ class View extends Component {
                                         </Row>
                                     <Row className="primary-600 sz-075 pd-05">
                                         <Col><Author authorId ={obj._to.authors}/>&nbsp; {obj._to.created}
-                                        </Col>    
-                                        <Col md="2">
-                                            <Button onClick={()=>this.buildOn(obj.to)}>BuildOn</Button>
+                                        </Col>
+                                        <Col md="3">
+                                            <Button size='sm' onClick={()=>this.buildOn(obj.to)}>BuildOn</Button>
+                                            <Button size='sm' className='ml-1' onClick={() => this.openNote(obj.to)}><i className="fa fa-pencil"></i></Button>
                                         </Col>
                                     </Row>
                                     </Col>
