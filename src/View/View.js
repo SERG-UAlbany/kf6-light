@@ -601,8 +601,8 @@ class View extends Component {
                             
                             <Row className="mrg-025">
                                 <Col md="12"sm="2" xs="2">
-                                    <DropdownButton drop="right" variant="outline-info" title={<i className="fas fa-plus-circle"></i>}>
-                                        
+                                    <DropdownButton drop="right" variant="primary" title={<i className="fas fa-plus-circle"></i>}>
+
                                         <Dropdown.Item onClick={()=>this.props.newNote(this.props.view, this.props.communityId, this.props.author._id)}>
                                                 New Note
                                         </Dropdown.Item>
