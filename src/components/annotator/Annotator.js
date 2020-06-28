@@ -1,6 +1,9 @@
 import React from 'react';
+import ScaffoldSelect from '../scaffold/ScaffoldSelect'
 import * as annotPlugins from './annotator.service'
 import './annotator.css'
+import store from '../../store/store';
+import { Provider } from 'react-redux';
 /*global $*/
 class Annotator extends React.Component {
 
@@ -17,12 +20,17 @@ class Annotator extends React.Component {
         this.fixPopupLocation = this.fixPopupLocation.bind(this)
         this.editorHidden = this.editorHidden.bind(this)
         this.loadAnnotations = this.loadAnnotations.bind(this)
+        this.onScaffoldSelected = this.onScaffoldSelected.bind(this)
         this.dlg = null
     }
 
     componentDidMount() {
         const annotatedElem = $(this.contentRef.current)
         annotatedElem.annotator()
+        this.scaffoldElem = (
+            <Provider store={store}>
+                <ScaffoldSelect initVal={0} onScaffoldSelected={this.onScaffoldSelected}/>
+            </Provider>)
 
         annotPlugins.setKFPlugin(annotatedElem, {
             annotationCreated: this.annotationCreated,
@@ -32,8 +40,9 @@ class Annotator extends React.Component {
             displayViewer: this.displayViewer,
             annotatorInitialized: this.annotatorInitialized,
             editorHidden: this.editorHidden
-        }, this.props.author.userName)
+        }, this.props.author.userName, this.scaffoldElem)
         this.dlg = $(`#contrib-dialog-${this.props.containerId}`)
+
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -95,7 +104,9 @@ class Annotator extends React.Component {
     }
     displayEditor(editor, annotation){
         /* $(editor.element.find(".annotator-controls")).off()*/
-
+        if (!editor.element.hasClass(editor.classes.invert.y)) {
+            editor.element.addClass(editor.classes.invert.y);
+        }
     }
     fixPopupLocation(popup){
         const dlgOffset = this.dlg.offset()
@@ -104,6 +115,19 @@ class Annotator extends React.Component {
     }
     displayViewer(viewer, annotation){
         this.fixPopupLocation(viewer.element)
+        viewer.element.addClass(viewer.classes.invert.y);
+    }
+
+    onScaffoldSelected(tagCreator, initialText) {
+        const mceditor = this.annotator.plugins.RichText.mceditor
+        const selected = mceditor.selection.getContent();
+        let text = selected.length ? selected : initialText;
+        const {tag, supportContentId} = tagCreator(text);
+        mceditor.insertContent(tag)
+        //select text after insert
+        const contentTag = mceditor.dom.get(supportContentId);
+        if (contentTag)
+            mceditor.selection.setCursorLocation(contentTag)
     }
 
     render() {

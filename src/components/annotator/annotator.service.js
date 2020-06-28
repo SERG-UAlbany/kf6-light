@@ -1,7 +1,7 @@
 /*global Annotator*/
 /*global $*/
 import tinymce from 'tinymce/tinymce';
-
+import ReactDOM from 'react-dom';
 // Default icons are required for TinyMCE 5.3 or above
 import 'tinymce/icons/default';
 
@@ -14,7 +14,7 @@ import 'tinymce/plugins/insertdatetime';
 import 'tinymce/plugins/link';
 import 'tinymce/plugins/code';
 
-export const setKFPlugin = (elem, annotatorHandler, uname) => {
+export const setKFPlugin = (elem, annotatorHandler, uname, scaffoldElement) => {
     Annotator.Plugin.KFPlugin = function( /*element*/ ) {
         return {
             pluginInit: function() {
@@ -97,14 +97,14 @@ export const setKFPlugin = (elem, annotatorHandler, uname) => {
         RichText.prototype.options = {
             tinymce:{
                 selector: "li.annotator-item textarea",
-                // content_css: '/manual_assets/kfmce.css',
-                height:"150px",
+                content_css: '/editor.css',
+                height:"170px",
                 statusbar: false,
                 plugins: "media image insertdatetime link code",
                 menubar: false,
                 toolbar_items_size: 'small',
                 extended_valid_elements : "iframe[src|frameborder|style|scrolling|class|width|height|name|align|id]",
-                toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | code ",
+                toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | code | mysidebar",
             }
         };
 
@@ -155,31 +155,34 @@ export const setKFPlugin = (elem, annotatorHandler, uname) => {
                     $('.mce-container').css('z-index','3090000000000000000');
 
                 });
-                // ed.addSidebar('mysidebar', {
-                //     tooltip: 'View Sacffold',
-                //     icon: 'settings',
-                //     onrender: function (api) {
-                //         //console.log('Render panel', api.element())
-
-                //     },
-                //     onshow: function (api) {
-
-                //         var str = "\"\'components/kfutils/scaffold/scaffold.html\'\"";
-                //         api.element().innerHTML = "<div id='annoSide'><div ng-include="+str+"></div></div>";
-                //         var scope = angular.element(document.getElementById("scaffoldContainer")).scope();
-                //         scope.$apply(function () {
-                //             scope.annotatorScaffoldInit(editorId);
-                //         });
-                //     },
-                //     onhide: function (api) {
-                //         api.element().innerHTML = "";
-                //         var scope = angular.element(document.getElementById("scaffoldContainer")).scope();
-                //         scope.$apply(function () {
-                //             scope.annotatorScaffoldClose();
-                //         });
-                //         //console.log('Hide panel', api.element());
-                //     }
-                // });
+                ed.ui.registry.addSidebar('mysidebar', {
+                    tooltip: 'View Scaffold',
+                    icon: 'settings',
+                    onSetup: function (api) {
+                        const sidebar = api.element()
+                        document.sidebar = sidebar
+                        sidebar.style.width = "200px"
+                        sidebar.style.overflow = "scroll"
+                        sidebar.style.fontSize = "0.7rem"
+                        ReactDOM.render(scaffoldElement, api.element(), null)
+                    },
+                    onShow: function (api) {
+                        // var str = "\"\'components/kfutils/scaffold/scaffold.html\'\"";
+                        // api.element().innerHTML = "<div id='annoSide'><div ng-include="+str+"></div></div>";
+                        // var scope = angular.element(document.getElementById("scaffoldContainer")).scope();
+                        // scope.$apply(function () {
+                        //     scope.annotatorScaffoldInit(editorId);
+                        // });
+                    },
+                    onHide: function (api) {
+                        // api.element().innerHTML = "";
+                        // var scope = angular.element(document.getElementById("scaffoldContainer")).scope();
+                        // scope.$apply(function () {
+                        //     scope.annotatorScaffoldClose();
+                        // });
+                        //console.log('Hide panel', api.element());
+                    }
+                });
 
             };
             tinymce.init(this.options.tinymce);

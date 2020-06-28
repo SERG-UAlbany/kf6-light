@@ -1,5 +1,5 @@
 .annotator-widget {
-    min-width: 500px;
+    min-width: 800px;
 }
 
 .tooltip1 .tooltiptext {
@@ -33,3 +33,4 @@
     visibility: visible;
     opacity: 1;
 }
+
