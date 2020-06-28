@@ -41,6 +41,12 @@ class Annotator extends React.Component {
             this.loadAnnotations()
         }
     }
+
+    componentWillUnmount() {
+        //Need to remove editor when closing dialog
+        if (this.annotator && this.annotator.plugins.RichText.mceditor)
+            this.annotator.plugins.RichText.mceditor.remove()
+    }
     editorHidden(editor, annotation){
         $(editor.element.find(".annotator-controls")).off()
     }

@@ -146,6 +146,7 @@ export const setKFPlugin = (elem, annotatorHandler, uname) => {
 
             //set listener for tinymce;
             this.options.tinymce.setup = function(ed) {
+                RichText.prototype.mceditor = ed
                 ed.on('change', function(e) {
                     //set the modification in the textarea of annotator
                     $(editor.element).find('textarea')[0].value = tinymce.activeEditor.getContent();
