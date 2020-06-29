@@ -124,18 +124,19 @@ class NoteContent extends Component{
                 </Form>                
             {this.props.noteContnetList.map(
                 (obj,i)=>{
+                    let data;
 
                     if(this.props.query && obj.data.English){
                         let innerHTML = obj.data.English;
                         let index = innerHTML.indexOf(this.props.query);
                         if (index >= 0) { 
-                            obj.data.English = innerHTML.substring(0,index) + "<span class='highlight'>" + innerHTML.substring(index,index+this.props.query.length) + "</span>" + innerHTML.substring(index + this.props.query.length);
+                            data = innerHTML.substring(0,index) + "<span class='highlight'>" + innerHTML.substring(index,index+this.props.query.length) + "</span>" + innerHTML.substring(index + this.props.query.length);
                         }
                     }else if(this.props.query && obj.data.body){
                         let innerHTML = obj.data.body;
                         let index = innerHTML.indexOf(this.props.query);
                         if (index >= 0) { 
-                            obj.data.body = innerHTML.substring(0,index) + "<span class='highlight'>" + innerHTML.substring(index,index+this.props.query.length) + "</span>" + innerHTML.substring(index + this.props.query.length);
+                            data = innerHTML.substring(0,index) + "<span class='highlight'>" + innerHTML.substring(index,index+this.props.query.length) + "</span>" + innerHTML.substring(index + this.props.query.length);
                         }   
                     }              
 
@@ -146,7 +147,14 @@ class NoteContent extends Component{
                                     <Col md="11" className="pd-1 primary-800 font-weight-bold">{obj.title }</Col>
                                     <Col md="1"><Button variant="secondary" onClick={()=>this.props.closeNote(obj._id)}>X</Button></Col>
                                 </Row>
-                                <Row><span className="pd-1" dangerouslySetInnerHTML={{ __html: obj.data.English ? (obj.data.English):(obj.data.body)}} /></Row>
+                                <Row>
+                                    <Col md="10">
+                                        <span className="pd-1" dangerouslySetInnerHTML={{ __html: data ? (data):(obj.data.body)}} />
+                                    </Col>
+                                    <Col md="2">
+                                        <Button size='sm' onClick={() => this.props.buildOn(obj._id)}>BuildOn</Button>
+                                    </Col>
+                                </Row>
                             </Col>
                         </Row>
 
