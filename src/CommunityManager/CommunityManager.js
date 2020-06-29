@@ -34,10 +34,14 @@ class CommunityManager extends Component {
         this.setState({
             [name]: value
         });
+        console.log("state",this.state);
+        
     }
 
     handleSubmit(e) {
         e.preventDefault();
+        // console.log(this.props.viewId);
+        // console.log(this.props.viewId);
 
         //REGISTER NEW COMMUNITY TO AUTHOR
         let registerUrl = `${apiUrl}/authors`;
@@ -68,6 +72,13 @@ class CommunityManager extends Component {
                     this.setState({
                         communitites: communityData,
                     })
+                    if(communityData[0]){
+                        this.setState({
+                            communityId : communityData[0]._id,
+                        })
+                        this.props.setCommunityId(communityData[0]._id);
+                        
+                    }
                 }).catch(
                     error => {
                         alert("Communities Failed, Please reload the page! ");
