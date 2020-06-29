@@ -7,6 +7,7 @@ export const setViewId = createAction('SET_VIEW_ID')
 export const setAuthor = createAction('SET_AUTHOR')
 export const setView = createAction('SET_VIEW')
 export const editCommunity = createAction('EDIT_COMMUNITY')
+export const setNoteContent = createAction('SET_NOTE_CONTENT')
 export const dateFormatOptions = {
     year: 'numeric', month: 'numeric', day: 'numeric',
     hour: 'numeric', minute: 'numeric', second: 'numeric',
@@ -20,7 +21,8 @@ const initState = {
     // communityId: '5e445735d525b936837f7450',
     author: {},
     view: null,
-    community: null
+    community: null,
+    noteContent: [],
 }
 
 export const globalsReducer = createReducer(initState, {
@@ -42,7 +44,11 @@ export const globalsReducer = createReducer(initState, {
     },
     [editCommunity]: (state, action) => {
         state.community = {...state.community, ...action.payload}
-    }
+    },
+    [setNoteContent]: (state, action) => {
+        state.noteContent = {...action.payload}
+        console.log("state.noteContent", state.noteContent);        
+    },
 });
 
 export const fetchAuthor = (communityId) => {

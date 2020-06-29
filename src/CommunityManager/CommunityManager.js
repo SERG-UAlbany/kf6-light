@@ -40,8 +40,6 @@ class CommunityManager extends Component {
 
     handleSubmit(e) {
         e.preventDefault();
-        // console.log(this.props.viewId);
-        // console.log(this.props.viewId);
 
         //REGISTER NEW COMMUNITY TO AUTHOR
         let registerUrl = `${apiUrl}/authors`;
