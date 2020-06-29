@@ -155,6 +155,9 @@ export const setKFPlugin = (elem, annotatorHandler, uname, scaffoldElement) => {
                     $('.mce-container').css('z-index','3090000000000000000');
 
                 });
+                ed.on('remove', function(){
+                    ReactDOM.unmountComponentAtNode(RichText.prototype.scaffoldSidebar)
+                })
                 ed.ui.registry.addSidebar('mysidebar', {
                     tooltip: 'View Scaffold',
                     icon: 'settings',
@@ -164,7 +167,8 @@ export const setKFPlugin = (elem, annotatorHandler, uname, scaffoldElement) => {
                         sidebar.style.width = "200px"
                         sidebar.style.overflow = "scroll"
                         sidebar.style.fontSize = "0.7rem"
-                        ReactDOM.render(scaffoldElement, api.element(), null)
+                        ReactDOM.render(scaffoldElement, sidebar, null)
+                        RichText.prototype.scaffoldSidebar = sidebar
                     },
                     onShow: function (api) {
                         // var str = "\"\'components/kfutils/scaffold/scaffold.html\'\"";
