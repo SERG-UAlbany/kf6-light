@@ -22,8 +22,8 @@ if (token) {
 }
 
 //USER
-export const getUserId = () => {
-    return axios.get(`${apiUrl}/users/me`);
+export const getUser = async () => {
+    return (await axios.get(`${apiUrl}/users/me`)).data
 }
 
 //Contribution
@@ -37,6 +37,10 @@ export const getCommunity = (communityId) => {
 }
 export const getGroups = async (communityId) => {
     return (await axios.get(`${apiUrl}/communities/${communityId}/groups`)).data
+}
+
+export const getCommunityViews = async (communityId) => {
+    return (await axios.get(`${apiUrl}/communities/${communityId}/views`)).data
 }
 
 //Links

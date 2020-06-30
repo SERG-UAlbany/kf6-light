@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { HashRouter as Router, Route, Switch } from 'react-router-dom';
+
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import ReactNotification from 'react-notifications-component';
 
 import Login from './Account/Login';
@@ -11,16 +12,20 @@ import NewNote from './components/newNote/NewNote'
 import ChangePassword from './Account/ChangePassword';
 import TestComponent from './components/test/TestComponent';
 import { setToken } from './store/api.js';
+import { useDispatch } from 'react-redux';
+import { fetchLoggedUser } from './store/globalsReducer.js'
 
 import 'react-notifications-component/dist/theme.css'
 import './App.css';
 
 function App() {
 
+    const dispatch = useDispatch();
     useEffect(() => {
         const token = sessionStorage.getItem('token');
         if (token) {
             setToken(token)
+            dispatch(fetchLoggedUser())
         }
     })
 
@@ -36,7 +41,7 @@ function App() {
                     </Route>
                     <Route path="/community-manager" component={CommunityManager}>
                     </Route>
-                    <Route path="/view" component={View}>
+                    <Route path="/view/:viewId" component={View}>
                     </Route>
                     <Route path="/new-note" component={NewNote}>
                     </Route>

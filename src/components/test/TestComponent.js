@@ -2,7 +2,6 @@ import React, {useEffect} from 'react';
 import AttachArea from '../attachmentArea/AttachArea.js'
 import AttachPanel from '../attachmentCollapse/AttachPanel.js'
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchAuthor } from '../../store/globalsReducer.js'
 import { fetchAuthors } from '../../store/userReducer.js'
 
 const TestComponent= props => {
@@ -13,7 +12,7 @@ const TestComponent= props => {
     useEffect(() => {
         console.log('use effect')
         dispatch(fetchAuthors(communityId))
-        dispatch(fetchAuthor(communityId));
+        /* dispatch(fetchAuthor(communityId)); */
     }, [dispatch, communityId]);
 
     return (

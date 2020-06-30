@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from "react-router-dom";
-import { DropdownButton, Dropdown, Button, Row, Col, Modal, Collapse } from 'react-bootstrap';
+import { DropdownButton, Dropdown, Button, Row, Col, Modal } from 'react-bootstrap';
 import { Form, FormGroup, Label, Input } from 'reactstrap';
 import Axios from 'axios';
 import { apiUrl } from '../store/api.js';
@@ -10,7 +10,7 @@ import { connect } from 'react-redux'
 import DialogHandler from '../components/dialogHandler/DialogHandler.js'
 import NoteContent from '../components/NoteContent/NoteContent'
 import ListOfNotes from './ListOfNotes/ListOfNotes'
-import { fetchAuthor, fetchView, fetchCommunity, setCommunityId, setViewId, setNoteContent } from '../store/globalsReducer.js'
+import { fetchView, fetchCommunity, setCommunityId, setViewId, setNoteContent, fetchViewCommunityData } from '../store/globalsReducer.js'
 import { fetchAuthors } from '../store/userReducer.js';
 import Author from '../components/Author/Author';
 import './View.css';
@@ -86,13 +86,9 @@ class View extends Component {
 
 
     componentDidMount() {
-        
-        /* this.props.setCommunityId(sessionStorage.getItem('communityId'))
-         * this.props.setViewId(sessionStorage.getItem('viewId')) */
-        this.props.fetchAuthor(this.props.communityId)
-        this.props.fetchView(this.props.viewId)
-        this.props.fetchCommunity(this.props.communityId)
-        this.props.fetchAuthors(this.props.communityId)
+        const viewId = this.props.match.params.viewId
+        this.props.fetchViewCommunityData(viewId)
+        /* this.props.fetchAuthors(this.props.communityId) */
 
         this.setState(this.props.location.state);
         // console.log("state",this.state);
@@ -1170,7 +1166,6 @@ const mapStateToProps = (state, ownProps) => {
 }
 
 const mapDispatchToProps = {
-    fetchAuthor,
     fetchView,
     fetchCommunity,
     fetchAuthors,
@@ -1178,7 +1173,8 @@ const mapDispatchToProps = {
     setViewId,
     setNoteContent,
     newNote,
-    openContribution
+    openContribution,
+    fetchViewCommunityData
 }
 
 export default connect(

@@ -5,7 +5,7 @@ import Axios from 'axios'
 import { Container, Col, Form, FormGroup, Label, Input, Button } from 'reactstrap'
 
 import { url, setToken } from '../store/api.js'
-import { setGlobalToken, setIsAuthenticated } from '../store/globalsReducer'
+import { setGlobalToken, fetchLoggedUser } from '../store/globalsReducer'
 
 class Login extends Component {
     constructor(props) {
@@ -42,9 +42,9 @@ class Login extends Component {
                 //SET TOKEN
                 sessionStorage.setItem('token', token);
                 this.props.setGlobalToken(token);
-                this.props.setIsAuthenticated();
-                setToken(token);
-
+                /* this.props.setIsAuthenticated(); */
+                setToken(token); //set token on api header
+                this.props.fetchLoggedUser()
                 //NAVIGATE TO COMMUNITY MANAGER
                 this.props.history.push("/community-manager");
             })
@@ -91,13 +91,13 @@ class Login extends Component {
 }
 const mapStateToProps = (state, ownProps) => {
     return {
-        token: state.globals.token,
+        token: state.globals.token
     }
 }
 
 const mapDispatchToProps = {
     setGlobalToken,
-    setIsAuthenticated
+    fetchLoggedUser
 }
 
 export default connect(

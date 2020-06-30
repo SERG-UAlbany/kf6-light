@@ -1,11 +1,12 @@
 import { createAction, createReducer } from '@reduxjs/toolkit'
-import { getAuthor, getObject, getCommunity, getGroups, getUserId } from './api.js'
+import { getObject, getCommunity, getGroups, getUser, getCommunityViews } from './api.js'
+import { fetchAuthors } from './userReducer.js';
 
 export const setGlobalToken = createAction('SET_TOKEN')
 export const setCommunity = createAction('SET_COMMUNITY')
 export const setCommunityId = createAction('SET_COMMUNITY_ID')
 export const setViewId = createAction('SET_VIEW_ID')
-export const setAuthor = createAction('SET_AUTHOR')
+export const setLoggedUser = createAction('SET_AUTHOR')
 export const setView = createAction('SET_VIEW')
 export const setViews = createAction('SET_VIEWS')
 export const editCommunity = createAction('EDIT_COMMUNITY')
@@ -19,23 +20,23 @@ export const dateFormatOptions = {
 };
 
 const initState = {
-    token: '',
+    token: sessionStorage.getItem("token"),
     communityId: sessionStorage.getItem('communityId'),
     viewId: sessionStorage.getItem('viewId'),
     contextId: '',
-    // communityId: '5e445735d525b936837f7450',
-    author: {},
+    user: null,
     view: null,
     views: [],
     community: null,
     noteContent: [],
     userId: '',
-    isAuthenticated: false,
+    isAuthenticated: sessionStorage.getItem("token") ? true: false,
 }
 
 export const globalsReducer = createReducer(initState, {
     [setGlobalToken]: (state, action) => {
         state.token = action.payload
+        state.isAuthenticated = state.token ? true : false
     },
     [setIsAuthenticated]: (state, action) => {
         state.isAuthenticated = state.token ? true : false
@@ -50,8 +51,8 @@ export const globalsReducer = createReducer(initState, {
     [setUserId]: (state, action) => {
         state.userId = action.payload
     },
-    [setAuthor]: (state, action) => {
-        state.author = action.payload
+    [setLoggedUser]: (state, action) => {
+        state.user = action.payload
     },
     [setView]: (state, action) => {
         state.view = action.payload
@@ -72,13 +73,13 @@ export const globalsReducer = createReducer(initState, {
     },
 });
 
-export const fetchAuthor = (communityId) => {
-    return dispatch => {
-        return getAuthor(communityId).then(res => {
-            dispatch(setAuthor(res.data));
-        })
-    }
-}
+// export const fetchAuthor = (communityId) => {
+//     return dispatch => {
+//         return getAuthor(communityId).then(res => {
+//             dispatch(setAuthor(res.data));
+//         })
+//     }
+// }
 
 export const fetchView = (viewId) => {
     return dispatch => {
@@ -103,10 +104,26 @@ export const fetchCommGroups = (communityId) => async (dispatch) => {
     dispatch(editCommunity({ groups }))
 }
 
-export const fetchUserId = () => {
-    return dispatch => {
-        return getUserId().then(res => {
-            dispatch(setUserId(res.data._id))
-        })
-    }
+export const fetchLoggedUser = () => async (dispatch) => {
+    const user = await getUser()
+    dispatch(setUserId(user._id))
+    dispatch(setLoggedUser(user))
+}
+
+export const fetchCommunityViews = (communityId) => async (dispatch) => {
+    const views = await getCommunityViews(communityId)
+    dispatch(setViews(views))
+}
+
+export const fetchViewCommunityData = (viewId) => async (dispatch) => {
+    const view = await getObject(viewId)
+    dispatch(setView(view))
+    dispatch(setViewId(view._id))
+    const commId = view.communityId
+    const community = (await getCommunity(commId)).data
+    dispatch(setCommunity(
+        { groups: [], ...community }
+    ))
+    dispatch(fetchCommunityViews(commId))
+    dispatch(fetchAuthors(commId))
 }

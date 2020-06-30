@@ -108,7 +108,7 @@ class CommunityManager extends Component {
         // SET COMMUNITYID
         sessionStorage.setItem('communityId', myCommunity.obj.communityId);
         this.props.setCommunityId(communityId);
-        
+
         //SET HEADER WITH TOKEN BEARER
         let config = {
             headers: { Authorization: `Bearer ${this.state.token}` }
@@ -123,7 +123,7 @@ class CommunityManager extends Component {
                     let welcomeId = result.data[0]._id;
                     let views = result.data;
                     console.log("views",views);
-                    
+
                     // SET VIEWID
                     sessionStorage.setItem('viewId',welcomeId);
                     this.props.setViewId(welcomeId);
@@ -131,7 +131,7 @@ class CommunityManager extends Component {
                     //SET VIEWS
                     this.props.setViews(views);
                     //NAVIGATE TO VIEW
-                    this.props.history.push({ pathname: "/view"});
+                    this.props.history.push({ pathname: `/view/${welcomeId}`});
                 }).catch(
                     error => {
                         alert(error);
@@ -186,7 +186,6 @@ const mapStateToProps = (state, ownProps) => {
         communityId: state.globals.communityId,
         viewId: state.globals.viewId,
         view: state.globals.view,
-        
     }
 }
 

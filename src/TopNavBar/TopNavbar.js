@@ -3,178 +3,71 @@ import { Navbar, Nav, Button } from 'react-bootstrap'
 import { Col, Form, FormGroup, Input } from 'reactstrap'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router'
-import Axios from 'axios'
 
-import { removeToken, apiUrl } from '../store/api.js'
-import { setViewId } from '../store/globalsReducer'
-
+import { removeToken } from '../store/api.js'
+import { setViewId, setGlobalToken } from '../store/globalsReducer'
 
 class TopNavbar extends Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      token: sessionStorage.getItem("token") ? sessionStorage.getItem("token") : this.props.token,
-      loggedIn: this.props.token ? true : false,
-      userName: null,
-      myViews: [],
-      viewTitle: sessionStorage.getItem("viewTitle") ? sessionStorage.getItem("viewTitle") : 'welcome',
-      communityId: this.props.communityId ? this.props.communityId : sessionStorage.getItem("communityId"),
-    };
-    console.log("constructor state",this.state.token);
-    
+    constructor(props) {
+        super(props);
+        this.handleChange = this.handleChange.bind(this);
+    }
 
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
+    logout() {
+        sessionStorage.clear();
+        removeToken()//remove token from api header
+        setGlobalToken(null)//Remove token from store
+    }
 
-  componentDidMount() {
-    this.setState({
-      // token: sessionStorage.getItem("token"),
-      // loggedIn: sessionStorage.getItem("token") || this.props.token ? true : false,
-      // communityId: this.props.communityId,
-    })
-    console.log("Top navbabr", this.state.token, "isAuthenticated", this.state.loggedIn, "CommunityId", this.state.communityId);
+    handleChange(e) {
+        /* e.persist(); */
+        let target = e.target;
+        let viewId = target.value;
+        this.props.history.push(`/view/${viewId}`)
+    }
 
-
-    //SET HEADER WITH TOKEN BEARER
-    let config = {
-      headers: { Authorization: `Bearer ${this.state.token}` }
-    };
-
-    // GET FULL NAME
-    /* HAVE A CONDITION WHEN USER IS LOGGED IN, THEN ONLY IT SHOWS THE NAME */
-    
-      Axios.get(`${apiUrl}/users/me`, config)
-        .then(
-          result => {
-            this.setState({
-              userName: result.data.firstName + " " + result.data.lastName,
-            })
-
-            sessionStorage.setItem("userId", result.data._id);
-
-          }).catch(
-            error => {
-            });
-
-      //GET USER'S VIEWS
-      if (this.state.communityId) {
-        console.log("communityId",this.state.communityId, "token",this.state.communityId, "Config", config);
-        
-        var viewUrl = `${apiUrl}/communities/${this.state.communityId}/views`;
-
-        Axios.get(viewUrl, config)
-          .then(
-            result => {
-              this.setState({
-                myViews: result.data
-              })
-            }).catch(
-              error => {
-                // alert(error);
-              });
-      }
-
-  }
-
-  logout() {
-    sessionStorage.clear();
-    // sessionStorage.removeItem('token');
-    // removeToken()
-    // var n = sessionStorage.length;
-    // while (n--) {
-    //   var key = sessionStorage.key(n);
-    //   if (/foo/.test(key)) {
-    //     sessionStorage.removeItem(key);
-    //   }
-    // }
-  }
-
-  handleChange(e) {
-    e.persist();
-    let target = e.target;
-    let value = target.value;
-
-    sessionStorage.setItem("viewId", value);
-
-    this.setState({
-      viewId: value,
-    });
-
-    var config = {
-      headers: { Authorization: `Bearer ${this.state.token}` }
-    };
-
-    var viewUrl = `${apiUrl}/objects/${target.value}`;
-
-    Axios.get(viewUrl, config)
-      .then(
-        result => {
-          console.log(result.data);
-
-          this.setState({
-            viewTitle: result.data.title,
-          })
-
-          sessionStorage.setItem("viewTitle", result.data.title);
-
-        }).catch(
-          error => {
-            alert(error);
-          });
-  }
-
-  handleSubmit(e) {
-    e.preventDefault();
-
-    console.log('The form was submitted with:');
-    console.log(this.state);
-
-  }
 
   render() {
-    const isLoggedIn = this.state.token ? true : false;
-    console.log("rendering loggedin", isLoggedIn);
-
+      const isLoggedIn = this.props.isAuthenticated
+      const userName = this.props.user ? `${this.props.user.firstName} ${this.props.user.lastName}` : null
+      const isViewUrl = this.props.location.pathname.startsWith('/view/')
     return (
       <Navbar bg="dark" variant="dark" fixed="top">
         <Navbar.Brand href="#community-manager">KF6 Light</Navbar.Brand>
-        {isLoggedIn ?
+        {isViewUrl ?
           (
-            <Nav className="mr-auto">
-              <span className="mrg-105-top white">{this.state.viewTitle}</span>
-              <Form onSubmit={this.handleSubmit} className="mrg-1-top">
-                <Col>
-                  <FormGroup>
-                    {/* <Label>Select Community</Label> */}
-                    <Input type="select" name="viewId" value={this.state.viewId} onChange={this.handleChange}>{
-                      this.state.myViews.map((obj) => {
-                        return <option key={obj._id} value={obj._id}> {obj.title} </option>
-                      })
-                    }</Input>
-                    {/* <select value={this.state.viewId} onChange={()=>this.handleChange}>
-                      {this.state.myViews.map((obj)=>{
-                        return <option key={obj._id} value={obj._id}>{obj.title}</option>
-                      })}
-                    </select> */}
-                  </FormGroup>
-                </Col>
-              </Form>
-            </Nav>
+              <Nav className="mr-auto">
+                  <span className="mrg-105-top white">{ this.props.view ? this.props.view.title: ''}</span>
+                  { this.props.view ?
+                  <Form className="mrg-1-top">
+                      <Col>
+                          <FormGroup>
+                              <Input type="select" name="viewId" value={this.props.view.viewId} onChange={this.handleChange}>
+                                  {
+                                      this.props.views.map((obj) => {
+                                          return <option key={obj._id} value={obj._id}> {obj.title} </option>
+                                      })
+                                  }
+                              </Input>
+                          </FormGroup>
+                      </Col>
+                  </Form>
+                  : null }
+              </Nav>
           ) :
           (
-            <Nav className="mr-auto">
-              <Nav.Link href="#signup">Signup</Nav.Link>
+            <Nav className="ml-auto">
+              <Nav.Link href="/signup">Signup</Nav.Link>
               <Nav.Link href="/">Login</Nav.Link>
             </Nav>
           )}
 
         {isLoggedIn ? (
           <>
-            <Nav.Link href="#change-password"><i className="fas fa-cog white"></i></Nav.Link>
-            <span className="white"> {this.state.userName} </span>
-            <Button variant="outline-secondary" href="/" onClick={this.logout}>Logout</Button>
+            <Nav.Link href="/change-password"><i className="fas fa-cog white"></i></Nav.Link>
+            <span className="white"> {userName} </span>
+            <Button variant="outline-secondary" className='ml-2' href="/" onClick={this.logout}>Logout</Button>
           </>
         ) : null}
 
@@ -185,16 +78,18 @@ class TopNavbar extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    token: state.globals.token,
-    communityId: state.globals.communityId,
-    viewId: state.globals.viewId,
-    isAuthenticated: state.globals.isAuthenticated,
-    location: ownProps.location,
+      token: state.globals.token,
+      communityId: state.globals.communityId,
+      viewId: state.globals.viewId,
+      isAuthenticated: state.globals.isAuthenticated,
+      location: ownProps.location,
+      user: state.globals.user,
+      views: state.globals.views,
+      view: state.globals.view
   }
 }
 const mapDispatchToProps = {
-  setViewId,
-
+  setViewId, setGlobalToken
 }
 
 export default withRouter(connect(
