@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 // export const url = 'https://kf6.ikit.org';
-// export const url = 'https://kf6-stage.ikit.org';
-export const url = "http://localhost:9000";
+export const url = 'https://kf6-stage.ikit.org';
+// export const url = "http://localhost:9000";
 export const apiUrl = `${url}/api`;
 
 
