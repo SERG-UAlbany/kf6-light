@@ -42,8 +42,7 @@ class Login extends Component {
                 //SET TOKEN
                 sessionStorage.setItem('token', token);
                 this.props.setGlobalToken(token);
-                console.log("Token", this.props.token);
-                this.props.setIsAuthenticated(true);
+                this.props.setIsAuthenticated();
                 setToken(token);
 
                 //NAVIGATE TO COMMUNITY MANAGER

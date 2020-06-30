@@ -14,6 +14,7 @@ class CommunityManager extends Component {
         this.state = {
             communitites: [],
             password: '',
+            token: sessionStorage.getItem("token"),
             // communityId: '',
             // userId: sessionStorage.getItem("userId"),
             // token: sessionStorage.getItem("token"),
@@ -77,7 +78,6 @@ class CommunityManager extends Component {
 
                         //SET VISIBLE COMMUNITYID
                         this.props.setCommunityId(communityId);
-                        
                     }
                 }).catch(
                     error => {
@@ -111,7 +111,7 @@ class CommunityManager extends Component {
         
         //SET HEADER WITH TOKEN BEARER
         let config = {
-            headers: { Authorization: `Bearer ${this.props.token}` }
+            headers: { Authorization: `Bearer ${this.state.token}` }
         };
 
         //GET USER'S VIEWS

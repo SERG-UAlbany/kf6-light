@@ -50,7 +50,7 @@ class Notes extends Component {
 
         let note;
         if (this.props.noteObj && this.props.noteObj._to && this.props.noteObj._to.title) {
-            console.log("NOTEJS", this.props.noteObj);
+            // console.log("NOTEJS", this.props.noteObj);
             note = <div>
                 <Row className="mrg-05-top">
                     <Col className="primary-bg-200 rounded mrg-1-bot">

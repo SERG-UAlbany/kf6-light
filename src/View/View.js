@@ -86,6 +86,7 @@ class View extends Component {
 
 
     componentDidMount() {
+        
         /* this.props.setCommunityId(sessionStorage.getItem('communityId'))
          * this.props.setViewId(sessionStorage.getItem('viewId')) */
         this.props.fetchAuthor(this.props.communityId)

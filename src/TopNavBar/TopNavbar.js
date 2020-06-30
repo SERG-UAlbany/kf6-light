@@ -6,21 +6,23 @@ import { withRouter } from 'react-router'
 import Axios from 'axios'
 
 import { removeToken, apiUrl } from '../store/api.js'
-import {setCommunityId, setViewId} from '../store/globalsReducer'
+import { setViewId } from '../store/globalsReducer'
 
 
 class TopNavbar extends Component {
 
   constructor(props) {
     super(props);
-
     this.state = {
-      loggedIn: '',
-      userName: null,      
+      token: sessionStorage.getItem("token") ? sessionStorage.getItem("token") : this.props.token,
+      loggedIn: this.props.token ? true : false,
+      userName: null,
       myViews: [],
       viewTitle: sessionStorage.getItem("viewTitle") ? sessionStorage.getItem("viewTitle") : 'welcome',
-      communityId: sessionStorage.getItem('communityId'),
+      communityId: this.props.communityId ? this.props.communityId : sessionStorage.getItem("communityId"),
     };
+    console.log("constructor state",this.state.token);
+    
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -28,58 +30,65 @@ class TopNavbar extends Component {
 
   componentDidMount() {
     this.setState({
-      loggedIn:  this.props.token ? true : false,
+      // token: sessionStorage.getItem("token"),
+      // loggedIn: sessionStorage.getItem("token") || this.props.token ? true : false,
+      // communityId: this.props.communityId,
     })
-    console.log("LoggedIn in topnav",this.state.loggedIn);
-    
+    console.log("Top navbabr", this.state.token, "isAuthenticated", this.state.loggedIn, "CommunityId", this.state.communityId);
+
 
     //SET HEADER WITH TOKEN BEARER
-    var config = {
+    let config = {
       headers: { Authorization: `Bearer ${this.state.token}` }
     };
 
     // GET FULL NAME
     /* HAVE A CONDITION WHEN USER IS LOGGED IN, THEN ONLY IT SHOWS THE NAME */
-    Axios.get(`${apiUrl}/users/me`, config)
-      .then(
-        result => {
-          this.setState({
-            userName: result.data.firstName + " " + result.data.lastName,
-          })
-
-          sessionStorage.setItem("userId", result.data._id);
-
-        }).catch(
-          error => {
-          });
-
-    //GET USER'S VIEWS
-    if (this.state.communityId) {
-      var viewUrl = `${apiUrl}/communities/${this.state.communityId}/views`;
-
-      Axios.get(viewUrl, config)
+    
+      Axios.get(`${apiUrl}/users/me`, config)
         .then(
           result => {
             this.setState({
-              myViews: result.data
+              userName: result.data.firstName + " " + result.data.lastName,
             })
+
+            sessionStorage.setItem("userId", result.data._id);
+
           }).catch(
             error => {
-              // alert(error);
             });
-    }
+
+      //GET USER'S VIEWS
+      if (this.state.communityId) {
+        console.log("communityId",this.state.communityId, "token",this.state.communityId, "Config", config);
+        
+        var viewUrl = `${apiUrl}/communities/${this.state.communityId}/views`;
+
+        Axios.get(viewUrl, config)
+          .then(
+            result => {
+              this.setState({
+                myViews: result.data
+              })
+            }).catch(
+              error => {
+                // alert(error);
+              });
+      }
+
   }
 
   logout() {
-    sessionStorage.removeItem('token');
-    removeToken()
-    var n = sessionStorage.length;
-    while (n--) {
-      var key = sessionStorage.key(n);
-      if (/foo/.test(key)) {
-        sessionStorage.removeItem(key);
-      }
-    }
+    sessionStorage.clear();
+    // sessionStorage.removeItem('token');
+    // removeToken()
+    // var n = sessionStorage.length;
+    // while (n--) {
+    //   var key = sessionStorage.key(n);
+    //   if (/foo/.test(key)) {
+    //     sessionStorage.removeItem(key);
+    //   }
+    // }
   }
 
   handleChange(e) {
@@ -125,11 +134,13 @@ class TopNavbar extends Component {
   }
 
   render() {
-    const isAuthenticated = this.props.isAuthenticated;
+    const isLoggedIn = this.state.token ? true : false;
+    console.log("rendering loggedin", isLoggedIn);
+
     return (
       <Navbar bg="dark" variant="dark" fixed="top">
         <Navbar.Brand href="#community-manager">KF6 Light</Navbar.Brand>
-        {isAuthenticated ?
+        {isLoggedIn ?
           (
             <Nav className="mr-auto">
               <span className="mrg-105-top white">{this.state.viewTitle}</span>
@@ -142,6 +153,11 @@ class TopNavbar extends Component {
                         return <option key={obj._id} value={obj._id}> {obj.title} </option>
                       })
                     }</Input>
+                    {/* <select value={this.state.viewId} onChange={()=>this.handleChange}>
+                      {this.state.myViews.map((obj)=>{
+                        return <option key={obj._id} value={obj._id}>{obj.title}</option>
+                      })}
+                    </select> */}
                   </FormGroup>
                 </Col>
               </Form>
@@ -154,7 +170,7 @@ class TopNavbar extends Component {
             </Nav>
           )}
 
-        {isAuthenticated ? (
+        {isLoggedIn ? (
           <>
             <Nav.Link href="#change-password"><i className="fas fa-cog white"></i></Nav.Link>
             <span className="white"> {this.state.userName} </span>
@@ -173,15 +189,15 @@ const mapStateToProps = (state, ownProps) => {
     communityId: state.globals.communityId,
     viewId: state.globals.viewId,
     isAuthenticated: state.globals.isAuthenticated,
+    location: ownProps.location,
   }
 }
 const mapDispatchToProps = {
-  setCommunityId,
   setViewId,
 
 }
 
-export default withRouter( connect(
+export default withRouter(connect(
   mapStateToProps,
   mapDispatchToProps
 )(TopNavbar));

@@ -30,20 +30,19 @@ const initState = {
     community: null,
     noteContent: [],
     userId: '',
-    IsAuthenticated: false,
+    isAuthenticated: false,
 }
 
 export const globalsReducer = createReducer(initState, {
     [setGlobalToken]: (state, action) => {
         state.token = action.payload
-        console.log("Incoming",action.payload, state.token);
     },
     [setIsAuthenticated]: (state, action) => {
-        state.IsAuthenticated = action.payload
-        console.log("setIsAuthenticated",action.payload, state.IsAuthenticated);
+        state.isAuthenticated = state.token ? true : false
     },
     [setCommunityId]: (state, action) => {
         state.communityId = action.payload
+        console.log("communityId from Global", state.communityId);
     },
     [setViewId]: (state, action) => {
         state.viewId = action.payload
