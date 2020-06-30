@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 // export const url = 'https://kf6.ikit.org';
-export const url = 'https://kf6-stage.ikit.org';
-// export const url = "http://localhost:9000";
+// export const url = 'https://kf6-stage.ikit.org';
+export const url = "http://localhost:9000";
 export const apiUrl = `${url}/api`;
 
 
@@ -17,8 +17,13 @@ export const removeToken = () => {
 
 
 const token = sessionStorage.getItem('token');
-if (token){
+if (token) {
     setToken(token)
+}
+
+//USER
+export const getUserId = () => {
+    return axios.get(`${apiUrl}/users/me`);
 }
 
 //Contribution
@@ -47,7 +52,7 @@ export const getLinks = async (objectId, direction, type) => {
 }
 
 export const postLink = async (fromId, toId, type, data) => {
-    return (await axios.post(`${apiUrl}/links`, {from: fromId, to: toId, type:type, data:data})).data
+    return (await axios.post(`${apiUrl}/links`, { from: fromId, to: toId, type: type, data: data })).data
 }
 
 export const deleteLink = async (linkId) => {

@@ -27,8 +27,8 @@ function App() {
     return (
         <div>
             <ReactNotification />
-            <TopNavbar></TopNavbar>
             <Router>
+                <TopNavbar></TopNavbar>
                 <Route exact path="/" component={Login}>
                 </Route>
                 <Route path="/signup" component={SignUp}>

@@ -4,7 +4,7 @@ import { Container, Col, Row, Form, FormGroup, Label, Input } from 'reactstrap';
 import { Button } from 'react-bootstrap';
 import { apiUrl } from '../store/api.js'
 import { connect } from 'react-redux'
-import { setCommunityId, setViewId } from '../store/globalsReducer.js'
+import { setCommunityId, setViewId, setViews, fetchView, } from '../store/globalsReducer.js'
 
 class CommunityManager extends Component {
 
@@ -14,10 +14,9 @@ class CommunityManager extends Component {
         this.state = {
             communitites: [],
             password: '',
-            communityId: '',
-            welcomeId: '',
-            userId: sessionStorage.getItem("userId"),
-            token: sessionStorage.getItem("token"),
+            // communityId: '',
+            // userId: sessionStorage.getItem("userId"),
+            // token: sessionStorage.getItem("token"),
             registrations: [],
             success: false,
         };
@@ -34,7 +33,7 @@ class CommunityManager extends Component {
         this.setState({
             [name]: value
         });
-        console.log("state",this.state);
+        console.log("Contribution state",this.state);
         
     }
 
@@ -43,9 +42,9 @@ class CommunityManager extends Component {
 
         //REGISTER NEW COMMUNITY TO AUTHOR
         let registerUrl = `${apiUrl}/authors`;
-        let data = { "communityId": this.state.communityId, "registrationKey": this.state.password, "userId": this.state.userId };
+        let data = { "communityId": this.props.communityId, "registrationKey": this.state.password, "userId": this.props.userId };
         let config = {
-            headers: { Authorization: `Bearer ${this.state.token}` }
+            headers: { Authorization: `Bearer ${this.props.token}` }
         };
 
         Axios.post(registerUrl, data, config)
@@ -67,14 +66,17 @@ class CommunityManager extends Component {
             .then(
                 result => {
                     let communityData = result.data;
+                    let communityId = communityData[0]._id;
                     this.setState({
                         communitites: communityData,
                     })
-                    if(communityData[0]){
+                    if(communityId){
                         this.setState({
-                            communityId : communityData[0]._id,
+                            communityId : communityId,
                         })
-                        this.props.setCommunityId(communityData[0]._id);
+
+                        //SET VISIBLE COMMUNITYID
+                        this.props.setCommunityId(communityId);
                         
                     }
                 }).catch(
@@ -99,31 +101,37 @@ class CommunityManager extends Component {
     }
 
     enterCommunity(myCommunity) {
-        let id = myCommunity.obj.communityId;
-        sessionStorage.setItem('communityId', myCommunity.obj.communityId)
-        // SET GLOBAL COMMUNITYID
-        this.props.setCommunityId(id)
-        let myState = {
-            communityId: id,
-            welcomeId: ''
-        }
-
+        let communityId = myCommunity.obj.communityId;
+        console.log("CommunityId", communityId);
+        console.log("viewId", this.props.viewId);
+        console.log("token", this.props.token);
+        // SET COMMUNITYID
+        sessionStorage.setItem('communityId', myCommunity.obj.communityId);
+        this.props.setCommunityId(communityId);
+        
         //SET HEADER WITH TOKEN BEARER
         let config = {
-            headers: { Authorization: `Bearer ${this.state.token}` }
+            headers: { Authorization: `Bearer ${this.props.token}` }
         };
 
         //GET USER'S VIEWS
-        var viewUrl = `${apiUrl}/communities/${id}/views`;
+        var viewUrl = `${apiUrl}/communities/${communityId}/views`;
 
         Axios.get(viewUrl, config)
             .then(
                 result => {
-                    myState.welcomeId = result.data[0]._id;
-                    sessionStorage.setItem('viewId', result.data[0]._id);
-                    // SET GLOBAL VIEWID
-                    this.props.setViewId(result.data[0]._id)
-                    this.props.history.push({ pathname: "/view", state: myState });
+                    let welcomeId = result.data[0]._id;
+                    let views = result.data;
+                    console.log("views",views);
+                    
+                    // SET VIEWID
+                    sessionStorage.setItem('viewId',welcomeId);
+                    this.props.setViewId(welcomeId);
+                    this.props.fetchView(welcomeId);
+                    //SET VIEWS
+                    this.props.setViews(views);
+                    //NAVIGATE TO VIEW
+                    this.props.history.push({ pathname: "/view"});
                 }).catch(
                     error => {
                         alert(error);
@@ -146,7 +154,7 @@ class CommunityManager extends Component {
                         })}
                     </Container>
 
-                    <Form onSubmit={this.handleSubmit} className="form">
+                    <Form onSubmit={this.handleSubmit} className="form mrg-1-top">
                         <Col>
                             <FormGroup>
                                 <Label>Register Community</Label>
@@ -173,12 +181,20 @@ class CommunityManager extends Component {
 
 const mapStateToProps = (state, ownProps) => {
     return {
+        token: state.globals.token,
+        userId: state.globals.userId,
+        communityId: state.globals.communityId,
+        viewId: state.globals.viewId,
+        view: state.globals.view,
+        
     }
 }
 
 const mapDispatchToProps = {
     setCommunityId,
     setViewId,
+    setViews,
+    fetchView,
 }
 
 export default connect(

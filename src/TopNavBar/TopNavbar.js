@@ -1,29 +1,37 @@
-import React, { Component } from 'react';
-import { Navbar, Nav, Button } from 'react-bootstrap';
-import {Col, Form, FormGroup, Input} from 'reactstrap';
-import { removeToken, apiUrl} from '../store/api.js'
-import Axios from 'axios';
+import React, { Component } from 'react'
+import { Navbar, Nav, Button } from 'react-bootstrap'
+import { Col, Form, FormGroup, Input } from 'reactstrap'
+import { connect } from 'react-redux'
+import { withRouter } from 'react-router'
+import Axios from 'axios'
+
+import { removeToken, apiUrl } from '../store/api.js'
+import {setCommunityId, setViewId} from '../store/globalsReducer'
+
 
 class TopNavbar extends Component {
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
-    this.state={
-        loggedIn: sessionStorage.getItem('token') ? true: false,
-        userName: null,
-        token : sessionStorage.getItem('token'),
-        myViews : [],
-        viewId : sessionStorage.getItem('viewId') ? sessionStorage.getItem('viewId') : '',
-        viewTitle : sessionStorage.getItem("viewTitle")? sessionStorage.getItem("viewTitle") :'welcome',
-        communityId : sessionStorage.getItem('communityId'),
+    this.state = {
+      loggedIn: '',
+      userName: null,      
+      myViews: [],
+      viewTitle: sessionStorage.getItem("viewTitle") ? sessionStorage.getItem("viewTitle") : 'welcome',
+      communityId: sessionStorage.getItem('communityId'),
     };
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  componentDidMount(){
+  componentDidMount() {
+    this.setState({
+      loggedIn:  this.props.token ? true : false,
+    })
+    console.log("LoggedIn in topnav",this.state.loggedIn);
+    
 
     //SET HEADER WITH TOKEN BEARER
     var config = {
@@ -33,129 +41,147 @@ class TopNavbar extends Component {
     // GET FULL NAME
     /* HAVE A CONDITION WHEN USER IS LOGGED IN, THEN ONLY IT SHOWS THE NAME */
     Axios.get(`${apiUrl}/users/me`, config)
-            .then(
-                result=>{
-                    this.setState({
-                        userName: result.data.firstName+ " "+ result.data.lastName,
-                     })
+      .then(
+        result => {
+          this.setState({
+            userName: result.data.firstName + " " + result.data.lastName,
+          })
 
-                     sessionStorage.setItem("userId", result.data._id);
+          sessionStorage.setItem("userId", result.data._id);
 
-                    }).catch(
-                    error=>{
-                    });
+        }).catch(
+          error => {
+          });
 
     //GET USER'S VIEWS
-    if(this.state.communityId){
-      var viewUrl= `${apiUrl}/communities/${this.state.communityId}/views`;
+    if (this.state.communityId) {
+      var viewUrl = `${apiUrl}/communities/${this.state.communityId}/views`;
 
       Axios.get(viewUrl, config)
-      .then(
-          result=>{
+        .then(
+          result => {
             this.setState({
               myViews: result.data
             })
           }).catch(
-              error=>{
-                  // alert(error);
-              });
+            error => {
+              // alert(error);
+            });
     }
   }
 
-    logout(){
-        sessionStorage.removeItem('token');
-        removeToken()
-        var n = sessionStorage.length;
-        while(n--) {
-          var key = sessionStorage.key(n);
-          if(/foo/.test(key)) {
-      sessionStorage.removeItem(key);
-  }  
-}
+  logout() {
+    sessionStorage.removeItem('token');
+    removeToken()
+    var n = sessionStorage.length;
+    while (n--) {
+      var key = sessionStorage.key(n);
+      if (/foo/.test(key)) {
+        sessionStorage.removeItem(key);
+      }
     }
-
-    handleChange(e) {
-      e.persist();
-      let target = e.target;
-      let value = target.value;
-
-      sessionStorage.setItem("viewId", value);
-      
-      this.setState({
-        viewId: value,
-      });
-
-      var config = {
-        headers: { Authorization: `Bearer ${this.state.token}` }
-      };
-
-      var viewUrl= `${apiUrl}/objects/${target.value}`;
-
-      Axios.get(viewUrl, config)
-        .then(
-          result=>{
-            console.log(result.data);
-            
-               this.setState({
-                   viewTitle: result.data.title,
-                })
-                
-                sessionStorage.setItem("viewTitle", result.data.title);
-              
-          }).catch(
-              error=>{
-                  alert(error);
-              });      
   }
 
-    handleSubmit(e) {
-      e.preventDefault();
-      
-      console.log('The form was submitted with:');
-      console.log(this.state);
-    
-    }
+  handleChange(e) {
+    e.persist();
+    let target = e.target;
+    let value = target.value;
 
-    render() {
-        return (
-            <Navbar bg="dark" variant="dark" fixed="top">
-            <Navbar.Brand href="#community-manager">KF6 Light</Navbar.Brand>
-            {this.state.loggedIn ? 
-            (
-              <Nav className="mr-auto">
+    sessionStorage.setItem("viewId", value);
+
+    this.setState({
+      viewId: value,
+    });
+
+    var config = {
+      headers: { Authorization: `Bearer ${this.state.token}` }
+    };
+
+    var viewUrl = `${apiUrl}/objects/${target.value}`;
+
+    Axios.get(viewUrl, config)
+      .then(
+        result => {
+          console.log(result.data);
+
+          this.setState({
+            viewTitle: result.data.title,
+          })
+
+          sessionStorage.setItem("viewTitle", result.data.title);
+
+        }).catch(
+          error => {
+            alert(error);
+          });
+  }
+
+  handleSubmit(e) {
+    e.preventDefault();
+
+    console.log('The form was submitted with:');
+    console.log(this.state);
+
+  }
+
+  render() {
+    const isAuthenticated = this.props.isAuthenticated;
+    return (
+      <Navbar bg="dark" variant="dark" fixed="top">
+        <Navbar.Brand href="#community-manager">KF6 Light</Navbar.Brand>
+        {isAuthenticated ?
+          (
+            <Nav className="mr-auto">
               <span className="mrg-105-top white">{this.state.viewTitle}</span>
               <Form onSubmit={this.handleSubmit} className="mrg-1-top">
-                    <Col>
-                    <FormGroup>
+                <Col>
+                  <FormGroup>
                     {/* <Label>Select Community</Label> */}
-                        <Input type="select" name="viewId" value={this.state.viewId} onChange={this.handleChange}>{
-                            this.state.myViews.map((obj) => {
-                                return <option key={obj._id} value={obj._id}> {obj.title} </option>
-                            })
-                        }</Input>
-                    </FormGroup>
-                    </Col>
-                </Form>
+                    <Input type="select" name="viewId" value={this.state.viewId} onChange={this.handleChange}>{
+                      this.state.myViews.map((obj) => {
+                        return <option key={obj._id} value={obj._id}> {obj.title} </option>
+                      })
+                    }</Input>
+                  </FormGroup>
+                </Col>
+              </Form>
             </Nav>
-            ):
-            (
-              <Nav className="mr-auto">
+          ) :
+          (
+            <Nav className="mr-auto">
               <Nav.Link href="#signup">Signup</Nav.Link>
               <Nav.Link href="/">Login</Nav.Link>
             </Nav>
-            )}
-            
-            {this.state.loggedIn ? (
-              <>
-                <Nav.Link href="#change-password"><i className="fas fa-cog white"></i></Nav.Link>
-                <span className="white"> {this.state.userName} </span>                
-                <Button variant="outline-secondary" href="/" onClick={this.logout}>Logout</Button>
-              </>
-            ):null}
+          )}
 
-            </Navbar>
-        );
-    }
+        {isAuthenticated ? (
+          <>
+            <Nav.Link href="#change-password"><i className="fas fa-cog white"></i></Nav.Link>
+            <span className="white"> {this.state.userName} </span>
+            <Button variant="outline-secondary" href="/" onClick={this.logout}>Logout</Button>
+          </>
+        ) : null}
+
+      </Navbar>
+    );
+  }
 }
 
-export default TopNavbar;
+const mapStateToProps = (state, ownProps) => {
+  return {
+    token: state.globals.token,
+    communityId: state.globals.communityId,
+    viewId: state.globals.viewId,
+    isAuthenticated: state.globals.isAuthenticated,
+  }
+}
+const mapDispatchToProps = {
+  setCommunityId,
+  setViewId,
+
+}
+
+export default withRouter( connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(TopNavbar));
