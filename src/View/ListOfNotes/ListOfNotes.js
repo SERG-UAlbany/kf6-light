@@ -65,19 +65,19 @@ class ListOfNotes extends Component {
                     if (obj && obj._to && obj._to.title) {
                         //1 STEP HIERARCHY
                         oneHirarchy = obj;
-                        return <Notes oneHirarchy = {oneHirarchy} showContent= {this.props.showContent}/>
+                        return <Notes key={i} oneHirarchy = {oneHirarchy} showContent= {this.props.showContent}/>
                     }
                     else {
                         // MULTIPLE
                         multipleHirarchy = obj;
-                        return <Notes multipleHirarchy = {multipleHirarchy} showContent= {this.props.showContent} />
+                        return <Notes key={i} multipleHirarchy = {multipleHirarchy} showContent= {this.props.showContent} />
                     }
             })):null}
 
             {this.props.noteLinks ?(
-                this.props.noteLinks.map((obj) =>{
+                this.props.noteLinks.map((obj, i) =>{
                     let noteObj = obj;
-                    return <Notes noteObj = {noteObj} noteId={obj.to} showContent= {this.props.showContent}/>
+                    return <Notes key={i} noteObj = {noteObj} noteId={obj.to} showContent= {this.props.showContent}/>
                 })
             )
             :null}

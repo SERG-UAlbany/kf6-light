@@ -35,6 +35,15 @@ export const postContribution = (communityId, obj) => {
 export const getCommunity = (communityId) => {
     return axios.get(`${apiUrl}/communities/${communityId}`);//, {mode: 'cors'});
 }
+
+export const getCommunities = async () => {
+    return (await axios.get(`${apiUrl}/communities/`)).data
+}
+
+export const getUserCommunities = async () => {
+    return (await axios.get(`${apiUrl}/users/myRegistrations`)).data
+}
+
 export const getGroups = async (communityId) => {
     return (await axios.get(`${apiUrl}/communities/${communityId}/groups`)).data
 }
@@ -61,6 +70,10 @@ export const postLink = async (fromId, toId, type, data) => {
 
 export const deleteLink = async (linkId) => {
     return (await axios.delete(`${apiUrl}/links/${linkId}`)).data
+}
+
+export const linksSearch = async (communityId, query) => {
+    return (await axios.post(`${apiUrl}/links/${communityId}/search`, { "query": query})).data
 }
 
 //Object

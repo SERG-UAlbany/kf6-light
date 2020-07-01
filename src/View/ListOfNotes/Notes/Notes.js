@@ -157,8 +157,8 @@ class Notes extends Component {
                         </Row>
 
                         {this.props.multipleHirarchy.map((subObj, j) => {
-                            return <Collapse in={this.open}>
-                                <Row key={j}>
+                            return <Collapse key={j} in={this.open}>
+                                <Row >
                                     <Col md="1">
                                     </Col>
                                     <Col>

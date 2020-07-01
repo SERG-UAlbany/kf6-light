@@ -24,6 +24,7 @@ class TopNavbar extends Component {
         /* e.persist(); */
         let target = e.target;
         let viewId = target.value;
+        this.props.setViewId(viewId)
         this.props.history.push(`/view/${viewId}`)
     }
 
@@ -43,7 +44,7 @@ class TopNavbar extends Component {
                   <Form className="mrg-1-top">
                       <Col>
                           <FormGroup>
-                              <Input type="select" name="viewId" value={this.props.view.viewId} onChange={this.handleChange}>
+                              <Input type="select" name="viewId" value={this.props.view._id} onChange={this.handleChange}>
                                   {
                                       this.props.views.map((obj) => {
                                           return <option key={obj._id} value={obj._id}> {obj.title} </option>
