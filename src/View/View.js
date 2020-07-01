@@ -19,7 +19,6 @@ const _ = require('lodash');
 class View extends Component {
 
     myRegistrations = [];
-    myViews = [];
     myCommunityId = '';
     show = false;
     from = [];
@@ -33,7 +32,6 @@ class View extends Component {
     //TOKEN
     token = sessionStorage.getItem('token');
 
-
     constructor(props) {
         super(props);
         // GET communityId AND welcomeId IN myState
@@ -43,11 +41,6 @@ class View extends Component {
         // this.myCommunityId = this.myState.communityId;
 
         this.state = {
-            communitites: [],
-            myCommunities: [],
-            views: [],
-            communityId: sessionStorage.getItem('communityId'),
-            viewId: sessionStorage.getItem('viewId'),
             viewLinks: [],
             showView: false,
             showCommunity: false,
@@ -62,8 +55,6 @@ class View extends Component {
             query: "",
             filteredData: [],
             filter: 'title',
-            authors: [],
-            scaffolds: [],
             scaffoldsTitle: [],
             noteData: [],
             hideScaffold: true,
@@ -82,133 +73,61 @@ class View extends Component {
 
         this.handleInputChange = this.handleInputChange.bind(this);
 
-        this.showContent = this.showContent.bind(this);
+        this.showContent = this.showContent.bind(this)
+
+        this.fetchSearchBuildsOn = this.fetchSearchBuildsOn.bind(this)
+        this.fetchNotes = this.fetchNotes.bind(this)
+        this.fetchScaffolds = this.fetchScaffolds.bind(this)
     }
 
-
-    componentDidMount() {
-        const viewId = this.props.match.params.viewId
-        this.props.fetchViewCommunityData(viewId)
-        /* this.props.fetchAuthors(this.props.communityId) */
-
-        this.setState(this.props.location.state);
-        // console.log("state",this.state);
-
-
-        //GET LIST OF ALL COMMUNITIES
-        Axios.get(`${apiUrl}/communities`)
-            .then(
-                result => {
-                    this.setState({
-                        communitites: result.data
-                    })
-                }).catch(
-                    error => {
-                        console.log("GET Communities Failed");
-                        alert("GET Communities Failed");
-                    }
-                );
-
-        //SET HEADER WITH TOKEN BEARER
-        var config = {
-            headers: { Authorization: `Bearer ${this.token}` }
-        };
-
-        //GET USER'S VIEWS
-        var viewUrl = `${apiUrl}/communities/${this.state.communityId}/views`;
-        Axios.get(viewUrl, config)
-            .then(
-                result => {
-                    this.setState({
-                        myViews: result.data
-                    })
-
-                }).catch(
-                    error => {
-                        alert(error);
-                    });
-
-
-        //GET USER'S REGISTERED COMMUNITIES
-        Axios.get(`${apiUrl}/users/myRegistrations`, config)
-            .then(
-                result => {
-                    this.setState({
-                        myCommunities: result.data
-                    })
-                }).catch(
-                    error => {
-                        alert(error);
-                    }
-                );
-
-
-        let viewNotesUrl = `${apiUrl}/links/from/${this.props.viewId}`;
+    async fetchNotes() {
+        console.log("Fetch notes")
         let links;
         let noteData = [];
+        let note_promises;
         // GET NOTES ID IN VIEW
-        Axios.get(viewNotesUrl, config)
-            .then(
-                result => {
-                    // links = result.data;
-                    links = result.data.filter(obj => (obj._to.type === "Note" && obj._to.title !== "" && obj._to.status === "active")).map(
-                        filteredObj => {
+        await api.getLinks(this.props.viewId, 'from')
+           .then( result => {
+               links = result.filter(obj => (obj._to.type === "Note" && obj._to.title !== "" && obj._to.status === "active"))
+               note_promises = links.map( filteredObj => {
+                   return api.getObject(filteredObj.to)// GET NOTEDATA
+                             .then( result => noteData.push(result))
+                             .catch( error => console.log("Failed to get data for: ", filteredObj.to));
+               });
+               const sortedLinks = _.sortBy(links, (obj) => obj._to.modified ).reverse();
+               this.setState({
+                   viewLinks: sortedLinks,
+               });
+           }).catch( error => console.log("Failed to get Links for viewId", sessionStorage.getItem('viewId')))
 
-                            let noteUrl = `${apiUrl}/objects/${filteredObj.to}`;
-                            // GET NOTEDATA
-                            Axios.get(noteUrl, config)
-                                .then(
-                                    result => {
-                                        noteData.push(result.data);
-                                    }).catch(
-                                        error => {
-                                            console.log("Failed to get data for: ", filteredObj.to);
-                                        });
-                            return filteredObj;
-                        });
+        await Promise.all(note_promises) //Wait to fetch all notes
+        this.setState({
+            noteData: noteData,
+        });
+        this.noteData1 = noteData;
+    }
 
-                    const sortedLinks = _.sortBy(links, function (obj) {
-                        return obj._to.modified;
-                    }).reverse();
-
-                    this.setState({
-                        viewLinks: sortedLinks,
-                        noteData: noteData,
-                    });
-                    // console.log("state link and data", this.state.viewLinks, this.state.noteData);
-                    this.noteData1 = noteData;
-
-                }).catch(
-                    error => {
-                        console.log("Failed to get Links for viewId", sessionStorage.getItem('viewId'));
-                    });
-
+    fetchSearchBuildsOn() {
+        console.log("Fetch buildson")
+        this.from = [];
+        this.to = [];
+        this.hierarchyNote = [];
 
         //GET SEARCH - HIRARCHICAL NOTES
-        var searchUrl = `${apiUrl}/links/${this.state.communityId}/search`;
-        let query = { "query": { "type": "buildson" } };
         let buildOnResult = [];
-        Axios.post(searchUrl, query, config)
+        api.linksSearch(this.props.communityId, { "type": "buildson" })
             .then(
                 result => {
-                    buildOnResult = result.data.reverse();
-                    let filteredBuildOn = buildOnResult.filter(function (obj) {
-                        if ((obj._to.type === "Note" && obj._to.status === "active")
-                            && (obj._from.type === "Note" && obj._from.status === "active")) {
-                            return obj;
-                        }
-                        else {
-                            return null;
-                        }
-                    });
+                    buildOnResult = result.reverse();
+                    let filteredBuildOn = buildOnResult.filter((obj) =>
+                        (obj._to.type === "Note" && obj._to.status === "active" && obj._from.type === "Note" && obj._from.status === "active")
+                    )
 
-                    filteredBuildOn.map(obj => {
+                    filteredBuildOn.forEach(obj => {
                         this.from.push(obj.from);
                         this.to.push(obj.to);
                         this.hierarchyNote.push(obj);
-                        return null;
                     });
-
                     try {
                         for (var l in this.to) {
                             if (this.from.includes(this.to[l])) {
@@ -222,44 +141,19 @@ class View extends Component {
                                 delete this.hierarchyNote[index];
                             }
                         }
-
                     } catch (error) {
                         console.log("Error in Hnotes", error);
-
                     } finally {
-                        this.setState({
-                            hNotes: this.hierarchyNote
-                        })
-                        // console.log("HNOTES", this.state.hNotes);
-
+                        this.setState({ hNotes: this.hierarchyNote })
                     }
-                }).catch(
-                    error => {
-                        console.log("Error occured for BuildsOn", error);
-                    })
+                }).catch( error => console.log("Error occured for BuildsOn", error))
 
+    }
 
-        //GET AUTHORS
-        var authorUrl = `${apiUrl}/communities/${this.state.communityId}/authors`;
-        Axios.get(authorUrl, config)
-            .then(
-                result => {
-                    this.setState({
-                        authors: result.data,
-                    });
-
-                    // console.log("this.state.authors",this.state.authors);
-
-
-                }).catch(
-                    error => {
-                        alert(error);
-                    });
-
+    fetchScaffolds(){
         //GET SCAFFOLDS
         let scaffoldIds = [];
-        let scaffolds = [];
-        api.getCommunity(this.state.communityId).then(
+        api.getCommunity(this.props.communityId).then(
             res => {
                 scaffoldIds = res.data.scaffolds
                 let scaffoldTitle = [];
@@ -269,7 +163,9 @@ class View extends Component {
                     console.log("ids scaffold", id);
 
                     let url = `${apiUrl}/links/from/` + id;
-
+                    let config = {
+                        headers: { Authorization: `Bearer ${this.props.token}` }
+                    };
                     Axios.get(url, config)
                         .then(
                             result => {
@@ -287,11 +183,29 @@ class View extends Component {
             });
     }
 
+    componentDidMount() {
+        const viewId = this.props.match.params.viewId
+        this.props.setViewId(viewId)
+        this.setState(this.props.location.state);
+    }
+
+        
+    componentDidUpdate(prevProps, prevState) {
+        if (this.props.viewId && this.props.viewId !== prevProps.viewId) {
+            this.props.fetchViewCommunityData(this.props.viewId)
+            this.fetchNotes()
+        }
+
+        if (this.props.communityId && this.props.communityId !== prevProps.communityId) {
+            this.fetchSearchBuildsOn()
+            this.fetchScaffolds()
+        }
+    }
+
     handleChange = (e) => {
         let target = e.target;
         let name = target.name;
         let value = target.value;
-        // console.log(name,value);        
 
         this.setState({
             [name]: value
@@ -321,11 +235,11 @@ class View extends Component {
             headers: { Authorization: `Bearer ${this.token}` }
         };
 
-        var addViewUrl = `${apiUrl}/contributions/${this.state.communityId}`;
+        var addViewUrl = `${apiUrl}/contributions/${this.props.communityId}`;
 
         var query = {
             "authors": [sessionStorage.getItem("userId")],
-            "communityId": this.state.communityId,
+            "communityId": this.props.communityId,
             "permission": "public",
             "status": "active",
             "title": this.state.addView,
@@ -502,15 +416,15 @@ class View extends Component {
     }
 
     handleInputChange = (event) => {
+        const query = event.target.value
         this.setState({
-            query: event.target.value,
+            query: query,
         });
-
         let filteredResults = [];
-        if (this.state.query || this.state.filter) {
+        if (query || this.state.filter) {
             switch (this.state.filter) {
                 case "title":
-                    this.state.viewLinks.filter(obj => obj._to.title.includes(this.state.query)).map(filteredObj => {
+                    this.state.viewLinks.filter(obj => obj._to.title.includes(query)).map(filteredObj => {
                         filteredResults.push(filteredObj);
                         return null;
                     })
@@ -536,12 +450,11 @@ class View extends Component {
                     // console.log("State authors", this.state.authors);
                     var authorId = [];
 
-                    this.state.authors.map(obj => {
-                        if (obj.firstName.toLowerCase().includes(this.state.query.toLowerCase()) || obj.lastName.toLowerCase().includes(this.state.query.toLowerCase())) {
+                    Object.values(this.props.authors).forEach(obj => {
+                        if (obj.firstName.toLowerCase().includes(query.toLowerCase()) || obj.lastName.toLowerCase().includes(query.toLowerCase())) {
                             // console.log("Matched", obj._id);
                             authorId.push(obj._id);
                         }
-                        return null;
                     });
 
                     authorId.forEach(element => {
@@ -822,7 +735,7 @@ class View extends Component {
                                 </Modal.Title>
                             </Modal.Header>
                             <Modal.Body style={{ 'max-height': 'calc(100vh - 210px)', 'overflow-y': 'auto' }}>
-                                {this.state.myViews.map((obj, i) => {
+                                {this.props.myViews.map((obj, i) => {
                                     return <Row key={i} value={obj.title} className="mrg-05-top">
                                         <Col><Link onClick={() => this.changeView({ obj })}> {obj.title} </Link></Col>
                                     </Row>
@@ -885,6 +798,10 @@ const mapStateToProps = (state, ownProps) => {
         view: state.globals.view,
         author: state.globals.author,
         noteContent: state.globals.noteContent,
+        communities: state.globals.communities,
+        myViews: state.globals.views,
+        authors: state.users,
+        scaffolds: state.scaffolds.items
     }
 }
 

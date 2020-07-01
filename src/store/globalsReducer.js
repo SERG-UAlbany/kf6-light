@@ -1,7 +1,7 @@
 import { createAction, createReducer } from '@reduxjs/toolkit'
-import { getObject, getCommunity, getGroups, getUser, getCommunityViews } from './api.js'
+import { getObject, getCommunity, getGroups, getUser, getCommunityViews, getCommunities,  getUserCommunities} from './api.js'
 import { fetchAuthors } from './userReducer.js';
-
+import { fetchScaffolds } from  './scaffoldReducer.js'
 export const setGlobalToken = createAction('SET_TOKEN')
 export const setCommunity = createAction('SET_COMMUNITY')
 export const setCommunityId = createAction('SET_COMMUNITY_ID')
@@ -13,6 +13,8 @@ export const editCommunity = createAction('EDIT_COMMUNITY')
 export const setNoteContent = createAction('SET_NOTE_CONTENT')
 export const setUserId = createAction('SET_USERID')
 export const setIsAuthenticated = createAction('SET_ISAUTHENTICATED')
+export const setCommunities = createAction('SET_COMMUNITIES')
+export const setUserCommunities = createAction('SET_USER_COMMUNITIES')
 export const dateFormatOptions = {
     year: 'numeric', month: 'numeric', day: 'numeric',
     hour: 'numeric', minute: 'numeric', second: 'numeric',
@@ -21,8 +23,8 @@ export const dateFormatOptions = {
 
 const initState = {
     token: sessionStorage.getItem("token"),
-    communityId: sessionStorage.getItem('communityId'),
-    viewId: sessionStorage.getItem('viewId'),
+    communityId: null,
+    viewId: null,
     contextId: '',
     user: null,
     view: null,
@@ -31,6 +33,8 @@ const initState = {
     noteContent: [],
     userId: '',
     isAuthenticated: sessionStorage.getItem("token") ? true: false,
+    communities: [],
+    userCommunities: []
 }
 
 export const globalsReducer = createReducer(initState, {
@@ -62,6 +66,7 @@ export const globalsReducer = createReducer(initState, {
     },
     [setCommunity]: (state, action) => {
         state.community = action.payload
+        state.communityId = action.payload._id
         state.contextId = action.payload.rootContextId
     },
     [editCommunity]: (state, action) => {
@@ -69,17 +74,28 @@ export const globalsReducer = createReducer(initState, {
     },
     [setNoteContent]: (state, action) => {
         state.noteContent = { ...action.payload }
-        console.log("state.noteContent", state.noteContent);
     },
+    [setCommunities]: (state, action) => {
+        state.communities = action.payload
+    },
+    [setUserCommunities]: (state, action) => {
+        state.userCommunities = action.payload
+    }
 });
 
-// export const fetchAuthor = (communityId) => {
-//     return dispatch => {
-//         return getAuthor(communityId).then(res => {
-//             dispatch(setAuthor(res.data));
-//         })
-//     }
-// }
+export const fetchCommunities = () => {
+    return async dispatch => {
+        const communities = await getCommunities()
+        dispatch(setCommunities(communities))
+    }
+}
+
+export const fetchUserCommunities = () => {
+    return async dispatch => {
+        const communities = await getUserCommunities()
+        dispatch(setUserCommunities(communities))
+    }
+}
 
 export const fetchView = (viewId) => {
     return dispatch => {
@@ -116,6 +132,12 @@ export const fetchCommunityViews = (communityId) => async (dispatch) => {
 }
 
 export const fetchViewCommunityData = (viewId) => async (dispatch) => {
+
+    //GET LIST OF ALL COMMUNITIES
+    dispatch(fetchCommunities())
+    //GET USER'S REGISTERED COMMUNITIES
+    // dispatch(fetchUserCommunities())
+
     const view = await getObject(viewId)
     dispatch(setView(view))
     dispatch(setViewId(view._id))
@@ -126,4 +148,5 @@ export const fetchViewCommunityData = (viewId) => async (dispatch) => {
     ))
     dispatch(fetchCommunityViews(commId))
     dispatch(fetchAuthors(commId))
+    dispatch(fetchScaffolds(commId, community.rootContextId))
 }

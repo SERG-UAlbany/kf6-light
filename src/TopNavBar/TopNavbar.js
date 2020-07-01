@@ -20,12 +20,13 @@ class TopNavbar extends Component {
     setGlobalToken(null)//Remove token from store
   }
 
-  handleChange(e) {
-    /* e.persist(); */
-    let target = e.target;
-    let viewId = target.value;
-    this.props.history.push(`/view/${viewId}`)
-  }
+    handleChange(e) {
+        /* e.persist(); */
+        let target = e.target;
+        let viewId = target.value;
+        this.props.setViewId(viewId)
+        this.props.history.push(`/view/${viewId}`)
+    }
 
 
   render() {
