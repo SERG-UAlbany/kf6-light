@@ -190,6 +190,7 @@ class View extends Component {
         }
         if (this.props.communityId) {
             this.fetchSearchBuildsOn()
+            this.fetchScaffolds()
         }
         const viewId = this.props.match.params.viewId //Get viewId from url param
         this.props.setViewId(viewId)
