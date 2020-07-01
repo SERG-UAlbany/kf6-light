@@ -1,5 +1,5 @@
 import { createAction, createReducer } from '@reduxjs/toolkit'
-import { getObject, getCommunity, getGroups, getUser, getCommunityViews, getCommunities,  getUserCommunities} from './api.js'
+import { getObject, getCommunity, getGroups, getUser, getAuthor, getCommunityViews, getCommunities,  getUserCommunities} from './api.js'
 import { fetchAuthors } from './userReducer.js';
 import { fetchScaffolds } from  './scaffoldReducer.js'
 export const setGlobalToken = createAction('SET_TOKEN')
@@ -8,6 +8,7 @@ export const setCommunityId = createAction('SET_COMMUNITY_ID')
 export const setViewId = createAction('SET_VIEW_ID')
 export const setLoggedUser = createAction('SET_AUTHOR')
 export const setView = createAction('SET_VIEW')
+export const setAuthor = createAction('SET_AUTHOR')
 export const setViews = createAction('SET_VIEWS')
 export const editCommunity = createAction('EDIT_COMMUNITY')
 export const setNoteContent = createAction('SET_NOTE_CONTENT')
@@ -80,9 +81,20 @@ export const globalsReducer = createReducer(initState, {
     },
     [setUserCommunities]: (state, action) => {
         state.userCommunities = action.payload
-    }
+    },
+    [setAuthor]: (state, action) => {
+        state.author = action.payload
+    },
 });
 
+export const fetchAuthor = (communityId) => {
+    return dispatch => {
+        console.log("Fetch author")
+        return getAuthor(communityId).then(res => {
+            dispatch(setAuthor(res.data));
+        })
+    }
+}
 export const fetchCommunities = () => {
     return async dispatch => {
         const communities = await getCommunities()
@@ -146,6 +158,7 @@ export const fetchViewCommunityData = (viewId) => async (dispatch) => {
     dispatch(setCommunity(
         { groups: [], ...community }
     ))
+    dispatch(fetchAuthor(commId))
     dispatch(fetchCommunityViews(commId))
     dispatch(fetchAuthors(commId))
     dispatch(fetchScaffolds(commId, community.rootContextId))
