@@ -99,7 +99,6 @@ export const noteReducer = createReducer(initState, {
         delete contrib.annos[action.payload.annoId]
     },
     [setViewNotes]: (state, action) => {
-        debugger
         const viewNotes = {}
         for (let i in action.payload)
             viewNotes[action.payload[i]._id] = action.payload[i]
