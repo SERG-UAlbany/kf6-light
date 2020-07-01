@@ -58,7 +58,7 @@ class View extends Component {
             scaffoldsTitle: [],
             noteData: [],
             hideScaffold: true,
-
+            _notes: {}
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -101,8 +101,11 @@ class View extends Component {
             }).catch(error => console.log("Failed to get Links for viewId", sessionStorage.getItem('viewId')))
 
         await Promise.all(note_promises) //Wait to fetch all notes
+        let notes = {}
+        noteData.forEach((n) => notes[n._id] = n)
         this.setState({
             noteData: noteData,
+            _notes: notes
         });
         this.noteData1 = noteData;
     }
@@ -123,6 +126,25 @@ class View extends Component {
                         (obj._to.type === "Note" && obj._to.status === "active" && obj._from.type === "Note" && obj._from.status === "active")
                     )
 
+                    this.setState({bo: filteredBuildOn})
+                    const hierarchy = {}
+                    filteredBuildOn.forEach(note => {
+                        const parent = note.to
+                        const child = note.from
+                        if (!(parent in hierarchy))
+                            hierarchy[parent] = { children: {}}
+                        if (!(child in hierarchy))
+                            hierarchy[child] = { parent: parent, children: {}}
+                        else
+                            hierarchy[child]['parent'] = parent
+                        hierarchy[parent]['children'][child] = hierarchy[child]
+                    })
+                    const final_h = {}
+                    for (let [key, value] of Object.entries(hierarchy)) {
+                        if (!('parent' in value))
+                            final_h[key] = value
+                    }
+                    this.setState({h: final_h})
                     filteredBuildOn.forEach(obj => {
                         this.from.push(obj.from);
                         this.to.push(obj.to);
@@ -607,7 +629,8 @@ class View extends Component {
                         </Form>
                         {scaffolds}
                         {this.state.query === "" && !showScffold ?
-                            (<ListOfNotes noteLinks={this.state.viewLinks} hNotes={this.state.hNotes} showContent={this.showContent} openNote={this.openNote} />)
+                         (<ListOfNotes noteLinks={this.state.viewLinks} notes={this.state._notes} hierarchy={this.state.h}
+                                       hNotes={this.state.hNotes} showContent={this.showContent} openNote={this.openNote} />)
                             :
                             (<>
                                 {this.state.filteredData.map((obj, i) => {

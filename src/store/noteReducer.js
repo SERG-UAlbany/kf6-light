@@ -22,8 +22,9 @@ export const addContribAuthor = createAction('ADD_CONTRIB_AUTHOR')
 export const setAnnotation = createAction('SET_ANNOTATION')
 export const setAnnotationsLoaded = createAction('SET_ANNOTATIONS_LOADED')
 export const removeAnnotation = createAction('REMOVE_ANNOTATION')
+export const setViewNotes = createAction('SET_VIEW_NOTES')
 
-const initState = {drawing: '', attachments: {}}
+const initState = {drawing: '', attachments: {}, viewNotes: {}}
 
 export const noteReducer = createReducer(initState, {
     [addNote]: (notes, action) => {
@@ -97,6 +98,13 @@ export const noteReducer = createReducer(initState, {
         let contrib = state[action.payload.contribId]
         delete contrib.annos[action.payload.annoId]
     },
+    [setViewNotes]: (state, action) => {
+        debugger
+        const viewNotes = {}
+        for (let i in action.payload)
+            viewNotes[action.payload[i]._id] = action.payload[i]
+        state.viewNotes = viewNotes
+    }
 });
 
 const createNote = (communityId, authorId, contextMode, fromId, content) => {
@@ -337,5 +345,13 @@ export const deleteAnnotation = (linkId, contribId, annoId) => async (dispatch) 
 export const modifyAnnotation = (annotation, communityId, contribId) => async (dispatch) => {
     const anno_updated = await api.putObject(annotation, communityId, annotation._id )
     return dispatch(setAnnotation({contribId, annotation: anno_updated}))
+}
+
+export const fetchViewNotes = (viewId) => async (dispatch) => {
+    const links = (await api.getLinks(viewId, 'from'))
+          .filter(obj => (obj._to.type === "Note" && obj._to.title !== "" && obj._to.status === "active"))
+
+    const notes = await Promise.all(links.map((filteredObj) => api.getObject(filteredObj.to)))
+    dispatch(setViewNotes(notes))
 }
 
