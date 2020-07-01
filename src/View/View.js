@@ -66,6 +66,7 @@ class View extends Component {
             scaffolds: [],
             scaffoldsTitle: [],
             noteData: [],
+            hideScaffold: true,
 
         };
 
@@ -261,22 +262,28 @@ class View extends Component {
         api.getCommunity(this.state.communityId).then(
             res => {
                 scaffoldIds = res.data.scaffolds
+                let scaffoldTitle = [];
                 // console.log("res", scaffoldIds);
 
                 scaffoldIds.forEach(id => {
-                    // CALL COMMNITY LINK / VIEW LINK  ID THEN SEARCH IN CONTENT  
+                    console.log("ids scaffold", id);
+
                     let url = `${apiUrl}/links/from/` + id;
 
                     Axios.get(url, config)
                         .then(
                             result => {
-                                scaffolds.push(result.data);
+                                let scaffoldList = result.data;
+                                scaffoldList.map(element => {
+                                    scaffoldTitle.push(element._to.title)
+                                })
                             });
                 });
-
                 this.setState({
-                    scaffolds: scaffolds,
+                    scaffoldsTitle: scaffoldTitle,
                 });
+
+
             });
     }
 
@@ -456,13 +463,14 @@ class View extends Component {
 
 
     filterNotes = (query) => {
-        // console.log("filterNotes", query);
+        console.log("filterNotes", query);
         let filteredResults = [];
         filteredResults = this.noteData1.filter(function (obj) {
             if (obj.data && obj.data.English) {
+                console.log("IF obj.data.English", obj.data.English);
+
                 return obj.data.English.includes(query);
             }
-            return null;
         });
         this.setState({
             filteredData: filteredResults,
@@ -545,22 +553,9 @@ class View extends Component {
 
                     break;
                 case "scaffold":
-                    //GET SCAFFOLD TITLES
-                    let scaffoldTitle = [];
-                    this.state.scaffolds.map(
-                        element => {
-                            element.map(
-                                obj => {
-                                    scaffoldTitle.push(obj._to.title);
-                                });
-                        }
-                    );
-
                     this.setState({
-                        scaffoldsTitle: scaffoldTitle,
-                    });
-
-
+                        hideScaffold: false,
+                    })
 
                     break;
 
@@ -596,14 +591,19 @@ class View extends Component {
     }
 
     render() {
-        // let viewLinkNotes;
-        // let hierarchicalNotes;
-        // this.state.viewLinks.map((obj)=>{
-        //     viewLinkNotes = <ListOfNotes noteObj = {obj} />
-        // })
-        // this.state.hNotes.map((obj)=>{
-        //     hierarchicalNotes = <ListOfNotes hNoteObj = {obj} />
-        // })
+        const showScffold = !this.hideScaffold && this.state.filter==="scaffold";
+        let scaffolds;
+        if (showScffold) {
+            scaffolds = <Row>
+                <Col>
+                    {this.state.scaffoldsTitle.map((obj, i) => {
+                        return <Row key={i} className="scaffold-title">
+                            <Link onClick={() => this.filterNotes(obj)} className="white">{obj}</Link>
+                        </Row>
+                    })}
+                </Col>
+            </Row>
+        }
 
         return (
             <>
@@ -684,24 +684,11 @@ class View extends Component {
                                 </Col>
                             </Row>
                         </Form>
-                        {this.state.query === "" ?
+                        {scaffolds}
+                        {this.state.query === "" &&  !showScffold?
                             (<ListOfNotes noteLinks={this.state.viewLinks} hNotes={this.state.hNotes} showContent={this.showContent} />)
                             :
                             (<>
-
-                                <Row>
-                                    {this.state.scaffoldsTitle && this.state.filter === "scaffold" ? (
-                                        <Col>
-                                            {this.state.scaffoldsTitle.map((obj, i) => {
-                                                return <Row key={i} className="scaffold-title">
-                                                    <Link onClick={() => this.filterNotes(obj)} className="white">{obj}</Link>
-                                                </Row>
-                                            })}
-                                        </Col>
-                                    ) : null
-                                    }
-                                </Row>
-
                                 {this.state.filteredData.map((obj, i) => {
                                     return <>
                                         {obj._to && obj._to.title ?
@@ -761,275 +748,11 @@ class View extends Component {
                             </>)}
                     </Col>
 
-
-                    {/* <Col md="5" sm="12" className="mrg-6-top pd-2-right v-scroll">
-                        <Form className="mrg-1-bot">
-                            <Row>
-                                <Col md="8">
-                                    <FormGroup>
-                                    <Input
-                                        placeholder="Search Your Note"
-                                        onChange={this.handleInputChange}
-                                    />
-                                    </FormGroup>
-                                </Col>
-                                <Col md="4">
-                                    <FormGroup>
-                                        <Input type="select" name="filter" id="filter" onChange={this.handleFilter}>
-                                            <option key="title" value="title">Search By Title</option>
-                                            <option key="scaffold" value="scaffold">Search By Scaffold</option>
-                                            <option key="content" value="content">Search By Content</option>
-                                            <option key="author" value="author">Search By Author</option>
-                                        </Input>
-                                    </FormGroup>
-                                </Col>
-                            </Row>
-                        </Form> 
-                        {this.state.query === ""? 
-                        (<>
-                            {this.state.hNotes.map((obj, i) => {
-                            return <Row key={i} className="mrg-05-top">
-                                <Col className="mr-auto primary-bg-200 rounded mrg-1-bot">
-                                    {obj._to && obj._to.title && obj._to.created ?(<>
-                                        <Row className="pd-05">
-                                            <Col md="10" className="primary-800 font-weight-bold">
-                                                <Link onClick={() => this.setOpen(!this.open)} aria-controls="example-collapse-text" aria-expanded={this.open}><i className="fa fa-chevron-right"></i>
-                                                </Link>
-                                            {obj._to.title}</Col>
-                                            <Col md="2">
-                                            <Form className="mrg-1-min pd-2-right">
-                                                <FormGroup>
-                                                    <Input type="checkbox" ref= {obj.to} onChange={e => this.showContent(e, obj.to)}/>
-                                                </FormGroup>
-                                            </Form>
-                                            </Col>
-                                        </Row>
-                                    <Row className="primary-600 sz-075 pd-05">
-                                        <Col><Author authorId ={obj._to.authors}/>&nbsp; {obj._to.created}</Col>
-                                        <Col md="2">
-                                            <Button onClick={()=>this.buildOn(obj.to)}>BuildOn</Button>
-                                        </Col>
-                                    </Row>
-                                        </>)
-                                        :
-                                        (<>
-                                            {obj[0]? 
-                                            (<>
-                                                <Row className="">
-                                                <Col>
-                                                    <Row>
-                                                    {obj[0]._to && obj[0]._to.title && obj[0]._to.created ?
-                                                    (<>
-                                                        <Col>
-                                                            <Row className="pd-05">
-                                                                <Col md="10" className="primary-800 font-weight-bold"> {obj[0]._to.title}</Col>
-                                                                <Col md="2">
-                                                                    <Form className="mrg-1-min pd-2-right">
-                                                                        <FormGroup>
-                                                                            <Input type="checkbox" ref= {obj[0].to} onChange={e => this.showContent(e, obj[0].to)}/>
-                                                                        </FormGroup>
-                                                                    </Form>
-                                                                </Col>
-                                                                </Row>
-                                                            <Row className="primary-600 sz-075 pd-05">
-                                                                <Col><Author authorId ={obj[0]._to.authors}/>&nbsp; {obj[0]._to.created}</Col>
-                                                                <Col md="2">
-                                                                    <Button onClick={()=>this.buildOn(obj[0].to)}>BuildOn</Button>
-                                                                </Col>
-                                                                </Row>
-                                                        </Col>
-                                                    </>)
-                                                    :
-                                                    null}
-                                                    </Row>
-                                                
-                                                {obj.map((subObj,j)=>{
-                                                    return <Row key={j}>
-                                                        <Col md="1">
-                                                        </Col>
-                                                        <Col>
-                                                            {obj[0] && obj[0]._to && obj[0]._to.title && subObj && subObj._from && subObj._from.created ?(<>
-                                                            <Row className="pd-05 border-left border-primary">
-                                                                <Col className="primary-800 font-weight-bold">{subObj._from.title}</Col>
-                                                                <Col md="2">
-                                                                    <Form className="mrg-1-min">
-                                                                        <FormGroup>
-                                                                            <Input className="pd-left" type="checkbox" ref= {subObj.from} onChange={e => this.showContent(e, subObj.from)}/>
-                                                                        </FormGroup>
-                                                                    </Form>
-                                                                </Col>
-                                                                </Row>
-                                                            <Row className="primary-600 sz-075 pd-05 border-left border-primary">
-                                                                <Col><Author authorId ={subObj._from.authors}/>&nbsp; {subObj._from.created}
-                                                                </Col>
-                                                                <Col md="2">
-                                                                    <Button onClick={()=>this.buildOn(subObj.from)}>BuildOn</Button>
-                                                                </Col>
-                                                            </Row></>):(<></>)}
-                                                        </Col>
-                                                    </Row>
-                                                            
-                                                })}
-                                                </Col>
-                                                </Row>
-                                            </>)
-                                            :
-                                            (<></>) }
-                                        </>)}                                    
-                                    
-                                    { obj._from && obj._from.title && obj._to.created ? 
-                                        (<>
-                                        <Collapse in={this.open}>
-                                        <Row>
-                                            <Col md="1"></Col>
-                                            <Col>
-                                                <Row className="pd-05 border-left border-primary"> 
-                                                <Col className="primary-800 font-weight-bold">{obj._from.title}</Col>
-                                                <Col md="2">
-                                                <Form className="mrg-1-min">
-                                                    <FormGroup>
-                                                        <Input className="pd-left" type="checkbox" ref= {obj.from} onChange={e => this.showContent(e, obj.from)}/>
-                                                    </FormGroup>
-                                                </Form>
-                                                </Col>
-                                                </Row>
-                                                <Row className="primary-600 sz-075 pd-05 border-left border-primary">
-                                                    <Col><Author authorId ={obj._from.authors}/>&nbsp; {obj._from.created}</Col>
-                                                    <Col md="2">
-                                                        <Button onClick={()=>this.buildOn(obj.from)}>BuildOn</Button>
-                                                    </Col>
-                                                </Row>
-                                            </Col>
-                                            </Row>
-                                        
-                                        </Collapse>
-                                           </>)
-                                        :(<>
-                                        </>)}                                     
-                                    
-                                </Col>
-                            </Row>
-                            }
-                            
-                            )}                            
-                        {this.state.viewLinks.map((obj, i) => {
-                            return <>
-                            {obj && obj._to.title?    
-                                (<>
-                                <Row key={i} value={obj.to} className="mrg-05-top">
-                                    <Col className="primary-bg-200 rounded mrg-1-bot">
-                                    <Row className="pd-05">
-                                        <Col className="primary-800 font-weight-bold"> {obj._to.title}</Col>
-                                        <Col md="2">
-                                            <Form className="mrg-1-min pd-2-right">
-                                                <FormGroup>
-                                                    <Input type="checkbox" ref= {obj.to} onChange={e => this.showContent(e, obj.to)}/>
-                                                </FormGroup>
-                                            </Form>
-                                        </Col>
-                                        </Row>
-                                    <Row className="primary-600 sz-075 pd-05">
-                                        <Col><Author authorId ={obj._to.authors}/>&nbsp; {obj._to.created}
-                                        </Col>
-                                        <Col md="3">
-                                            <Button size='sm' onClick={()=>this.buildOn(obj.to)}>BuildOn</Button>
-                                            <Button size='sm' className='ml-1' onClick={() => this.openNote(obj.to)}><i className="fa fa-pencil"></i></Button>
-                                        </Col>
-                                    </Row>
-                                    </Col>
-                                </Row>
-                                </>)
-                                :(<></>)
-                            }
-                            
-                            </>
-                            })}
-                        </>)
-                        :(<>
-
-                        <Row>
-                            {this.state.scaffoldsTitle &&  this.state.filter === "scaffold"? (
-                                <Col>
-                                    {this.state.scaffoldsTitle.map((obj, i) => {
-                                        return <Row key={i} className="scaffold-title">
-                                            <Link onClick={()=>this.filterNotes(obj)} className="white">{obj}</Link>
-                                        </Row>})}                                    
-                                </Col>
-                            ):null
-                            }
-                        </Row>
-
-                        {this.state.filteredData.map((obj, i) => {
-                            return <>
-                            {obj._to && obj._to.title?    
-                                (<>
-                                <Row key={i} value={obj.to} className="mrg-05-top">
-                                    <Col className="primary-bg-200 rounded mrg-1-bot">
-                                    <Row className="pd-05">
-                                        <Col className="primary-800 font-weight-bold"> {obj._to.title}</Col>
-                                        <Col md="2">
-                                            <Form className="mrg-1-min pd-2-right">
-                                                <FormGroup>
-                                                    <Input type="checkbox" ref= {obj.to} onChange={e => this.showContent(e, obj.to)}/>
-                                                </FormGroup>
-                                            </Form>
-                                            </Col>
-                                        </Row>
-                                    <Row className="primary-600 sz-075 pd-05">
-                                        <Col><Author authorId ={obj._to.authors}/>&nbsp; {obj._to.created}
-                                        </Col>
-                                        <Col md="2">
-                                            <Button onClick={()=>this.buildOn(obj.to)}>BuildOn</Button>
-                                        </Col>
-                                        </Row>
-                                    </Col>
-                                </Row>
-                                </>)
-                                :(<>
-                                    {obj._id ? (<>
-                                        <Row key={i} value={obj._id} className="mrg-05-top">
-                                        <Col className="primary-bg-200 rounded mrg-1-bot">
-                                        <Row className="pd-05">
-                                            <Col className="primary-800 font-weight-bold"> {obj.title}</Col>
-                                            <Col md="2">
-                                            <Form className="mrg-1-min pd-2-right">
-                                                <FormGroup>
-                                                    <Input type="checkbox" ref= {obj._id} onChange={e => this.showContent(e, obj._id)}/>
-                                                </FormGroup>
-                                            </Form>
-                                            </Col>
-                                            </Row>
-                                        <Row className="primary-600 sz-075 pd-05">
-                                            <Col><Author authorId ={obj.authors}/>&nbsp; {obj.created}</Col>
-                                            <Col md="2">
-                                                <Button onClick={()=>this.buildOn(obj._id)}>BuildOn</Button>
-                                            </Col>
-                                        </Row>
-                                        </Col>
-                                </Row>   
-                                    </>)
-                                :(<></>)}
-                                </>)
-                            }
-                            
-                            </>
-                            })}     
-
-                        </>)} 
-
-                        {hierarchicalNotes}
-                        {viewLinkNotes}
-                        
-                        <ListOfNotes noteLinks = {this.state.viewLinks} hNotes = {this.state.hNotes}/>                   
-                            
-                        </Col>
-                         */}
-
                     {/* NOTE CONTENT */}
                     {this.state.showNoteContent ?
                         (<>
                             <Col md="5" sm="12" className="mrg-6-top v-scroll">
-                                <NoteContent noteContnetList={this.state.noteContnetList} closeNote={this.closeNote} query={this.state.query} filter={this.state.filter} buildOn = {this.buildOn} />
+                                <NoteContent noteContnetList={this.state.noteContnetList} closeNote={this.closeNote} query={this.state.query} filter={this.state.filter} buildOn={this.buildOn} />
                             </Col>
                         </>)
                         : null

@@ -149,7 +149,7 @@ class NoteContent extends Component{
                                 </Row>
                                 <Row>
                                     <Col md="10">
-                                        <span className="pd-1" dangerouslySetInnerHTML={{ __html: data ? (data):(obj.data.body)}} />
+                                        <span className="pd-1" dangerouslySetInnerHTML={{ __html:data ? (data) : (obj.data.English ? obj.data.English : obj.data.body)}} />
                                     </Col>
                                     <Col md="2">
                                         <Button size='sm' onClick={() => this.props.buildOn(obj._id)}>BuildOn</Button>
