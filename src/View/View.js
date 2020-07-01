@@ -149,7 +149,14 @@ class View extends Component {
     }
 
     componentDidMount() {
-        const viewId = this.props.match.params.viewId
+        if (this.props.viewId){
+            this.props.fetchViewCommunityData(this.props.viewId)
+            this.fetchNotes()
+        }
+        if (this.props.communityId){
+            this.fetchSearchBuildsOn()
+        }
+        const viewId = this.props.match.params.viewId //Get viewId from url param
         this.props.setViewId(viewId)
         this.setState(this.props.location.state);
     }
