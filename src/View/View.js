@@ -87,18 +87,18 @@ class View extends Component {
         let note_promises;
         // GET NOTES ID IN VIEW
         await api.getLinks(this.props.viewId, 'from')
-           .then( result => {
-               links = result.filter(obj => (obj._to.type === "Note" && obj._to.title !== "" && obj._to.status === "active"))
-               note_promises = links.map( filteredObj => {
-                   return api.getObject(filteredObj.to)// GET NOTEDATA
-                             .then( result => noteData.push(result))
-                             .catch( error => console.log("Failed to get data for: ", filteredObj.to));
-               });
-               const sortedLinks = _.sortBy(links, (obj) => obj._to.modified ).reverse();
-               this.setState({
-                   viewLinks: sortedLinks,
-               });
-           }).catch( error => console.log("Failed to get Links for viewId", sessionStorage.getItem('viewId')))
+            .then(result => {
+                links = result.filter(obj => (obj._to.type === "Note" && obj._to.title !== "" && obj._to.status === "active"))
+                note_promises = links.map(filteredObj => {
+                    return api.getObject(filteredObj.to)// GET NOTEDATA
+                        .then(result => noteData.push(result))
+                        .catch(error => console.log("Failed to get data for: ", filteredObj.to));
+                });
+                const sortedLinks = _.sortBy(links, (obj) => obj._to.modified).reverse();
+                this.setState({
+                    viewLinks: sortedLinks,
+                });
+            }).catch(error => console.log("Failed to get Links for viewId", sessionStorage.getItem('viewId')))
 
         await Promise.all(note_promises) //Wait to fetch all notes
         this.setState({
@@ -146,11 +146,11 @@ class View extends Component {
                     } finally {
                         this.setState({ hNotes: this.hierarchyNote })
                     }
-                }).catch( error => console.log("Error occured for BuildsOn", error))
+                }).catch(error => console.log("Error occured for BuildsOn", error))
 
     }
 
-    fetchScaffolds(){
+    fetchScaffolds() {
         //GET SCAFFOLDS
         let scaffoldIds = [];
         api.getCommunity(this.props.communityId).then(
@@ -184,11 +184,11 @@ class View extends Component {
     }
 
     componentDidMount() {
-        if (this.props.viewId){
+        if (this.props.viewId) {
             this.props.fetchViewCommunityData(this.props.viewId)
             this.fetchNotes()
         }
-        if (this.props.communityId){
+        if (this.props.communityId) {
             this.fetchSearchBuildsOn()
         }
         const viewId = this.props.match.params.viewId //Get viewId from url param
@@ -196,7 +196,7 @@ class View extends Component {
         this.setState(this.props.location.state);
     }
 
-        
+
     componentDidUpdate(prevProps, prevState) {
         if (this.props.viewId && this.props.viewId !== prevProps.viewId) {
             this.props.fetchViewCommunityData(this.props.viewId)
@@ -511,7 +511,7 @@ class View extends Component {
     }
 
     render() {
-        const showScffold = !this.hideScaffold && this.state.filter==="scaffold";
+        const showScffold = !this.hideScaffold && this.state.filter === "scaffold";
         let scaffolds;
         if (showScffold) {
             scaffolds = <Row>
@@ -605,8 +605,8 @@ class View extends Component {
                             </Row>
                         </Form>
                         {scaffolds}
-                        {this.state.query === "" &&  !showScffold?
-                            (<ListOfNotes noteLinks={this.state.viewLinks} hNotes={this.state.hNotes} showContent={this.showContent} />)
+                        {this.state.query === "" && !showScffold ?
+                            (<ListOfNotes noteLinks={this.state.viewLinks} hNotes={this.state.hNotes} showContent={this.showContent} openNote={this.openNote} />)
                             :
                             (<>
                                 {this.state.filteredData.map((obj, i) => {

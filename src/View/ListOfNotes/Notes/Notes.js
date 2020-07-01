@@ -69,7 +69,7 @@ class Notes extends Component {
                             </Col>
                             <Col md="3">
                                 {/* <Button size='sm' onClick={() => this.buildOn(this.props.noteObj.to)}>BuildOn</Button> */}
-                                <Button size='sm' className='ml-1' onClick={() => this.openNote(this.props.noteObj.to)}><i className="fa fa-pencil"></i></Button>
+                                <Button size='sm' className='ml-1' onClick={() => this.props.openNote(this.props.noteObj.to)}><i className="fa fa-pencil"></i></Button>
                             </Col>
                         </Row>
                     </Col>

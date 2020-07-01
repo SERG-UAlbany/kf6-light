@@ -77,7 +77,7 @@ class ListOfNotes extends Component {
             {this.props.noteLinks ?(
                 this.props.noteLinks.map((obj, i) =>{
                     let noteObj = obj;
-                    return <Notes key={i} noteObj = {noteObj} noteId={obj.to} showContent= {this.props.showContent}/>
+                    return <Notes key={i} noteObj = {noteObj} noteId={obj.to} showContent= {this.props.showContent} openNote={this.props.openNote}/>
                 })
             )
             :null}
