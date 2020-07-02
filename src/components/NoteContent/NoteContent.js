@@ -6,7 +6,7 @@ import Axios from 'axios';
 
 import './NoteContent.css';
 import { apiUrl } from '../../store/api.js';
-import {openContribution} from '../../store/noteReducer'
+import { openContribution } from '../../store/noteReducer'
 
 class NoteContent extends Component {
     noteList = [];
@@ -68,31 +68,30 @@ class NoteContent extends Component {
             }, 1500)
         }
         else {
-            console.log("State Handle Submit", this.state.addView);
 
-            // let url = `${apiUrl}/links`;
-            // let config = {
-            //     headers: { Authorization: `Bearer ${this.state.token}` }
-            // };
-            // this.props.noteContnetList.forEach(note => {
-            //     let noteId = note._id;
-            //     let query = {
-            //         "from": this.state.addView,
-            //         "to": noteId,
-            //         "type": "contains"
-            //     };
-            //     Axios.post(url, query, config).then(
-            //         res => {
-            //             // console.log("AZIOX POST DONE");
-            //             this.setState({ visible: true }, () => {
-            //                 window.setTimeout(() => {
-            //                     this.setState({ visible: false })
-            //                 }, 1000)
-            //             });
+            let url = `${apiUrl}/links`;
+            let config = {
+                headers: { Authorization: `Bearer ${this.state.token}` }
+            };
+            this.props.checkedNotes.forEach(note => {
+                let noteId = note._id;
+                let query = {
+                    "from": this.state.addView,
+                    "to": noteId,
+                    "type": "contains"
+                };
+                Axios.post(url, query, config).then(
+                    res => {
+                        // console.log("AZIOX POST DONE");
+                        this.setState({ visible: true }, () => {
+                            window.setTimeout(() => {
+                                this.setState({ visible: false })
+                            }, 1000)
+                        });
 
-            //         }
-            //     );
-            // });
+                    }
+                );
+            });
         }
 
 
@@ -137,7 +136,7 @@ class NoteContent extends Component {
                         </Col>
                     </Row>
                 </Form>
-                {this.props.noteContnetList.map(
+                {this.props.checkedNotes.map(
                     (obj, i) => {
                         let data;
 
@@ -160,7 +159,7 @@ class NoteContent extends Component {
                                 <Col>
                                     <Row>
                                         <Col md="10" className="pd-1 primary-800 font-weight-bold">{obj.title}</Col>
-                                        <Col md="2"><Button variant="outline-secondary" className="circular-border float-right" onClick={() => this.props.closeNote(obj._id)}><i class="fas fa-times"></i></Button></Col>
+                                        <Col md="2"><Button variant="outline-secondary" className="circular-border float-right" onClick={() => this.props.closeNote(obj._id)}><i className="fas fa-times"></i></Button></Col>
                                     </Row>
                                     <Row>
                                         <Col>
@@ -189,6 +188,7 @@ const mapStateToProps = (state, ownProps) => {
     return {
         viewId: state.globals.viewId,
         views: state.globals.views,
+        checkedNotes: state.notes.checkedNotes
     }
 }
 

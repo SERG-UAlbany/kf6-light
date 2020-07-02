@@ -12,7 +12,6 @@ export const setView = createAction('SET_VIEW')
 export const setAuthor = createAction('SET_AUTHOR')
 export const setViews = createAction('SET_VIEWS')
 export const editCommunity = createAction('EDIT_COMMUNITY')
-export const setNoteContent = createAction('SET_NOTE_CONTENT')
 export const setUserId = createAction('SET_USERID')
 export const setIsAuthenticated = createAction('SET_ISAUTHENTICATED')
 export const setCommunities = createAction('SET_COMMUNITIES')
@@ -32,7 +31,6 @@ const initState = {
     view: null,
     views: [],
     community: null,
-    noteContent: [],
     userId: '',
     isAuthenticated: sessionStorage.getItem("token") ? true: false,
     communities: [],
@@ -73,9 +71,6 @@ export const globalsReducer = createReducer(initState, {
     },
     [editCommunity]: (state, action) => {
         state.community = { ...state.community, ...action.payload }
-    },
-    [setNoteContent]: (state, action) => {
-        state.noteContent = { ...action.payload }
     },
     [setCommunities]: (state, action) => {
         state.communities = action.payload

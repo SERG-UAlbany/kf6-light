@@ -23,8 +23,9 @@ export const setAnnotation = createAction('SET_ANNOTATION')
 export const setAnnotationsLoaded = createAction('SET_ANNOTATIONS_LOADED')
 export const removeAnnotation = createAction('REMOVE_ANNOTATION')
 export const setViewNotes = createAction('SET_VIEW_NOTES')
+export const setCheckedNotes = createAction('SET_CHECKED_NOTES')
 
-const initState = {drawing: '', attachments: {}, viewNotes: {}}
+const initState = {drawing: '', attachments: {}, viewNotes: {}, checkedNotes:[]}
 
 export const noteReducer = createReducer(initState, {
     [addNote]: (notes, action) => {
@@ -103,7 +104,10 @@ export const noteReducer = createReducer(initState, {
         for (let i in action.payload)
             viewNotes[action.payload[i]._id] = action.payload[i]
         state.viewNotes = viewNotes
-    }
+    },
+    [setCheckedNotes]:(state, action) => {
+        state.checkedNotes = action.payload
+    },
 });
 
 const createNote = (communityId, authorId, contextMode, fromId, content) => {
