@@ -51,7 +51,7 @@ class Notes extends Component {
         return (
             <div>
                 <Row className="mrg-05-top">
-                    <Col className="mr-auto primary-bg-200 rounded mrg-1-bot">
+                    <Col className="mr-auto rounded mrg-1-bot">
                         <Row className="pd-05">
                             <Col md="10" className="primary-800 font-weight-bold">
                                 {hasChildren ?

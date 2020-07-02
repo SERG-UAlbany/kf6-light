@@ -42,10 +42,15 @@
 .scaffold-title{
     width: 280px !important;
     padding: 0.25rem !important;
-    background-color: rgb(233, 174, 66);
+    border: solid;
+    border-color: rgb(233, 174, 66);
+    border-radius: 1rem !important;
     margin-bottom: 1rem !important;
     list-style: none !important;
-    border-radius: 0.5rem !important;
+}
+.scaffold-text{
+    color: rgb(233, 174, 66) !important;
+    font-weight: bold;
 }
 
 .white{

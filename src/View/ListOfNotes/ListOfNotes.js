@@ -26,7 +26,7 @@ class ListOfNotes extends Component {
 
     // }
 
-    getNotes(){
+    getNotes() {
         const notes = []
         for (let noteId in this.props.hierarchy) {
             if (noteId in this.props.notes)
@@ -42,11 +42,11 @@ class ListOfNotes extends Component {
 
         //     if (Array.isArray(this.props.hNoteObj)) {
         //         console.log("Its Array",this.props.hNoteObj);
-                
+
         //     } else {
         //         console.log("kot knt",this.props.noteObj);
         //         note = <Notes noteId={this.props.noteObj.to} authors={this.props.noteObj._to.authors} title={this.props.noteObj._to.title} created={this.props.noteObj.created}/>
-                
+
         //     }
 
         // }
@@ -58,7 +58,9 @@ class ListOfNotes extends Component {
             {
                 notes.map((note, i) => {
                     const children = this.props.hierarchy[note._id].children
-                    return <Notes key={i} note={note} children={children} notes={this.props.notes} showContent= {this.props.showContent}/>
+                    return <div className="shadow p-3 mb-5 rounded">
+                        <Notes key={i} note={note} children={children} notes={this.props.notes} showContent={this.props.showContent} />
+                    </div>
                 })
             }
             {/* {this.props.hNotes ?(
