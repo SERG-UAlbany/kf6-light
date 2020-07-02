@@ -12,7 +12,7 @@ class MCEditor extends React.Component {
                     apiKey="arg05azt52qbujpnf831szuswhmyhoqute0q48btk5bqigoj"
                     init={{
                         setup: (editor) => {this.props.onEditorSetup(editor)},
-                        content_css: './editor.css',
+                        content_css: '/editor.css',
                         height: 300,
                         menubar: false,
                         statusbar: false,
