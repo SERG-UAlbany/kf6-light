@@ -58,9 +58,10 @@ class View extends Component {
             scaffoldsTitle: [],
             noteData: [],
             hideScaffold: true,
-
+            bo: []
         };
 
+        this.getBuildOnHierarchy = this.getBuildOnHierarchy.bind(this)
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
 
@@ -81,7 +82,6 @@ class View extends Component {
     }
 
     async fetchNotes() {
-        console.log("Fetch notes")
         let links;
         let noteData = [];
         let note_promises;
@@ -101,12 +101,36 @@ class View extends Component {
             }).catch(error => console.log("Failed to get Links for viewId", sessionStorage.getItem('viewId')))
 
         await Promise.all(note_promises) //Wait to fetch all notes
+        let notes = {}
         this.setState({
             noteData: noteData,
         });
         this.noteData1 = noteData;
     }
 
+    getBuildOnHierarchy() {
+        const hierarchy = {}
+        for (let noteId in this.props.viewNotes){
+            hierarchy[noteId] = {children: {}}
+        }
+        this.state.bo.forEach(note => {
+            const parent = note.to
+            const child = note.from
+            if (!(parent in hierarchy))
+                hierarchy[parent] = { children: {}}
+            if (!(child in hierarchy))
+                hierarchy[child] = { parent: parent, children: {}}
+            else
+                hierarchy[child]['parent'] = parent
+            hierarchy[parent]['children'][child] = hierarchy[child]
+        })
+        const final_h = {}
+        for (let [key, value] of Object.entries(hierarchy)) {
+            if (!('parent' in value))
+                final_h[key] = value
+        }
+        return final_h
+    }
     fetchSearchBuildsOn() {
         console.log("Fetch buildson")
         this.from = [];
@@ -123,6 +147,7 @@ class View extends Component {
                         (obj._to.type === "Note" && obj._to.status === "active" && obj._from.type === "Note" && obj._from.status === "active")
                     )
 
+                    this.setState({bo: filteredBuildOn})
                     filteredBuildOn.forEach(obj => {
                         this.from.push(obj.from);
                         this.to.push(obj.to);
@@ -513,6 +538,7 @@ class View extends Component {
 
     render() {
         const showScffold = !this.hideScaffold && this.state.filter === "scaffold";
+        const hierarchy = this.getBuildOnHierarchy()
         let scaffolds;
         if (showScffold) {
             scaffolds = <Row>
@@ -607,7 +633,8 @@ class View extends Component {
                         </Form>
                         {scaffolds}
                         {this.state.query === "" && !showScffold ?
-                            (<ListOfNotes noteLinks={this.state.viewLinks} hNotes={this.state.hNotes} showContent={this.showContent} openNote={this.openNote} />)
+                         (<ListOfNotes noteLinks={this.state.viewLinks} notes={this.props.viewNotes} hierarchy={hierarchy}
+                                       hNotes={this.state.hNotes} showContent={this.showContent} openNote={this.openNote} />)
                             :
                             (<>
                                 {this.state.filteredData.map((obj, i) => {
@@ -809,7 +836,8 @@ const mapStateToProps = (state, ownProps) => {
         communities: state.globals.communities,
         myViews: state.globals.views,
         authors: state.users,
-        scaffolds: state.scaffolds.items
+        scaffolds: state.scaffolds.items,
+        viewNotes: state.notes.viewNotes
     }
 }
 
