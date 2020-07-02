@@ -657,7 +657,7 @@ class View extends Component {
                                                             <Col><Author authorId={obj._to.authors} />&nbsp; {obj._to.created}
                                                             </Col>
                                                             <Col md="2">
-                                                                <Button onClick={() => this.buildOn(obj.to)}>BuildOn</Button>
+                                                                {/* <Button onClick={() => this.buildOn(obj.to)}>BuildOn</Button> */}
                                                             </Col>
                                                         </Row>
                                                     </Col>
