@@ -475,25 +475,40 @@ class View extends Component {
                     break;
 
                 case "author":
-                    // console.log("Author", this.state.query);
-                    // console.log("State authors", this.state.authors);
-                    var authorId = [];
+                    let filteredNotes = [];
+                    let authors = [];
 
-                    Object.values(this.props.authors).forEach(obj => {
-                        if (obj.firstName.toLowerCase().includes(query.toLowerCase()) || obj.lastName.toLowerCase().includes(query.toLowerCase())) {
-                            // console.log("Matched", obj._id);
-                            authorId.push(obj._id);
-                        }
-                    });
+                    // authors = Object.values(this.props.authors).filter(function (obj) {
+                    //     let fullName = obj.firstName.toLowerCase() + " " + obj.lastName.toLowerCase();
+                    //     if (fullName.includes(query.toLowerCase())) {
+                    //         return obj._id;
+                    //     }
+                    // });
+                    // authors.forEach(element => {
+                    //     filteredNotes = this.state.viewLinks.filter(obj => obj.authors && obj.authors.includes(element)).map(filteredObj => {
+                    //         return filteredObj;
+                    //     });
+                    //     filteredResults.concat(filteredNotes);
+                    //     console.log("Authors filtered", filteredResults);
+                    // });
+                        // let authors = [];
 
-                    authorId.forEach(element => {
-                        filteredResults = this.noteData1.filter(obj => obj.authors.includes(element)).map(filteredObj => {
-                            return filteredObj;
+                        Object.values(this.props.authors).forEach(obj => {
+                            let fullName = obj.firstName.toLowerCase() + " " + obj.lastName.toLowerCase();
+                            if (fullName.includes(query.toLowerCase())) {
+                                console.log("Matched", obj._id);
+                                authors.push(obj._id);
+                            }
                         });
-                    });
+
+                        authors.forEach(element => {
+                            filteredResults = this.noteData1.filter(obj => obj.authors.includes(element)).map(filteredObj => {
+                                return filteredObj;
+                            });
+                        });
 
 
-                    break;
+                        break;
                 case "scaffold":
                     this.setState({
                         hideScaffold: false,
