@@ -91,7 +91,7 @@ const mapStateToProps = (state, ownProps) => {
     viewId: state.globals.viewId,
     isAuthenticated: state.globals.isAuthenticated,
     location: ownProps.location,
-    user: state.globals.user,
+    user: state.globals.author,
     views: state.globals.views,
     view: state.globals.view
   }
