@@ -5,12 +5,12 @@ import { Form, FormGroup, Label, Input } from 'reactstrap';
 import Axios from 'axios';
 import { apiUrl } from '../store/api.js';
 import * as api from '../store/api.js';
-import { newNote, openContribution } from '../store/noteReducer.js'
+import { newNote, openContribution, setCheckedNotes } from '../store/noteReducer.js'
 import { connect } from 'react-redux'
 import DialogHandler from '../components/dialogHandler/DialogHandler.js'
 import NoteContent from '../components/NoteContent/NoteContent'
 import ListOfNotes from './ListOfNotes/ListOfNotes'
-import { fetchView, fetchCommunity, setCommunityId, setViewId, setNoteContent, fetchViewCommunityData } from '../store/globalsReducer.js'
+import { fetchView, fetchCommunity, setCommunityId, setViewId, fetchViewCommunityData } from '../store/globalsReducer.js'
 import { fetchAuthors } from '../store/userReducer.js';
 import Author from '../components/Author/Author';
 import './View.css';
@@ -58,7 +58,7 @@ class View extends Component {
             scaffoldsTitle: [],
             noteData: [],
             hideScaffold: true,
-            bo: []
+            bo: [],
         };
 
         this.getBuildOnHierarchy = this.getBuildOnHierarchy.bind(this)
@@ -358,15 +358,20 @@ class View extends Component {
         });
 
         if (isChecked) {
-            var myArray = this.noteData1;
-            myArray.map((object) => {
+            let checkedNote = [];
+            let noteData = [...this.state.noteData];
+            noteData.map((object) => {
                 if (object._id && object._id === id) {
-                    this.noteContnetNew.push(object);
-                    this.setState({
-                        noteContnetList: this.noteContnetNew,
-                    })
-                    console.log("Should push and goto noteContentList", this.props.noteContent);
-                    this.props.setNoteContent(this.noteContnetNew);
+                    checkedNote.push(object);
+                    let concatArray = [...this.props.checkedNotes].concat(checkedNote);
+                    console.log("My Concated Array", concatArray);
+
+                    this.props.setCheckedNotes(concatArray);
+                    // this.setState({
+                    //     noteContnetList: this.noteContnetNew,
+                    // })
+                    // console.log("Should push and goto checkedNotes", this.props.noteContent);
+
                     // console.log("Should push and goto AFTER ", this.props.noteContent);
                     // console.log("STATE DATA", this.state.noteContnetList);
 
@@ -375,35 +380,26 @@ class View extends Component {
             });
 
         } else {
-            this.noteContnetNew.filter(obj => obj._id.includes(id)).map(filteredObj => {
-                this.noteContnetNew.pop(filteredObj)
-                return null;
-            });
-            this.setState({
-                noteContnetList: this.noteContnetNew,
-            })
+            this.closeNote(id);
         }
 
     }
 
     //CLOSE NOTE
     closeNote = (id) => {
-        if (this.state.noteContnetList) {
-            let noteArray = [...this.state.noteContnetList];
+        let checkedNotes = [...this.props.checkedNotes];
+        // checkedNotes.filter(obj => obj._id.includes(id)).map(filteredObj => {
+        //     checkedNotes.pop(filteredObj)
+        //     return null;
+        // });
 
-            if (noteArray) {
-                noteArray.filter(obj => obj._id.includes(id)).map(filteredObj => {
-                    noteArray.pop(filteredObj);
-                    this.setState({
-                        noteContnetList: [...noteArray],
-                    });
-                    // this.refs[id]
-                    // console.log("Check refs",this.refs[id]);
-                    return null;
+        const filteredArray = checkedNotes.filter(function (obj) {
+            return !obj._id.includes(id)
+        })
 
-                });
-            }
-        }
+        this.props.setCheckedNotes(filteredArray)
+
+        //TODO UNCHECK THE BOXES IN LEFT
 
     }
 
@@ -478,25 +474,40 @@ class View extends Component {
                     break;
 
                 case "author":
-                    // console.log("Author", this.state.query);
-                    // console.log("State authors", this.state.authors);
-                    var authorId = [];
+                    let filteredNotes = [];
+                    let authors = [];
 
-                    Object.values(this.props.authors).forEach(obj => {
-                        if (obj.firstName.toLowerCase().includes(query.toLowerCase()) || obj.lastName.toLowerCase().includes(query.toLowerCase())) {
-                            // console.log("Matched", obj._id);
-                            authorId.push(obj._id);
-                        }
-                    });
+                    // authors = Object.values(this.props.authors).filter(function (obj) {
+                    //     let fullName = obj.firstName.toLowerCase() + " " + obj.lastName.toLowerCase();
+                    //     if (fullName.includes(query.toLowerCase())) {
+                    //         return obj._id;
+                    //     }
+                    // });
+                    // authors.forEach(element => {
+                    //     filteredNotes = this.state.viewLinks.filter(obj => obj.authors && obj.authors.includes(element)).map(filteredObj => {
+                    //         return filteredObj;
+                    //     });
+                    //     filteredResults.concat(filteredNotes);
+                    //     console.log("Authors filtered", filteredResults);
+                    // });
+                        // let authors = [];
 
-                    authorId.forEach(element => {
-                        filteredResults = this.noteData1.filter(obj => obj.authors.includes(element)).map(filteredObj => {
-                            return filteredObj;
+                        Object.values(this.props.authors).forEach(obj => {
+                            let fullName = obj.firstName.toLowerCase() + " " + obj.lastName.toLowerCase();
+                            if (fullName.includes(query.toLowerCase())) {
+                                console.log("Matched", obj._id);
+                                authors.push(obj._id);
+                            }
                         });
-                    });
+
+                        authors.forEach(element => {
+                            filteredResults = this.noteData1.filter(obj => obj.authors.includes(element)).map(filteredObj => {
+                                return filteredObj;
+                            });
+                        });
 
 
-                    break;
+                        break;
                 case "scaffold":
                     this.setState({
                         hideScaffold: false,
@@ -840,7 +851,8 @@ const mapStateToProps = (state, ownProps) => {
         myViews: state.globals.views,
         authors: state.users,
         scaffolds: state.scaffolds.items,
-        viewNotes: state.notes.viewNotes
+        viewNotes: state.notes.viewNotes,
+        checkedNotes: state.notes.checkedNotes
     }
 }
 
@@ -850,7 +862,7 @@ const mapDispatchToProps = {
     fetchAuthors,
     setCommunityId,
     setViewId,
-    setNoteContent,
+    setCheckedNotes,
     newNote,
     openContribution,
     fetchViewCommunityData

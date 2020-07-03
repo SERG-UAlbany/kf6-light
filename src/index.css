@@ -79,6 +79,10 @@ body {
   margin-bottom: 1rem !important;
 }
 
+.mrg-1-left{
+  margin-left: 1rem !important;
+}
+
 /* PADDING */
 
 .pd-05 {
@@ -270,4 +274,8 @@ body {
 /* MINIMUM HEIGHT */
 .min-height-2{
   min-height: 2rem;
+}
+
+.circular-border{
+  border-radius: 50%;
 }

@@ -6,6 +6,7 @@ import { withRouter } from 'react-router'
 
 import { removeToken } from '../store/api.js'
 import { setViewId, setGlobalToken } from '../store/globalsReducer'
+import { setCheckedNotes } from '../store/noteReducer'
 
 class TopNavbar extends Component {
 
@@ -20,13 +21,15 @@ class TopNavbar extends Component {
     setGlobalToken(null)//Remove token from store
   }
 
-    handleChange(e) {
-        /* e.persist(); */
-        let target = e.target;
-        let viewId = target.value;
-        this.props.setViewId(viewId)
-        this.props.history.push(`/view/${viewId}`)
-    }
+  handleChange(e) {
+    /* e.persist(); */
+    let target = e.target;
+    let viewId = target.value;
+    this.props.setViewId(viewId);
+    //EMPTY CHECKEDNOTES
+    this.props.setCheckedNotes([]);
+    this.props.history.push(`/view/${viewId}`)
+  }
 
 
   render() {
@@ -65,7 +68,7 @@ class TopNavbar extends Component {
               <Nav.Link href="/change-password"><i className="fas fa-cog white"></i></Nav.Link>
               <Nav.Link className="white mr-auto"> {userName} </Nav.Link>
               <Button variant="outline-secondary" className='ml-2' href="/" onClick={this.logout}>Logout</Button>
-            </Nav> 
+            </Nav>
           </>
         ) :
           <>
@@ -94,7 +97,9 @@ const mapStateToProps = (state, ownProps) => {
   }
 }
 const mapDispatchToProps = {
-  setViewId, setGlobalToken
+  setViewId,
+  setGlobalToken,
+  setCheckedNotes
 }
 
 export default withRouter(connect(
