@@ -79,6 +79,7 @@ class View extends Component {
         this.fetchSearchBuildsOn = this.fetchSearchBuildsOn.bind(this)
         this.fetchNotes = this.fetchNotes.bind(this)
         this.fetchScaffolds = this.fetchScaffolds.bind(this)
+        this.filterResults = this.filterResults.bind(this)
     }
 
     async fetchNotes() {
@@ -410,18 +411,21 @@ class View extends Component {
 
     filterNotes = (query) => {
         console.log("filterNotes", query);
-        let filteredResults = [];
-        filteredResults = this.noteData1.filter(function (obj) {
-            if (obj.data && obj.data.English) {
-                console.log("IF obj.data.English", obj.data.English);
-
-                return obj.data.English.includes(query);
-            }
-        });
         this.setState({
-            filteredData: filteredResults,
+            query: query,
         });
+        /* let filteredResults = [];
+         * filteredResults = this.noteData1.filter(function (obj) {
+         *     if (obj.data && obj.data.English) {
+         *         console.log("IF obj.data.English", obj.data.English);
 
+         *         return obj.data.English.includes(query);
+         *     }
+         * });
+         * this.setState({
+         *     filteredData: filteredResults,
+         * });
+         */
     }
 
 
@@ -447,11 +451,8 @@ class View extends Component {
         this.props.closeDialog(dlg.id);
     }
 
-    handleInputChange = (event) => {
-        const query = event.target.value
-        this.setState({
-            query: query,
-        });
+    filterResults(){
+        const query = this.state.query
         let filteredResults = [];
         if (query || this.state.filter) {
             switch (this.state.filter) {
@@ -465,10 +466,10 @@ class View extends Component {
                 case "content":
                     filteredResults = this.noteData1.filter(function (obj) {
                         if (obj.data && obj.data.English) {
-                            return obj.data.English.includes(event.target.value);
+                            return obj.data.English.includes(query);
                         }
                         else if (obj.data && obj.data.body) {
-                            return obj.data.body.includes(event.target.value);
+                            return obj.data.body.includes(query);
                         }
                         else {
                             return null;
@@ -478,13 +479,11 @@ class View extends Component {
                     break;
 
                 case "author":
-                    // console.log("Author", this.state.query);
-                    // console.log("State authors", this.state.authors);
                     var authorId = [];
 
                     Object.values(this.props.authors).forEach(obj => {
-                        if (obj.firstName.toLowerCase().includes(query.toLowerCase()) || obj.lastName.toLowerCase().includes(query.toLowerCase())) {
-                            // console.log("Matched", obj._id);
+                        const authName = `${obj.firstName} ${obj.lastName}`.toLowerCase()
+                        if (authName.includes(query.toLowerCase())) {
                             authorId.push(obj._id);
                         }
                     });
@@ -498,20 +497,89 @@ class View extends Component {
 
                     break;
                 case "scaffold":
-                    this.setState({
-                        hideScaffold: false,
-                    })
-
+                    /* this.setState({
+                     *     hideScaffold: false,
+                     * }) */
+                    filteredResults = this.noteData1.filter(function (obj) {
+                        if (obj.data && obj.data.English) {
+                            console.log("IF obj.data.English", obj.data.English);
+                            return obj.data.English.includes(query);
+                        }
+                        return false
+                    });
                     break;
 
                 default:
                     break;
             }
         }
-
+        return filteredResults
+    }
+    handleInputChange = (event) => {
+        const query = event.target.value
         this.setState({
-            filteredData: filteredResults,
-        })
+            query: query,
+        });
+        /* let filteredResults = [];
+         * if (query || this.state.filter) {
+         *     switch (this.state.filter) {
+         *         case "title":
+         *             this.state.viewLinks.filter(obj => obj._to.title.includes(query)).map(filteredObj => {
+         *                 filteredResults.push(filteredObj);
+         *                 return null;
+         *             })
+         *             break;
+
+         *         case "content":
+         *             filteredResults = this.noteData1.filter(function (obj) {
+         *                 if (obj.data && obj.data.English) {
+         *                     return obj.data.English.includes(event.target.value);
+         *                 }
+         *                 else if (obj.data && obj.data.body) {
+         *                     return obj.data.body.includes(event.target.value);
+         *                 }
+         *                 else {
+         *                     return null;
+         *                 }
+         *             });
+
+         *             break;
+
+         *         case "author":
+         *             // console.log("Author", this.state.query);
+         *             // console.log("State authors", this.state.authors);
+         *             var authorId = [];
+
+         *             Object.values(this.props.authors).forEach(obj => {
+         *                 if (obj.firstName.toLowerCase().includes(query.toLowerCase()) || obj.lastName.toLowerCase().includes(query.toLowerCase())) {
+         *                     // console.log("Matched", obj._id);
+         *                     authorId.push(obj._id);
+         *                 }
+         *             });
+
+         *             authorId.forEach(element => {
+         *                 filteredResults = this.noteData1.filter(obj => obj.authors.includes(element)).map(filteredObj => {
+         *                     return filteredObj;
+         *                 });
+         *             });
+
+
+         *             break;
+         *         case "scaffold":
+         *             this.setState({
+         *                 hideScaffold: false,
+         *             })
+
+         *             break;
+
+         *         default:
+         *             break;
+         *     }
+         * }
+
+         * this.setState({
+         *     filteredData: filteredResults,
+         * }) */
     };
 
 
@@ -519,6 +587,7 @@ class View extends Component {
         let value = e.target.value;
         this.setState({
             filter: value,
+            query: ''
         });
     }
 
@@ -537,6 +606,7 @@ class View extends Component {
     render() {
         const showScffold = !this.hideScaffold && this.state.filter === "scaffold";
         const hierarchy = this.getBuildOnHierarchy()
+        const filteredResults = this.filterResults()
         let scaffolds;
         if (showScffold) {
             scaffolds = <Row>
@@ -636,7 +706,7 @@ class View extends Component {
                                     hNotes={this.state.hNotes} showContent={this.showContent} openNote={this.openNote} />)
                             :
                             (<>
-                                {this.state.filteredData.map((obj, i) => {
+                                {filteredResults.map((obj, i) => {
                                     return <>
                                         {obj._to && obj._to.title ?
                                             (<>

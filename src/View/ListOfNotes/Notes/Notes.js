@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { Col, Row } from 'react-bootstrap';
-import Author from '../../../components/Author/Author';
+import { connect } from 'react-redux'
 import { Form, FormGroup, Input } from 'reactstrap';
 import { Button, Collapse } from 'react-bootstrap';
 import ListOfNotes from '../ListOfNotes.js'
-
+import { dateFormatOptions } from '../../../store/globalsReducer.js'
 class Notes extends Component {
     constructor(props) {
         super(props);
@@ -16,27 +16,6 @@ class Notes extends Component {
     }
 
     componentDidMount() {
-        console.log("component did mount!")
-        // console.log("NOTES AND PROPS", this.props.noteId);
-        // let config = {
-        //     headers: { Authorization: `Bearer ${this.token}` }
-        // };
-
-        // let linksFromNote = `${apiUrl}/links/from/${this.props.noteId}`;
-        // Axios.get(linksFromNote, config).then(
-        //     result => {
-        //         // console.log("LINKS FROM", result.data.length);
-        //         if (result.data.length === 0) {
-        //             this.setState({
-        //                 showNote: true,
-        //             })
-        //         }
-        //         else { 
-        //             //
-        //         }
-        //     }
-        // )
-
     }
 
     setOpen = (value) => {
@@ -48,6 +27,7 @@ class Notes extends Component {
     render() {
         const hasChildren = Object.keys(this.props.children).length !== 0;;
         const icon = this.state.open ? "fa-chevron-down" : "fa-chevron-right"
+        const formatter = new Intl.DateTimeFormat('default', dateFormatOptions)
         return (
             <div>
                 <Row className="mrg-05-top">
@@ -69,7 +49,7 @@ class Notes extends Component {
                             </Col>
                         </Row>
                         <Row className="primary-600 sz-075 pd-05">
-                            <Col><Author authorId={this.props.note.authors} />&nbsp; {this.props.note.created}</Col>
+                            <Col><span> {this.props.author} </span>&nbsp; {formatter.format(new Date(this.props.note.created))}</Col>
                             <Col md="2">
                                 {/* <Button onClick={() => this.buildOn(this.props.oneHirarchy.to)}>BuildOn</Button> */}
                             </Col>
@@ -90,4 +70,17 @@ class Notes extends Component {
     }
 
 }
-export default Notes;
+
+const mapStateToProps = (state, ownProps) => {
+    const author = state.users[ownProps.note.authors[0]]
+    return {
+        author: (author && `${author.firstName} ${author.lastName}`)  || 'NA'
+    }
+}
+
+const mapDispatchToProps = {}
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Notes)
