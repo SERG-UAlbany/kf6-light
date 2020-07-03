@@ -101,7 +101,6 @@ class View extends Component {
             }).catch(error => console.log("Failed to get Links for viewId", sessionStorage.getItem('viewId')))
 
         await Promise.all(note_promises) //Wait to fetch all notes
-        let notes = {}
         this.setState({
             noteData: noteData,
         });
@@ -524,8 +523,7 @@ class View extends Component {
     }
 
     buildOn = (buildOn) => {
-        sessionStorage.setItem("buildOn", buildOn);
-        this.props.newNote(this.props.view, this.props.communityId, this.props.author._id);
+        this.props.newNote(this.props.view, this.props.communityId, this.props.author._id, buildOn);
     }
 
     openNote = (contribId) => {

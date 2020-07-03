@@ -165,24 +165,10 @@ const createNote = (communityId, authorId, contextMode, fromId, content) => {
     return newobj
 }
 
-export const newNote = (view, communityId, authorId) => dispatch => {
+export const newNote = (view, communityId, authorId, buildson) => dispatch => {
     const mode = {permission: view.permission, group: view.group, _groupMembers: view._groupMembers }
 
-    const newN = sessionStorage.getItem("buildOn") === null ? createNote(communityId, authorId, mode) : // IF IT'S A BUILDON, THEN CREATE BUILDON LINK
-    {
-            "authors" : authorId,
-            "buildson" : sessionStorage.getItem("buildOn"),
-            "communityId" : communityId,
-            data : {
-                "body" : "",
-            },
-            "permission" : view.permission,
-            "status": "unsaved",
-            "title": "",
-            "type": "Note",
-            "_groupMembers": [],
-    };
-    if(newN){sessionStorage.removeItem("buildOn")};
+    const newN = createNote(communityId, authorId, mode, buildson)
 
     return api.postContribution(communityId, newN).then((res) => {
         const note = {attachments: [],
@@ -193,8 +179,10 @@ export const newNote = (view, communityId, authorId) => dispatch => {
                       group: null,
                       ...res.data}
         const pos = {x: 100, y:100}
-        api.postLink(view._id, note._id, 'contains', pos)
 
+        if (!buildson){
+            api.postLink(view._id, note._id, 'contains', pos)
+        }
         //TODO saveContainsLinktoITM x2
 
         dispatch(addNote(note))

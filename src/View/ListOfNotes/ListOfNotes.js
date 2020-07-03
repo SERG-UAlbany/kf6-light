@@ -51,8 +51,6 @@ class ListOfNotes extends Component {
 
         // }
         const notes = this.getNotes()
-        console.log("Notes...")
-        console.log(notes)
 
         return (<>
             {
