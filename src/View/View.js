@@ -12,7 +12,6 @@ import NoteContent from '../components/NoteContent/NoteContent'
 import ListOfNotes from './ListOfNotes/ListOfNotes'
 import { fetchView, fetchCommunity, setCommunityId, setViewId, fetchViewCommunityData } from '../store/globalsReducer.js'
 import { fetchAuthors } from '../store/userReducer.js';
-import Author from '../components/Author/Author';
 import './View.css';
 const _ = require('lodash');
 
@@ -79,6 +78,7 @@ class View extends Component {
         this.fetchSearchBuildsOn = this.fetchSearchBuildsOn.bind(this)
         this.fetchNotes = this.fetchNotes.bind(this)
         this.fetchScaffolds = this.fetchScaffolds.bind(this)
+        this.filterResults = this.filterResults.bind(this)
     }
 
     async fetchNotes() {
@@ -131,7 +131,6 @@ class View extends Component {
         return final_h
     }
     fetchSearchBuildsOn() {
-        console.log("Fetch buildson")
         this.from = [];
         this.to = [];
         this.hierarchyNote = [];
@@ -291,10 +290,6 @@ class View extends Component {
             );
     }
 
-    logout() {
-        sessionStorage.removeItem('token');
-    }
-
     newContribution() {
         // console.log("New Contribution onclick works");
         this.setState({
@@ -406,6 +401,9 @@ class View extends Component {
 
     filterNotes = (query) => {
         console.log("filterNotes", query);
+        /* this.setState({
+         *     query: query,
+         * }); */
         let filteredResults = [];
         filteredResults = this.noteData1.filter(function (obj) {
             if (obj.data && obj.data.English) {
@@ -413,6 +411,7 @@ class View extends Component {
 
                 return obj.data.English.includes(query);
             }
+            return false
         });
         this.setState({
             filteredData: filteredResults,
@@ -443,41 +442,33 @@ class View extends Component {
         this.props.closeDialog(dlg.id);
     }
 
-    handleInputChange = (event) => {
-        const query = event.target.value
-        this.setState({
-            query: query,
-        });
+    filterResults(q){
+        const query = q || this.state.query
         let filteredResults = [];
         if (query || this.state.filter) {
             switch (this.state.filter) {
                 case "title":
-                    this.state.viewLinks.filter(obj => obj._to.title.includes(query)).map(filteredObj => {
-                        filteredResults.push(filteredObj);
-                        return null;
-                    })
+                    filteredResults = this.noteData1.filter(note => note.title.includes(query))
                     break;
 
                 case "content":
                     filteredResults = this.noteData1.filter(function (obj) {
                         if (obj.data && obj.data.English) {
-                            return obj.data.English.includes(event.target.value);
+                            return obj.data.English.includes(query);
                         }
                         else if (obj.data && obj.data.body) {
-                            return obj.data.body.includes(event.target.value);
+                            return obj.data.body.includes(query);
                         }
-                        else {
-                            return null;
-                        }
+                        return false
                     });
 
                     break;
 
                 case "author":
-                    let authors = [];
+                    const authors = [];
                     Object.values(this.props.authors).forEach(obj => {
-                        let fullName = obj.firstName.toLowerCase() + " " + obj.lastName.toLowerCase();
-                        if (fullName.includes(query.toLowerCase())) {
+                        const authName = `${obj.firstName} ${obj.lastName}`.toLowerCase()
+                        if (authName.includes(query.toLowerCase())) {
                             authors.push(obj._id);
                         }
                     });
@@ -485,20 +476,30 @@ class View extends Component {
 
                     break;
                 case "scaffold":
-                    this.setState({
-                        hideScaffold: false,
-                    })
-
+                    /* this.setState({
+                     *     hideScaffold: false,
+                     * }) */
+                    /* filteredResults = this.noteData1.filter(function (obj) {
+                     *     if (obj.data && obj.data.English) {
+                     *         console.log("IF obj.data.English", obj.data.English);
+                     *         return obj.data.English.includes(query);
+                     *     }
+                     *     return false
+                     * }); */
                     break;
 
                 default:
                     break;
             }
         }
-
+        return filteredResults
+    }
+    handleInputChange = (event) => {
+        const query = event.target.value
         this.setState({
-            filteredData: filteredResults,
-        })
+            query: query,
+            filteredData: this.filterResults(query)
+        });
     };
 
 
@@ -506,6 +507,7 @@ class View extends Component {
         let value = e.target.value;
         this.setState({
             filter: value,
+            query: ''
         });
     }
 
@@ -524,6 +526,7 @@ class View extends Component {
     render() {
         const showScffold = !this.hideScaffold && this.state.filter === "scaffold";
         const hierarchy = this.getBuildOnHierarchy()
+        /* const filteredResults = this.filterResults() */
         let scaffolds;
         if (showScffold) {
             scaffolds = <Row>
@@ -619,69 +622,12 @@ class View extends Component {
                         {scaffolds}
                         {this.state.query === "" && !showScffold ?
                             (
-                                <ListOfNotes noteLinks={this.state.viewLinks} notes={this.props.viewNotes} hierarchy={hierarchy}
-                                    hNotes={this.state.hNotes} showContent={this.showContent} openNote={this.openNote} />)
+                                <ListOfNotes notes={this.props.viewNotes} hierarchy={hierarchy}
+                                    showContent={this.showContent} openNote={this.openNote} />)
                             :
                             (<>
-                                {this.state.filteredData.map((obj, i) => {
-                                    return <>
-                                        {obj._to && obj._to.title ?
-                                            (<>
-                                                <div className="shadow p-3 mb-5 rounded">
-                                                    <Row key={i} value={obj.to} className="mrg-05-top">
-                                                        <Col className=" rounded mrg-1-bot">
-                                                            <Row className="pd-05">
-                                                                <Col className="primary-800 font-weight-bold"> {obj._to.title}</Col>
-                                                                <Col md="2">
-                                                                    <Form className="mrg-1-min pd-2-right">
-                                                                        <FormGroup>
-                                                                            <Input type="checkbox" ref={obj.to} onChange={e => this.showContent(e, obj.to)} />
-                                                                        </FormGroup>
-                                                                    </Form>
-                                                                </Col>
-                                                            </Row>
-                                                            <Row className="primary-600 sz-075 pd-05">
-                                                                <Col><Author authorId={obj._to.authors} />&nbsp; {obj._to.created}
-                                                                </Col>
-                                                                <Col md="2">
-                                                                    {/* <Button onClick={() => this.buildOn(obj.to)}>BuildOn</Button> */}
-                                                                </Col>
-                                                            </Row>
-                                                        </Col>
-                                                    </Row>
-                                                </div>
-                                            </>)
-                                            : (<>
-                                                {obj._id ? (<>
-                                                    <div className="shadow p-3 mb-5 rounded">
-                                                        <Row key={i} value={obj._id} className="mrg-05-top">
-                                                            <Col className="rounded mrg-1-bot">
-                                                                <Row className="pd-05">
-                                                                    <Col className="primary-800 font-weight-bold"> {obj.title}</Col>
-                                                                    <Col md="2">
-                                                                        <Form className="mrg-1-min pd-2-right">
-                                                                            <FormGroup>
-                                                                                <Input type="checkbox" ref={obj._id} onChange={e => this.showContent(e, obj._id)} />
-                                                                            </FormGroup>
-                                                                        </Form>
-                                                                    </Col>
-                                                                </Row>
-                                                                <Row className="primary-600 sz-075 pd-05">
-                                                                    <Col><Author authorId={obj.authors} />&nbsp; {obj.created}</Col>
-                                                                    <Col md="2">
-                                                                        {/* <Button onClick={() => this.buildOn(obj._id)}>BuildOn</Button> */}
-                                                                    </Col>
-                                                                </Row>
-                                                            </Col>
-                                                        </Row>
-                                                    </div>
-                                                </>)
-                                                    : (<></>)}
-                                            </>)
-                                        }
-
-                                    </>
-                                })}
+                                <ListOfNotes notes={this.props.viewNotes} noteLinks={this.state.filteredData}
+                                             showContent={this.showContent} openNote={this.openNote} />
 
                             </>)}
                     </Col>

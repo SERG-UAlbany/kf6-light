@@ -23,6 +23,7 @@ export const setAnnotation = createAction('SET_ANNOTATION')
 export const setAnnotationsLoaded = createAction('SET_ANNOTATIONS_LOADED')
 export const removeAnnotation = createAction('REMOVE_ANNOTATION')
 export const setViewNotes = createAction('SET_VIEW_NOTES')
+export const addViewNote = createAction('ADD_VIEW_NOTE')
 export const setCheckedNotes = createAction('SET_CHECKED_NOTES')
 
 const initState = {drawing: '', attachments: {}, viewNotes: {}, checkedNotes:[]}
@@ -108,6 +109,9 @@ export const noteReducer = createReducer(initState, {
     [setCheckedNotes]:(state, action) => {
         state.checkedNotes = action.payload
     },
+    [addViewNote]: (state, action) => {
+        state.viewNotes[action.payload._id] = action.payload
+    }
 });
 
 const createNote = (communityId, authorId, contextMode, fromId, content) => {
@@ -243,7 +247,7 @@ export const postContribution = (contribId, dialogId) => async (dispatch, getSta
         contrib.data.body = text
         const newNote = await api.putObject(contrib, contrib.communityId, contrib._id)
         dispatch(editNote(newNote))
-
+        dispatch(addViewNote(newNote))
         if (dialogId !== undefined)
             dispatch(closeDialog(dialogId))
         addNotification({title: 'Saved!', type:'success', message:'Contribution created!'})
