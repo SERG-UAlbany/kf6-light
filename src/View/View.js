@@ -453,7 +453,7 @@ class View extends Component {
         if (query || this.state.filter) {
             switch (this.state.filter) {
                 case "title":
-                    this.state.viewLinks.filter(obj => obj._to.title.includes(query)).map(filteredObj => {
+                    this.state.viewLinks.filter(obj => obj._to.title.toLowerCase().includes(query.toLowerCase())).map(filteredObj => {
                         filteredResults.push(filteredObj);
                         return null;
                     })
