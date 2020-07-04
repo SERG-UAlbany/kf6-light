@@ -448,7 +448,8 @@ class View extends Component {
         if (query || this.state.filter) {
             switch (this.state.filter) {
                 case "title":
-                    filteredResults = this.noteData1.filter(note => note.title.includes(query))
+                    filteredResults = this.noteData1.filter(note => note._to.title.toLowerCase().includes(query.toLowerCase()));
+                    
                     break;
 
                 case "content":

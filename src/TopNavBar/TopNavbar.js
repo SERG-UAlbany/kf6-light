@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Navbar, Nav, Button } from 'react-bootstrap'
+import { Link } from 'react-router-dom'
 import { Col, Form, FormGroup, Input } from 'reactstrap'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router'
@@ -29,6 +30,10 @@ class TopNavbar extends Component {
     //EMPTY CHECKEDNOTES
     this.props.setCheckedNotes([]);
     this.props.history.push(`/view/${viewId}`)
+  }
+
+  signUp = (e) => {
+    this.props.history.push("/signup");
   }
 
 
@@ -73,7 +78,7 @@ class TopNavbar extends Component {
         ) :
           <>
             <Nav className="ml-auto">
-              <Nav.Link href="/signup">Signup</Nav.Link>
+              <Nav.Link onClick={this.signUp}>Signup</Nav.Link>
               <Nav.Link href="/">Login</Nav.Link>
             </Nav>
           </>
