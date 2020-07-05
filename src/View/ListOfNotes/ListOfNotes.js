@@ -17,7 +17,7 @@ class ListOfNotes extends Component {
                 notes.push(this.props.notes[noteId])
         }
         //TODO sort them
-        return notes
+        return notes.sort((a, b) => { return new Date(b.created) - new Date(a.created) })
 
     }
 

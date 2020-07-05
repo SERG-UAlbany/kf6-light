@@ -193,7 +193,7 @@ class View extends Component {
                         .then(
                             result => {
                                 let scaffoldList = result.data;
-                                scaffoldList.map(element => {
+                                scaffoldList.forEach(element => {
                                     scaffoldTitle.push(element._to.title)
                                 })
                             });
@@ -533,7 +533,7 @@ class View extends Component {
                 <Col>
                     {this.state.scaffoldsTitle.map((obj, i) => {
                         return <Row key={i} className="scaffold-title">
-                            <Link onClick={() => this.filterNotes(obj)} className="scaffold-text">{obj}</Link>
+                            <Button variant='link' onClick={() => this.filterNotes(obj)} className="scaffold-text">{obj}</Button>
                         </Row>
                     })}
                 </Col>
