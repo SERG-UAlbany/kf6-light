@@ -13,6 +13,7 @@ import ListOfNotes from './ListOfNotes/ListOfNotes'
 import { fetchView, fetchCommunity, setCommunityId, setViewId, fetchViewCommunityData } from '../store/globalsReducer.js'
 import { fetchAuthors } from '../store/userReducer.js';
 import './View.css';
+import { result } from 'lodash';
 const _ = require('lodash');
 
 class View extends Component {
@@ -179,7 +180,7 @@ class View extends Component {
         api.getCommunity(this.props.communityId).then(
             res => {
                 scaffoldIds = res.data.scaffolds
-                let scaffoldTitle = [];
+                let scaffolds = [];
                 // console.log("res", scaffoldIds);
 
                 scaffoldIds.forEach(id => {
@@ -194,12 +195,14 @@ class View extends Component {
                             result => {
                                 let scaffoldList = result.data;
                                 scaffoldList.map(element => {
-                                    scaffoldTitle.push(element._to.title)
+                                    scaffolds.push(element)
                                 })
                             });
+                    console.log("scaffoldTitle", scaffolds);
+
                 });
                 this.setState({
-                    scaffoldsTitle: scaffoldTitle,
+                    scaffoldsTitle: scaffolds,
                 });
 
 
@@ -401,15 +404,15 @@ class View extends Component {
 
     filterNotes = (query) => {
         console.log("filterNotes", query);
-        /* this.setState({
-         *     query: query,
-         * }); */
         let filteredResults = [];
         filteredResults = this.noteData1.filter(function (obj) {
             if (obj.data && obj.data.English) {
-                console.log("IF obj.data.English", obj.data.English);
-
-                return obj.data.English.includes(query);
+                // console.log("obj.data.English.includes(query._to.title);",obj.data.English.includes(query._to.title));
+                return obj.data.English.includes(query._to.title);
+            }
+            else if (obj.data && obj.data.body) {
+                // console.log("obj.data.body.includes(query.to)", obj.data.body.includes(query.to));
+                return obj.data.body.includes(query.to);
             }
             return false
         });
@@ -442,14 +445,14 @@ class View extends Component {
         this.props.closeDialog(dlg.id);
     }
 
-    filterResults(q){
+    filterResults(q) {
         const query = q || this.state.query
         let filteredResults = [];
         if (query || this.state.filter) {
             switch (this.state.filter) {
                 case "title":
                     filteredResults = this.noteData1.filter(note => note._to.title.toLowerCase().includes(query.toLowerCase()));
-                    
+
                     break;
 
                 case "content":
@@ -473,7 +476,7 @@ class View extends Component {
                             authors.push(obj._id);
                         }
                     });
-                    filteredResults = this.noteData1.filter( note => note.authors.some(author => authors.includes(author)) )
+                    filteredResults = this.noteData1.filter(note => note.authors.some(author => authors.includes(author)))
 
                     break;
                 case "scaffold":
@@ -534,7 +537,7 @@ class View extends Component {
                 <Col>
                     {this.state.scaffoldsTitle.map((obj, i) => {
                         return <Row key={i} className="scaffold-title">
-                            <Link onClick={() => this.filterNotes(obj)} className="scaffold-text">{obj}</Link>
+                            <Link onClick={() => this.filterNotes(obj)} className="scaffold-text">{obj._to.title}</Link>
                         </Row>
                     })}
                 </Col>
@@ -628,7 +631,7 @@ class View extends Component {
                             :
                             (<>
                                 <ListOfNotes notes={this.props.viewNotes} noteLinks={this.state.filteredData}
-                                             showContent={this.showContent} openNote={this.openNote} />
+                                    showContent={this.showContent} openNote={this.openNote} />
 
                             </>)}
                     </Col>
