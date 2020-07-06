@@ -39,7 +39,9 @@
     padding-right: 2rem !important;
 }
 
-.scaffold-title{
+.scaffold-text{
+    color: rgb(233, 174, 66) !important;
+    font-weight: bold;
     width: 280px !important;
     padding: 0.25rem !important;
     border: solid;
@@ -47,10 +49,6 @@
     border-radius: 1rem !important;
     margin-bottom: 1rem !important;
     list-style: none !important;
-}
-.scaffold-text{
-    color: rgb(233, 174, 66) !important;
-    font-weight: bold;
 }
 
 .white{

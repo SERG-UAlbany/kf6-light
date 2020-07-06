@@ -451,8 +451,8 @@ class View extends Component {
         if (query || this.state.filter) {
             switch (this.state.filter) {
                 case "title":
-                    filteredResults = this.noteData1.filter(note => note._to.title.toLowerCase().includes(query.toLowerCase()));
-
+                    filteredResults = this.noteData1.filter(note => note.title.toLowerCase().includes(query.toLowerCase()));
+                    
                     break;
 
                 case "content":
@@ -536,8 +536,8 @@ class View extends Component {
             scaffolds = <Row>
                 <Col>
                     {this.state.scaffoldsTitle.map((obj, i) => {
-                        return <Row key={i} className="scaffold-title">
-                            <Link onClick={() => this.filterNotes(obj)} className="scaffold-text">{obj._to.title}</Link>
+                        return <Row key={i}>
+                            <Button variant='link' onClick={() => this.filterNotes(obj)} className="scaffold-text">{obj._to.title}</Button>
                         </Row>
                     })}
                 </Col>
