@@ -2,7 +2,7 @@ import { createAction, createReducer } from '@reduxjs/toolkit'
 import { getObject, getCommunity, getGroups, getUser, getAuthor, getCommunityViews, getCommunities,  getUserCommunities} from './api.js'
 import { fetchAuthors } from './userReducer.js';
 import { fetchScaffolds } from  './scaffoldReducer.js'
-import { fetchViewNotes } from './noteReducer.js'
+import { fetchViewNotes, fetchBuildsOn } from './noteReducer.js'
 export const setGlobalToken = createAction('SET_TOKEN')
 export const setCommunity = createAction('SET_COMMUNITY')
 export const setCommunityId = createAction('SET_COMMUNITY_ID')
@@ -155,6 +155,7 @@ export const fetchViewCommunityData = (viewId) => async (dispatch) => {
     dispatch(setCommunity(
         { groups: [], ...community }
     ))
+    dispatch(fetchBuildsOn(commId))
     dispatch(fetchAuthor(commId))
     dispatch(fetchCommunityViews(commId))
     dispatch(fetchAuthors(commId))

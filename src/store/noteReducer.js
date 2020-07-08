@@ -26,7 +26,8 @@ export const setViewNotes = createAction('SET_VIEW_NOTES')
 export const addViewNote = createAction('ADD_VIEW_NOTE')
 export const setCheckedNotes = createAction('SET_CHECKED_NOTES')
 export const setViewLinks = createAction('SET_VIEW_LINKS')
-const initState = {drawing: '', attachments: {}, viewNotes: {}, checkedNotes:[], viewLinks:[]}
+export const setBuildsOn = createAction('SET_BUILDS_ON')
+const initState = {drawing: '', attachments: {}, viewNotes: {}, checkedNotes:[], viewLinks:[], buildsOn: []}
 
 export const noteReducer = createReducer(initState, {
     [addNote]: (notes, action) => {
@@ -114,6 +115,9 @@ export const noteReducer = createReducer(initState, {
     },
     [setViewLinks]: (state, action) => {
         state.viewLinks = action.payload
+    },
+    [setBuildsOn]: (state, action) => {
+        state.buildsOn = action.payload
     }
 });
 
@@ -354,3 +358,13 @@ export const fetchViewNotes = (viewId) => async (dispatch) => {
     dispatch(setViewNotes(notes))
 }
 
+
+export const fetchBuildsOn = (communityId) => async (dispatch) => {
+    let buildOnResult = await api.linksSearch(communityId, { "type": "buildson" })
+    buildOnResult = buildOnResult.reverse();
+    const filteredBuildOn = buildOnResult.filter(
+        (obj) =>
+            (obj._to.type === "Note" && obj._to.status === "active" && obj._from.type === "Note" && obj._from.status === "active")
+    )
+    dispatch(setBuildsOn(filteredBuildOn))
+}

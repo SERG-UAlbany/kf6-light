@@ -13,18 +13,13 @@ import ListOfNotes from './ListOfNotes/ListOfNotes'
 import { fetchView, fetchCommunity, setCommunityId, setViewId, fetchViewCommunityData } from '../store/globalsReducer.js'
 import { fetchAuthors } from '../store/userReducer.js';
 import './View.css';
-import { result } from 'lodash';
-const _ = require('lodash');
 
 class View extends Component {
 
     myRegistrations = [];
     myCommunityId = '';
     show = false;
-    from = [];
-    to = [];
     myTempTo = [];
-    hierarchyNote = [];
     noteContnetNew = [];
     open = false;
 
@@ -42,9 +37,6 @@ class View extends Component {
         this.state = {
             showView: false,
             showCommunity: false,
-            showContribution: false,
-            showNote: false,
-            hNotes: [],
             addView: '',
             showRiseAbove: false,
             showModel: false,
@@ -73,7 +65,6 @@ class View extends Component {
 
         this.showContent = this.showContent.bind(this)
 
-        this.fetchSearchBuildsOn = this.fetchSearchBuildsOn.bind(this)
         this.fetchScaffolds = this.fetchScaffolds.bind(this)
         this.filterResults = this.filterResults.bind(this)
     }
@@ -83,7 +74,7 @@ class View extends Component {
         for (let noteId in this.props.viewNotes) {
             hierarchy[noteId] = { children: {} }
         }
-        this.state.bo.forEach(note => {
+        this.props.buildsOn.forEach(note => {
             const parent = note.to
             const child = note.from
             if (!(parent in hierarchy))
@@ -100,48 +91,6 @@ class View extends Component {
                 final_h[key] = value
         }
         return final_h
-    }
-    fetchSearchBuildsOn() {
-        this.from = [];
-        this.to = [];
-        this.hierarchyNote = [];
-
-        //GET SEARCH - HIRARCHICAL NOTES
-        let buildOnResult = [];
-        api.linksSearch(this.props.communityId, { "type": "buildson" })
-            .then(
-                result => {
-                    buildOnResult = result.reverse();
-                    let filteredBuildOn = buildOnResult.filter((obj) =>
-                        (obj._to.type === "Note" && obj._to.status === "active" && obj._from.type === "Note" && obj._from.status === "active")
-                    )
-
-                    this.setState({ bo: filteredBuildOn })
-                    filteredBuildOn.forEach(obj => {
-                        this.from.push(obj.from);
-                        this.to.push(obj.to);
-                        this.hierarchyNote.push(obj);
-                    });
-                    try {
-                        for (var l in this.to) {
-                            if (this.from.includes(this.to[l])) {
-                                var index = this.from.indexOf(this.to[l]);
-                                var temporaryTo = [];
-                                if (this.hierarchyNote[index]) {
-                                    temporaryTo.push(this.hierarchyNote[index]);
-                                }
-                                temporaryTo.push(this.hierarchyNote[l]);
-                                this.hierarchyNote[l] = temporaryTo;
-                                delete this.hierarchyNote[index];
-                            }
-                        }
-                    } catch (error) {
-                        console.log("Error in Hnotes", error);
-                    } finally {
-                        this.setState({ hNotes: this.hierarchyNote })
-                    }
-                }).catch(error => console.log("Error occured for BuildsOn", error))
-
     }
 
     fetchScaffolds() {
@@ -164,7 +113,7 @@ class View extends Component {
                         .then(
                             result => {
                                 let scaffoldList = result.data;
-                                scaffoldList.map(element => {
+                                scaffoldList.forEach(element => {
                                     scaffolds.push(element)
                                 })
                             });
@@ -184,7 +133,6 @@ class View extends Component {
             this.props.fetchViewCommunityData(this.props.viewId)
         }
         if (this.props.communityId) {
-            this.fetchSearchBuildsOn()
             this.fetchScaffolds()
         }
         const viewId = this.props.match.params.viewId //Get viewId from url param
@@ -199,7 +147,6 @@ class View extends Component {
         }
 
         if (this.props.communityId && this.props.communityId !== prevProps.communityId) {
-            this.fetchSearchBuildsOn()
             this.fetchScaffolds()
         }
     }
@@ -261,31 +208,11 @@ class View extends Component {
             );
     }
 
-    newContribution() {
-        // console.log("New Contribution onclick works");
-        this.setState({
-            showContribution: true,
-            showCommunity: false,
-            showView: false,
-            showRiseAbove: false,
-        })
-    }
-
-    newNote() {
-        // console.log("New Note onclick works");
-        this.setState({
-            showNote: true,
-            showView: false,
-            showRiseAbove: false,
-        })
-    }
-
     newView() {
         // console.log("New View onclick works"); 
         this.setState({
             showView: true,
             showRiseAbove: false,
-            showNote: false,
             showModel: true,
         })
     }
@@ -294,7 +221,6 @@ class View extends Component {
         // console.log("New RiseAbove onclick works");
         this.setState({
             showView: false,
-            showNote: false,
             showRiseAbove: true,
             showModel: true,
         })
@@ -421,7 +347,6 @@ class View extends Component {
             switch (this.state.filter) {
                 case "title":
                     filteredResults = notes.filter(note => note.title.toLowerCase().includes(query.toLowerCase()));
-                    
                     break;
 
                 case "content":
@@ -622,35 +547,6 @@ class View extends Component {
 
                 {/* MODEL */}
                 <Modal show={this.state.showModel} onHide={() => this.handleShow(false)}>
-                    {this.state.showContribution ? (
-                        <>
-                            <Modal.Header closeButton>
-                                <Modal.Title>Contributions</Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body style={{ 'max-height': 'calc(100vh - 300px)', 'overflow-y': 'auto' }}>
-                                {this.state.hNotes.map((obj, i) => {
-                                    return <Row key={i} value={obj.to} className="mrg-05-top">
-                                        <Col className="mr-auto">
-                                            <Row className="indigo"> {obj._to.title}</Row>
-                                            <Row> {obj.to}</Row>
-                                            <Row className="pd-2-left blue"> {obj._from.title}</Row>
-                                            <Row className="pd-2-left"> {obj.from}</Row>
-                                            <hr />
-                                        </Col>
-                                    </Row>
-                                })}
-
-                                {this.props.viewLinks.map((obj, i) => {
-                                    return <Row key={i} value={obj.to} className="mrg-05-top">
-                                        <Col>
-                                            <Row className="indigo"> {obj._to.title}</Row>
-                                            <Row> {obj.to}</Row>
-                                            <hr />
-                                        </Col>
-                                    </Row>
-                                })}
-                            </Modal.Body>
-                        </>) : null}
 
                     {this.state.showView ? (
                         <>
@@ -706,21 +602,6 @@ class View extends Component {
                             </Modal.Body>
                         </>) : null}
 
-                    {this.state.showNote ? (
-                        <>
-                            <Modal.Header closeButton>
-                                <Modal.Title>
-                                    <Row>
-                                        <Col>New Note</Col>
-                                    </Row>
-                                </Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body style={{ 'max-height': 'calc(100vh - 210px)', 'overflow-y': 'auto' }}>
-                                New Note
-                        </Modal.Body>
-                        </>) : null}
-
-
                     <Modal.Footer>
                         <Button variant="secondary" onClick={() => this.handleShow(false)}>
                             Close
@@ -748,7 +629,8 @@ const mapStateToProps = (state, ownProps) => {
         scaffolds: state.scaffolds.items,
         viewNotes: state.notes.viewNotes,
         checkedNotes: state.notes.checkedNotes,
-        viewLinks: state.notes.viewLinks
+        viewLinks: state.notes.viewLinks,
+        buildsOn: state.notes.buildsOn
     }
 }
 
