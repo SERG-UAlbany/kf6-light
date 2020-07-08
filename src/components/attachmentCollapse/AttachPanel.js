@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Modal, Button, Form, ProgressBar} from 'react-bootstrap'
+import { addNotification } from '../../store/notifier.js'
 import { fetchAttachments } from '../../store/noteReducer.js'
 import { FileDrop } from 'react-file-drop';
 import {url as serverUrl} from '../../store/api.js'
@@ -23,31 +24,39 @@ const AttachPanel = props => {
         /* e.target.value = null; */
 
     }
-    const onFileSelect = (fileList) => {
+    const onFileSelect = async (fileList) => {
         const files = Array.from(fileList)
         setProgress(0)
-        /* const hasVideo = files.some((file) => file.type.indexOf('video') === 0); */
         // TODO googleOauth, googledrive
-        files.forEach((file) => {
+        const upload_promises = []
+        files.forEach(async (file) => {
             if (file.type.indexOf("image/") >= 0){
                 const _URL = window.URL || window.webkitURL;
-                const img = document.createElement("img");
-                img.onload = function() {
-                    var width  = img.naturalWidth  || img.width;
-                    var height = img.naturalHeight || img.height;
-                    file.width = width;
-                    file.height = height;
-                    createAttachment(file, 'image');
-                };
-                img.src = _URL.createObjectURL(file);
+                const img = await addImageProcess(_URL.createObjectURL(file))
+                var width  = img.naturalWidth  || img.width;
+                var height = img.naturalHeight || img.height;
+                file.width = width;
+                file.height = height;
+                upload_promises.push(createAttachment(file, 'image'))
             }else if (file.type.startsWith('video')){
-                createAttachment(file, 'video')
+                upload_promises.push(createAttachment(file, 'video'))
             }else{
-                createAttachment(file, 'link')
+                upload_promises.push(createAttachment(file, 'link'))
             }
         });
-    }
 
+        await Promise.all(upload_promises)
+        handleClose()
+        addNotification({title: 'Uploaded!', type:'success', message:'Attachments uploaded!'})
+    }
+    const addImageProcess = (src) => {
+        return new Promise((resolve, reject) => {
+            let img = document.createElement("img")
+            img.onload = () => resolve(img)
+            img.onerror = reject
+            img.src = src
+        })
+    }
     const createAttachment = async (file, type) => {
         try {
             const attachRes = await postAttachment(author.communityId, author._id)
