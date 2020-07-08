@@ -25,6 +25,7 @@ export const removeAnnotation = createAction('REMOVE_ANNOTATION')
 export const setViewNotes = createAction('SET_VIEW_NOTES')
 export const addViewNote = createAction('ADD_VIEW_NOTE')
 export const setCheckedNotes = createAction('SET_CHECKED_NOTES')
+export const updateCheckedNotes = createAction('UPDATE_CHECKED_NOTES')
 export const setViewLinks = createAction('SET_VIEW_LINKS')
 export const setBuildsOn = createAction('SET_BUILDS_ON')
 const initState = {drawing: '', attachments: {}, viewNotes: {}, checkedNotes:[], viewLinks:[], buildsOn: []}
@@ -109,6 +110,13 @@ export const noteReducer = createReducer(initState, {
     },
     [setCheckedNotes]:(state, action) => {
         state.checkedNotes = action.payload
+    },
+    [updateCheckedNotes]: (state, action) => {
+        if (action.payload.checked){
+            state.checkedNotes.push(action.payload.noteId)
+        }else{
+            state.checkedNotes = state.checkedNotes.filter(id => id !== action.payload.noteId)
+        }
     },
     [addViewNote]: (state, action) => {
         state.viewNotes[action.payload._id] = action.payload
@@ -245,6 +253,7 @@ export const postContribution = (contribId, dialogId) => async (dispatch, getSta
     if (contrib.type === 'Note') {
         // TODO if isGoogleDoc
         // const isNewNote = contrib.status === 'unsaved'
+        const wasActive = contrib.status === 'active'
         contrib.status = 'active'
         const jq = await postProcess(contrib.data.body, contrib._id, contrib.toLinks, contrib.fromLinks)
         dispatch(fetchLinks(contribId, 'from'))
@@ -257,7 +266,9 @@ export const postContribution = (contribId, dialogId) => async (dispatch, getSta
         dispatch(addViewNote(newNote))
         if (dialogId !== undefined)
             dispatch(closeDialog(dialogId))
-        addNotification({title: 'Saved!', type:'success', message:'Contribution created!'})
+        if (!wasActive) //To update builds on hierarchy
+            dispatch(fetchBuildsOn(newNote.communityId))
+        addNotification({title: 'Saved!', type:'success', message:'Contribution updated!'})
     }
 }
 

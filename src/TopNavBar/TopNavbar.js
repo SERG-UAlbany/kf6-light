@@ -1,13 +1,11 @@
 import React, { Component } from 'react'
 import { Navbar, Nav, Button } from 'react-bootstrap'
-import { Link } from 'react-router-dom'
 import { Col, Form, FormGroup, Input } from 'reactstrap'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router'
 
 import { removeToken } from '../store/api.js'
 import { setViewId, setGlobalToken } from '../store/globalsReducer'
-import { setCheckedNotes } from '../store/noteReducer'
 
 class TopNavbar extends Component {
 
@@ -24,11 +22,9 @@ class TopNavbar extends Component {
 
   handleChange(e) {
     /* e.persist(); */
-    let target = e.target;
-    let viewId = target.value;
+    const viewId = e.target.value;
     this.props.setViewId(viewId);
     //EMPTY CHECKEDNOTES
-    this.props.setCheckedNotes([]);
     this.props.history.push(`/view/${viewId}`)
   }
 
@@ -91,11 +87,9 @@ class TopNavbar extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    token: state.globals.token,
     communityId: state.globals.communityId,
     viewId: state.globals.viewId,
     isAuthenticated: state.globals.isAuthenticated,
-    location: ownProps.location,
     user: state.globals.author,
     views: state.globals.views,
     view: state.globals.view
@@ -103,8 +97,7 @@ const mapStateToProps = (state, ownProps) => {
 }
 const mapDispatchToProps = {
   setViewId,
-  setGlobalToken,
-  setCheckedNotes
+  setGlobalToken
 }
 
 export default withRouter(connect(

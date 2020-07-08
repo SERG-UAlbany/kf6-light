@@ -4,7 +4,9 @@ import { connect } from 'react-redux'
 import { Form, FormGroup, Input } from 'reactstrap';
 import { Button, Collapse } from 'react-bootstrap';
 import ListOfNotes from '../ListOfNotes.js'
-import { dateFormatOptions } from '../../../store/globalsReducer.js'
+import { dateFormatOptions } from '../../../store/globalsReducer'
+import {updateCheckedNotes} from '../../../store/noteReducer'
+
 class Notes extends Component {
     constructor(props) {
         super(props);
@@ -13,6 +15,7 @@ class Notes extends Component {
             showNote: false,
             open: false
         };
+        this.checkNote = this.checkNote.bind(this)
     }
 
     componentDidMount() {
@@ -22,6 +25,10 @@ class Notes extends Component {
         this.setState((prevState) => {
             return { open: !prevState.open}
         })
+    }
+
+    checkNote = (evt, noteId) => {
+        this.props.updateCheckedNotes({noteId, checked: evt.target.checked})
     }
 
     render() {
@@ -43,7 +50,7 @@ class Notes extends Component {
                             <Col md="2">
                                 <Form className="mrg-1-min pd-2-right">
                                     <FormGroup>
-                                        <Input type="checkbox" ref={this.props.note._id} onChange={e => this.props.showContent(e, this.props.note._id)} />
+                                        <Input type="checkbox" checked={this.props.isChecked} ref={this.props.note._id} onChange={e => this.checkNote(e, this.props.note._id)} />
                                     </FormGroup>
                                 </Form>
                             </Col>
@@ -58,7 +65,7 @@ class Notes extends Component {
                           <Collapse in={this.state.open}>
                               <Row>
                                   <Col>
-                                      <ListOfNotes hierarchy={this.props.children} notes={this.props.notes} showContent= {this.props.showContent}></ListOfNotes>
+                                      <ListOfNotes hierarchy={this.props.children} notes={this.props.notes}></ListOfNotes>
                                   </Col>
                               </Row>
                           </Collapse>
@@ -74,11 +81,14 @@ class Notes extends Component {
 const mapStateToProps = (state, ownProps) => {
     const author = state.users[ownProps.note.authors[0]]
     return {
-        author: (author && `${author.firstName} ${author.lastName}`)  || 'NA'
+        author: (author && `${author.firstName} ${author.lastName}`)  || 'NA',
+        isChecked: state.notes.checkedNotes.includes(ownProps.note._id)
     }
 }
 
-const mapDispatchToProps = {}
+const mapDispatchToProps = {
+    updateCheckedNotes
+}
 
 export default connect(
     mapStateToProps,

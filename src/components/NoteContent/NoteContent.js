@@ -6,7 +6,7 @@ import Axios from 'axios';
 
 import './NoteContent.css';
 import { apiUrl } from '../../store/api.js';
-import { openContribution } from '../../store/noteReducer'
+import { openContribution, updateCheckedNotes } from '../../store/noteReducer'
 
 class NoteContent extends Component {
     noteList = [];
@@ -165,7 +165,12 @@ class NoteContent extends Component {
                                 <Col>
                                     <Row>
                                         <Col md="10" className="pd-1 primary-800 font-weight-bold">{obj.title}</Col>
-                                        <Col md="2"><Button variant="outline-secondary" className="circular-border float-right" onClick={() => this.props.closeNote(obj._id)}><i className="fas fa-times"></i></Button></Col>
+                                        <Col md="2">
+                                            <Button variant="outline-secondary" className="circular-border float-right"
+                                                    onClick={() => this.props.updateCheckedNotes({checked: false, noteId: obj._id})}>
+                                                <i className="fas fa-times"></i>
+                                            </Button>
+                                        </Col>
                                     </Row>
                                     <Row>
                                         <Col>
@@ -190,16 +195,18 @@ class NoteContent extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
+    const viewNotes = state.notes.viewNotes
     return {
         viewId: state.globals.viewId,
         views: state.globals.views,
-        checkedNotes: state.notes.checkedNotes,
+        checkedNotes: state.notes.checkedNotes.map(noteId => viewNotes[noteId]),
         viewLinks: state.notes.viewLinks
     }
 }
 
 const mapDispatchToProps = {
-    openContribution
+    openContribution,
+    updateCheckedNotes
 }
 
 export default connect(

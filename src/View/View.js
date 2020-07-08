@@ -40,14 +40,11 @@ class View extends Component {
             addView: '',
             showRiseAbove: false,
             showModel: false,
-            showNoteContent: false,
-            noteContnetList: [],
             query: "",
             filteredData: [],
             filter: 'title',
             scaffoldsTitle: [],
             hideScaffold: true,
-            bo: [],
         };
 
         this.getBuildOnHierarchy = this.getBuildOnHierarchy.bind(this)
@@ -63,7 +60,6 @@ class View extends Component {
 
         this.handleInputChange = this.handleInputChange.bind(this);
 
-        this.showContent = this.showContent.bind(this)
 
         this.fetchScaffolds = this.fetchScaffolds.bind(this)
         this.filterResults = this.filterResults.bind(this)
@@ -209,7 +205,7 @@ class View extends Component {
     }
 
     newView() {
-        // console.log("New View onclick works"); 
+        // console.log("New View onclick works");
         this.setState({
             showView: true,
             showRiseAbove: false,
@@ -242,59 +238,6 @@ class View extends Component {
         });
 
     }
-
-    showContent(event, id) {
-        let isChecked = event.target.checked;
-        this.setState({
-            showNoteContent: true,
-        });
-
-        if (isChecked) {
-            let checkedNote = [];
-            let noteData = Object.values(this.props.viewNotes)//[...this.state.noteData];
-            noteData.map((object) => {
-                if (object._id && object._id === id) {
-                    checkedNote.push(object);
-                    let concatArray = [...this.props.checkedNotes].concat(checkedNote);
-                    console.log("My Concated Array", concatArray);
-
-                    this.props.setCheckedNotes(concatArray);
-                    // this.setState({
-                    //     noteContnetList: this.noteContnetNew,
-                    // })
-                    // console.log("Should push and goto checkedNotes", this.props.noteContent);
-
-                    // console.log("Should push and goto AFTER ", this.props.noteContent);
-                    // console.log("STATE DATA", this.state.noteContnetList);
-
-                }
-                return null;
-            });
-
-        } else {
-            this.closeNote(id);
-        }
-
-    }
-
-    //CLOSE NOTE
-    closeNote = (id) => {
-        let checkedNotes = [...this.props.checkedNotes];
-        // checkedNotes.filter(obj => obj._id.includes(id)).map(filteredObj => {
-        //     checkedNotes.pop(filteredObj)
-        //     return null;
-        // });
-
-        const filteredArray = checkedNotes.filter(function (obj) {
-            return !obj._id.includes(id)
-        })
-
-        this.props.setCheckedNotes(filteredArray)
-
-        //TODO UNCHECK THE BOXES IN LEFT
-
-    }
-
 
     filterNotes = (query) => {
         console.log("filterNotes", query);
@@ -413,10 +356,6 @@ class View extends Component {
         this.props.newNote(this.props.view, this.props.communityId, this.props.author._id, buildOn);
     }
 
-    openNote = (contribId) => {
-        this.props.openContribution(contribId)
-    }
-
     setOpen = (value) => {
         this.open = value;
     }
@@ -519,22 +458,17 @@ class View extends Component {
                         </Form>
                         {scaffolds}
                         {this.state.query === "" && !showScffold ?
-                            (
-                                <ListOfNotes notes={this.props.viewNotes} hierarchy={hierarchy}
-                                    showContent={this.showContent} openNote={this.openNote} />)
-                            :
-                            (<>
-                                <ListOfNotes notes={this.props.viewNotes} noteLinks={this.state.filteredData}
-                                    showContent={this.showContent} openNote={this.openNote} />
-
-                            </>)}
+                         ( <ListOfNotes notes={this.props.viewNotes} hierarchy={hierarchy}/>)
+                        :
+                         ( <ListOfNotes notes={this.props.viewNotes} noteLinks={this.state.filteredData}/> )
+                        }
                     </Col>
 
                     {/* NOTE CONTENT */}
-                    {this.state.showNoteContent ?
+                    {this.props.checkedNotes.length ?
                         (<>
                             <Col md="5" sm="12" className="mrg-6-top v-scroll">
-                                <NoteContent noteContnetList={this.state.noteContnetList} closeNote={this.closeNote} query={this.state.query} filter={this.state.filter} buildOn={this.buildOn} />
+                                <NoteContent query={this.state.query} buildOn={this.buildOn} />
                             </Col>
                         </>)
                         : null
