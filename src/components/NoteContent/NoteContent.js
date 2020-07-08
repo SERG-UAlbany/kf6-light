@@ -68,17 +68,23 @@ class NoteContent extends Component {
             }, 1500)
         }
         else {
-
+            const topleft = { x: 1000, y: 1000 };
             let url = `${apiUrl}/links`;
             let config = {
                 headers: { Authorization: `Bearer ${this.state.token}` }
             };
             this.props.checkedNotes.forEach(note => {
+                const ref = this.props.viewLinks.filter((lnk) => lnk.to === note._id)[0]
+                topleft.x = Math.min(topleft.x, ref.data.x);
+                topleft.y = Math.min(topleft.y, ref.data.y);
+            })
+            this.props.checkedNotes.forEach(note => {
                 let noteId = note._id;
                 let query = {
                     "from": this.state.addView,
                     "to": noteId,
-                    "type": "contains"
+                    "type": "contains",
+                    'data': topleft
                 };
                 Axios.post(url, query, config).then(
                     res => {
@@ -188,7 +194,8 @@ const mapStateToProps = (state, ownProps) => {
     return {
         viewId: state.globals.viewId,
         views: state.globals.views,
-        checkedNotes: state.notes.checkedNotes
+        checkedNotes: state.notes.checkedNotes,
+        viewLinks: state.notes.viewLinks
     }
 }
 

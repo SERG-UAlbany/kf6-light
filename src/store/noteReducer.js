@@ -25,8 +25,8 @@ export const removeAnnotation = createAction('REMOVE_ANNOTATION')
 export const setViewNotes = createAction('SET_VIEW_NOTES')
 export const addViewNote = createAction('ADD_VIEW_NOTE')
 export const setCheckedNotes = createAction('SET_CHECKED_NOTES')
-
-const initState = {drawing: '', attachments: {}, viewNotes: {}, checkedNotes:[]}
+export const setViewLinks = createAction('SET_VIEW_LINKS')
+const initState = {drawing: '', attachments: {}, viewNotes: {}, checkedNotes:[], viewLinks:[]}
 
 export const noteReducer = createReducer(initState, {
     [addNote]: (notes, action) => {
@@ -111,6 +111,9 @@ export const noteReducer = createReducer(initState, {
     },
     [addViewNote]: (state, action) => {
         state.viewNotes[action.payload._id] = action.payload
+    },
+    [setViewLinks]: (state, action) => {
+        state.viewLinks = action.payload
     }
 });
 
@@ -346,6 +349,7 @@ export const fetchViewNotes = (viewId) => async (dispatch) => {
     const links = (await api.getLinks(viewId, 'from'))
           .filter(obj => (obj._to.type === "Note" && obj._to.title !== "" && obj._to.status === "active"))
 
+    dispatch(setViewLinks(links))
     const notes = await Promise.all(links.map((filteredObj) => api.getObject(filteredObj.to)))
     dispatch(setViewNotes(notes))
 }
