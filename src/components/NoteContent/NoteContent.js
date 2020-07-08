@@ -160,7 +160,7 @@ class NoteContent extends Component {
                             }
                         }
 
-                        return <>
+                        return (
                             <Row className="min-height-2 mrg-05 border rounded mrg-1-bot pd-1" key={i}>
                                 <Col>
                                     <Row>
@@ -180,8 +180,7 @@ class NoteContent extends Component {
                                     </Row>
                                 </Col>
                             </Row>
-
-                        </>
+                        )
                     }
                 )}
             </>

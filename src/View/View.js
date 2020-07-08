@@ -25,7 +25,6 @@ class View extends Component {
     to = [];
     myTempTo = [];
     hierarchyNote = [];
-    noteData1 = [];
     noteContnetNew = [];
     open = false;
 
@@ -41,7 +40,6 @@ class View extends Component {
         // this.myCommunityId = this.myState.communityId;
 
         this.state = {
-            viewLinks: [],
             showView: false,
             showCommunity: false,
             showContribution: false,
@@ -56,7 +54,6 @@ class View extends Component {
             filteredData: [],
             filter: 'title',
             scaffoldsTitle: [],
-            noteData: [],
             hideScaffold: true,
             bo: [],
         };
@@ -77,35 +74,8 @@ class View extends Component {
         this.showContent = this.showContent.bind(this)
 
         this.fetchSearchBuildsOn = this.fetchSearchBuildsOn.bind(this)
-        this.fetchNotes = this.fetchNotes.bind(this)
         this.fetchScaffolds = this.fetchScaffolds.bind(this)
         this.filterResults = this.filterResults.bind(this)
-    }
-
-    async fetchNotes() {
-        let links;
-        let noteData = [];
-        let note_promises;
-        // GET NOTES ID IN VIEW
-        await api.getLinks(this.props.viewId, 'from')
-            .then(result => {
-                links = result.filter(obj => (obj._to.type === "Note" && obj._to.title !== "" && obj._to.status === "active"))
-                note_promises = links.map(filteredObj => {
-                    return api.getObject(filteredObj.to)// GET NOTEDATA
-                        .then(result => noteData.push(result))
-                        .catch(error => console.log("Failed to get data for: ", filteredObj.to));
-                });
-                const sortedLinks = _.sortBy(links, (obj) => obj._to.modified).reverse();
-                this.setState({
-                    viewLinks: sortedLinks,
-                });
-            }).catch(error => console.log("Failed to get Links for viewId", sessionStorage.getItem('viewId')))
-
-        await Promise.all(note_promises) //Wait to fetch all notes
-        this.setState({
-            noteData: noteData,
-        });
-        this.noteData1 = noteData;
     }
 
     getBuildOnHierarchy() {
@@ -212,7 +182,6 @@ class View extends Component {
     componentDidMount() {
         if (this.props.viewId) {
             this.props.fetchViewCommunityData(this.props.viewId)
-            this.fetchNotes()
         }
         if (this.props.communityId) {
             this.fetchSearchBuildsOn()
@@ -227,7 +196,6 @@ class View extends Component {
     componentDidUpdate(prevProps, prevState) {
         if (this.props.viewId && this.props.viewId !== prevProps.viewId) {
             this.props.fetchViewCommunityData(this.props.viewId)
-            this.fetchNotes()
         }
 
         if (this.props.communityId && this.props.communityId !== prevProps.communityId) {
@@ -357,7 +325,7 @@ class View extends Component {
 
         if (isChecked) {
             let checkedNote = [];
-            let noteData = [...this.state.noteData];
+            let noteData = Object.values(this.props.viewNotes)//[...this.state.noteData];
             noteData.map((object) => {
                 if (object._id && object._id === id) {
                     checkedNote.push(object);
@@ -405,7 +373,7 @@ class View extends Component {
     filterNotes = (query) => {
         console.log("filterNotes", query);
         let filteredResults = [];
-        filteredResults = this.noteData1.filter(function (obj) {
+        filteredResults = Object.values(this.props.viewNotes).filter(function (obj) {
             if (obj.data && obj.data.English) {
                 // console.log("obj.data.English.includes(query._to.title);",obj.data.English.includes(query._to.title));
                 return obj.data.English.includes(query._to.title);
@@ -448,15 +416,16 @@ class View extends Component {
     filterResults(q) {
         const query = q || this.state.query
         let filteredResults = [];
+        const notes = Object.values(this.props.viewNotes)
         if (query || this.state.filter) {
             switch (this.state.filter) {
                 case "title":
-                    filteredResults = this.noteData1.filter(note => note.title.toLowerCase().includes(query.toLowerCase()));
+                    filteredResults = notes.filter(note => note.title.toLowerCase().includes(query.toLowerCase()));
                     
                     break;
 
                 case "content":
-                    filteredResults = this.noteData1.filter(function (obj) {
+                    filteredResults = notes.filter(function (obj) {
                         if (obj.data && obj.data.English) {
                             return obj.data.English.includes(query);
                         }
@@ -476,7 +445,7 @@ class View extends Component {
                             authors.push(obj._id);
                         }
                     });
-                    filteredResults = this.noteData1.filter(note => note.authors.some(author => authors.includes(author)))
+                    filteredResults = notes.filter(note => note.authors.some(author => authors.includes(author)))
 
                     break;
                 case "scaffold":
@@ -671,7 +640,7 @@ class View extends Component {
                                     </Row>
                                 })}
 
-                                {this.state.viewLinks.map((obj, i) => {
+                                {this.props.viewLinks.map((obj, i) => {
                                     return <Row key={i} value={obj.to} className="mrg-05-top">
                                         <Col>
                                             <Row className="indigo"> {obj._to.title}</Row>
@@ -778,7 +747,8 @@ const mapStateToProps = (state, ownProps) => {
         authors: state.users,
         scaffolds: state.scaffolds.items,
         viewNotes: state.notes.viewNotes,
-        checkedNotes: state.notes.checkedNotes
+        checkedNotes: state.notes.checkedNotes,
+        viewLinks: state.notes.viewLinks
     }
 }
 
