@@ -43,26 +43,19 @@ class View extends Component {
             query: "",
             filteredData: [],
             filter: 'title',
-            scaffoldsTitle: [],
             hideScaffold: true,
         };
 
         this.getBuildOnHierarchy = this.getBuildOnHierarchy.bind(this)
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-
         this.handleSubmitView = this.handleSubmitView.bind(this);
         this.handleChangeView = this.handleChangeView.bind(this);
-
         this.onCloseDialog = this.onCloseDialog.bind(this);
-
         this.onConfirmDrawDialog = this.onConfirmDrawDialog.bind(this);
-
         this.handleInputChange = this.handleInputChange.bind(this);
-
-
-        this.fetchScaffolds = this.fetchScaffolds.bind(this)
         this.filterResults = this.filterResults.bind(this)
+        this.getScaffoldSupports = this.getScaffoldSupports.bind(this)
     }
 
     getBuildOnHierarchy() {
@@ -89,47 +82,17 @@ class View extends Component {
         return final_h
     }
 
-    fetchScaffolds() {
-        //GET SCAFFOLDS
-        let scaffoldIds = [];
-        api.getCommunity(this.props.communityId).then(
-            res => {
-                scaffoldIds = res.data.scaffolds
-                let scaffolds = [];
-                // console.log("res", scaffoldIds);
-
-                scaffoldIds.forEach(id => {
-                    console.log("ids scaffold", id);
-
-                    let url = `${apiUrl}/links/from/` + id;
-                    let config = {
-                        headers: { Authorization: `Bearer ${this.props.token}` }
-                    };
-                    Axios.get(url, config)
-                        .then(
-                            result => {
-                                let scaffoldList = result.data;
-                                scaffoldList.forEach(element => {
-                                    scaffolds.push(element)
-                                })
-                            });
-                    console.log("scaffoldTitle", scaffolds);
-
-                });
-                this.setState({
-                    scaffoldsTitle: scaffolds,
-                });
-
-
-            });
+    getScaffoldSupports() {
+        let supports = []
+        this.props.scaffolds.forEach(scaffold => {
+            supports = [...supports, ...scaffold.supports]
+        })
+        return supports
     }
 
     componentDidMount() {
         if (this.props.viewId) {
             this.props.fetchViewCommunityData(this.props.viewId)
-        }
-        if (this.props.communityId) {
-            this.fetchScaffolds()
         }
         const viewId = this.props.match.params.viewId //Get viewId from url param
         this.props.setViewId(viewId)
@@ -140,10 +103,6 @@ class View extends Component {
     componentDidUpdate(prevProps, prevState) {
         if (this.props.viewId && this.props.viewId !== prevProps.viewId) {
             this.props.fetchViewCommunityData(this.props.viewId)
-        }
-
-        if (this.props.communityId && this.props.communityId !== prevProps.communityId) {
-            this.fetchScaffolds()
         }
     }
 
@@ -241,22 +200,9 @@ class View extends Component {
 
     filterNotes = (query) => {
         console.log("filterNotes", query);
-        let filteredResults = [];
-        filteredResults = Object.values(this.props.viewNotes).filter(function (obj) {
-            if (obj.data && obj.data.English) {
-                // console.log("obj.data.English.includes(query._to.title);",obj.data.English.includes(query._to.title));
-                return obj.data.English.includes(query._to.title);
-            }
-            else if (obj.data && obj.data.body) {
-                // console.log("obj.data.body.includes(query.to)", obj.data.body.includes(query.to));
-                return obj.data.body.includes(query.to);
-            }
-            return false
-        });
         this.setState({
-            filteredData: filteredResults,
+            filteredData: this.filterResults(query)
         });
-
     }
 
 
@@ -317,16 +263,8 @@ class View extends Component {
 
                     break;
                 case "scaffold":
-                    /* this.setState({
-                     *     hideScaffold: false,
-                     * }) */
-                    /* filteredResults = this.noteData1.filter(function (obj) {
-                     *     if (obj.data && obj.data.English) {
-                     *         console.log("IF obj.data.English", obj.data.English);
-                     *         return obj.data.English.includes(query);
-                     *     }
-                     *     return false
-                     * }); */
+                    const noteIds = this.props.supports.filter(support => support.from === query).map( support => support.to)
+                    filteredResults = notes.filter(note => noteIds.includes(note._id))
                     break;
 
                 default:
@@ -366,11 +304,12 @@ class View extends Component {
         /* const filteredResults = this.filterResults() */
         let scaffolds;
         if (showScffold) {
+            const supports = this.getScaffoldSupports()
             scaffolds = <Row>
                 <Col>
-                    {this.state.scaffoldsTitle.map((obj, i) => {
+                    {supports.map((obj, i) => {
                         return <Row key={i}>
-                            <Button variant='link' onClick={() => this.filterNotes(obj)} className="scaffold-text">{obj._to.title}</Button>
+                            <Button variant='link' onClick={() => this.filterNotes(obj.to)} className="scaffold-text">{obj._to.title}</Button>
                         </Row>
                     })}
                 </Col>
@@ -564,7 +503,8 @@ const mapStateToProps = (state, ownProps) => {
         viewNotes: state.notes.viewNotes,
         checkedNotes: state.notes.checkedNotes,
         viewLinks: state.notes.viewLinks,
-        buildsOn: state.notes.buildsOn
+        buildsOn: state.notes.buildsOn,
+        supports: state.notes.supports
     }
 }
 

@@ -28,7 +28,8 @@ export const setCheckedNotes = createAction('SET_CHECKED_NOTES')
 export const updateCheckedNotes = createAction('UPDATE_CHECKED_NOTES')
 export const setViewLinks = createAction('SET_VIEW_LINKS')
 export const setBuildsOn = createAction('SET_BUILDS_ON')
-const initState = {drawing: '', attachments: {}, viewNotes: {}, checkedNotes:[], viewLinks:[], buildsOn: []}
+export const setSupports = createAction('SET_SUPPORTS')
+const initState = {drawing: '', attachments: {}, viewNotes: {}, checkedNotes:[], viewLinks:[], buildsOn: [], supports: []}
 
 export const noteReducer = createReducer(initState, {
     [addNote]: (notes, action) => {
@@ -126,6 +127,9 @@ export const noteReducer = createReducer(initState, {
     },
     [setBuildsOn]: (state, action) => {
         state.buildsOn = action.payload
+    },
+    [setSupports]: (state, action) => {
+        state.supports = action.payload
     }
 });
 
@@ -378,4 +382,9 @@ export const fetchBuildsOn = (communityId) => async (dispatch) => {
             (obj._to.type === "Note" && obj._to.status === "active" && obj._from.type === "Note" && obj._from.status === "active")
     )
     dispatch(setBuildsOn(filteredBuildOn))
+}
+
+export const fetchSupports = (communityId) => async (dispatch) => {
+    let supports = await api.linksSearch(communityId, { "type": "supports" })
+    dispatch(setSupports(supports))
 }
