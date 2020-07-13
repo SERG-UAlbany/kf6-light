@@ -44,7 +44,10 @@ export const createRiseAbove = (view, communityId, author, notes) => dispatch =>
         api.postContribObject(communityId, note).then(noteResponse => {
             console.log("noteResponse", noteResponse);
             riseAboveNoteId = noteResponse._id;
-            noteResponse.data.riseabove = { viewId };
+            noteResponse.data = {
+                body: "",
+                riseabove: { viewId: `${riseAboveId}` }
+            }
             noteResponse.status = "active";
             noteResponse.title = "Riseabove"
             console.log("noteResponse noteResponse", noteResponse);
