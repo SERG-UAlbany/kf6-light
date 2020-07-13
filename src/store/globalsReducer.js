@@ -47,7 +47,6 @@ export const globalsReducer = createReducer(initState, {
     },
     [setCommunityId]: (state, action) => {
         state.communityId = action.payload
-        console.log("communityId from Global", state.communityId);
     },
     [setViewId]: (state, action) => {
         state.viewId = action.payload
