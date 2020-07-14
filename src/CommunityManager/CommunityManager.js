@@ -38,7 +38,7 @@ class CommunityManager extends Component {
 
         //REGISTER NEW COMMUNITY TO AUTHOR
         let registerUrl = `${apiUrl}/authors`;
-        let data = { "communityId": this.props.communityId, "registrationKey": this.state.password, "userId": this.props.userId };
+        let data = { "communityId": this.state.communityId, "registrationKey": this.state.password, "userId": this.props.userId };
         let config = {
             headers: { Authorization: `Bearer ${this.props.token}` }
         };
@@ -70,9 +70,6 @@ class CommunityManager extends Component {
                         this.setState({
                             communityId : communityId,
                         })
-
-                        //SET VISIBLE COMMUNITYID
-                        this.props.setCommunityId(communityId);
                     }
                 }).catch(
                     error => {
@@ -170,10 +167,7 @@ class CommunityManager extends Component {
 const mapStateToProps = (state, ownProps) => {
     return {
         token: state.globals.token,
-        userId: state.globals.userId,
-        communityId: state.globals.communityId,
-        viewId: state.globals.viewId,
-        view: state.globals.view,
+        userId: state.globals.userId
     }
 }
 
