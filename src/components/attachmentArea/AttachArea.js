@@ -55,7 +55,11 @@ const AttachArea = props => {
             setSelectedImgs((imgs) => [...imgs, attId])
         }
     }
-    const deleteAttachment = () => {}
+    const deleteAttachment = (attId) => {
+        if (window.confirm('Are you sure to delete the attachment?')) {
+            props.onAttachDelete(attId)
+        }
+    }
     return (
         <Col>
             <Row>
@@ -90,7 +94,7 @@ const AttachArea = props => {
                                         </a>
                                     </p>
                                     <p>
-                                        <button className="delete-attachment" onClick={deleteAttachment}>
+                                        <button className="delete-attachment" onClick={() => deleteAttachment(attachment._id)}>
                                             <img src={`${serverUrl}/manual_assets/kf6images/trash.png`} alt='Delete attachment' width="10px" height="15px"/>
                                         </button>
                                     </p>

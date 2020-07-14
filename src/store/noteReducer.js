@@ -56,9 +56,10 @@ export const noteReducer = createReducer(initState, {
         note.attachments.push(action.payload.attachment._id)
         state.attachments[action.payload.attachment._id] = action.payload.attachment
     },
-    [removeAttachment]: (notes, action) => {
-        let note = notes[action.payload.noteId]
-        note.attachments = note.attachments.filter((att) => att.id !== action.payload.attId)
+    [removeAttachment]: (state, action) => {
+        let note = state[action.payload.noteId]
+        note.attachments = note.attachments.filter((att) => att !== action.payload.attId)
+        delete state.attachments[action.payload.attId]
     },
     [setAttachments]: (state, action) => {
         let note = state[action.payload.contribId]
@@ -264,8 +265,10 @@ export const postContribution = (contribId, dialogId) => async (dispatch, getSta
         dispatch(fetchLinks(contribId, 'to'))
 
         const text = jq.html()
+        const prev_text = contrib.data.body
         contrib.data.body = text
         const newNote = await api.putObject(contrib, contrib.communityId, contrib._id)
+        newNote.data.body = prev_text
         dispatch(editNote(newNote))
         dispatch(addViewNote(newNote))
         if (dialogId !== undefined)
@@ -370,7 +373,18 @@ export const fetchViewNotes = (viewId) => async (dispatch) => {
 
     dispatch(setViewLinks(links))
     const notes = await Promise.all(links.map((filteredObj) => api.getObject(filteredObj.to)))
+
     dispatch(setViewNotes(notes))
+    notes.forEach(async note => {
+        const toLinks = (await api.getLinks(note._id, 'to')).filter((lnk) => lnk.type === 'supports')
+        if (toLinks.length > 0){
+            const noteBody = preProcess(note.data.body, toLinks, [])
+            let new_note = {...note}
+            new_note.data = {...note.data}
+            new_note.data.body = noteBody
+            dispatch(addViewNote(new_note))
+        }
+    })
 }
 
 
@@ -387,4 +401,13 @@ export const fetchBuildsOn = (communityId) => async (dispatch) => {
 export const fetchSupports = (communityId) => async (dispatch) => {
     let supports = await api.linksSearch(communityId, { "type": "supports" })
     dispatch(setSupports(supports))
+}
+
+export const deleteAttachment = (contribId, attId) => async (dispatch, getState) => {
+    const state = getState()
+    let contrib = state.notes[contribId]
+    const att_link = contrib.fromLinks.filter((lnk) => lnk.to === attId)[0]
+    await api.deleteLink(att_link._id)
+    dispatch(removeAttachment({attId, noteId: contribId}))
+    dispatch(fetchLinks(contribId, 'from'))
 }

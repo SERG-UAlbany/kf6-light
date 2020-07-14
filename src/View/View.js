@@ -343,27 +343,27 @@ class View extends Component {
 
 
                             {/* <Toolbar></Toolbar>*/}
-                            <Col md="12" sm="2" xs="2">
+                            {/* <Col md="12" sm="2" xs="2">
                                 <DropdownButton drop="right" variant="outline-info" title={<i className="fa fa-pencil"></i>}>
 
                                 </DropdownButton>
-                            </Col>
-                            <Col md="12" sm="2" xs="2">
+                                </Col>
+                                <Col md="12" sm="2" xs="2">
                                 <DropdownButton drop="right" variant="outline-info" title={<i className="fas fa-file"></i>}>
 
                                 </DropdownButton>
-                            </Col>
-                            <Col md="12" sm="2" xs="2">
+                                </Col>
+                                <Col md="12" sm="2" xs="2">
                                 <DropdownButton drop="right" variant="outline-info" title={<i className="fas fa-hammer"></i>}>
 
                                 </DropdownButton>
-                            </Col>
+                                </Col>
 
-                            <Col md="12" sm="2" xs="2">
+                                <Col md="12" sm="2" xs="2">
                                 <DropdownButton drop="right" variant="outline-info" title={<i className="fas fa-edit"></i>}>
 
                                 </DropdownButton>
-                            </Col>
+                                </Col> */}
 
                         </Row>
                     </Col>
@@ -377,6 +377,7 @@ class View extends Component {
                                 <Col md="8">
                                     <FormGroup>
                                         <Input
+                                            value={this.state.query}
                                             placeholder="Search Your Note"
                                             onChange={this.handleInputChange}
                                         />

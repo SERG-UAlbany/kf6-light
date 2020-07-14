@@ -76,7 +76,6 @@ class SignUp extends Component {
 
   render() {
     const siteKey = "6LfcR60ZAAAAALR4zc7tMUf8g_et0e1LIVM8oEv_";
-    const copySecretKey = "6LfcR60ZAAAAAAivWWevSsTC-Lv2-m8E8Vm9uw0x";
     const recaptcha = <Recaptcha
       sitekey={siteKey}
       render="explicit"

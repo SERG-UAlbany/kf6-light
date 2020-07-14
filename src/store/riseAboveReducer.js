@@ -1,8 +1,5 @@
 import { createAction, createReducer } from '@reduxjs/toolkit';
 import * as api from './api.js'
-import { addNotification } from './notifier.js'
-import { dateFormatOptions } from './globalsReducer.js'
-import { error } from 'jquery';
 
 export const addNote = createAction('ADD_NOTE')
 const initState = {

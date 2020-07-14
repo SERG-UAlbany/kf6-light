@@ -15,9 +15,6 @@ class CommunityManager extends Component {
             communitites: [],
             password: '',
             token: sessionStorage.getItem("token"),
-            // communityId: '',
-            // userId: sessionStorage.getItem("userId"),
-            // token: sessionStorage.getItem("token"),
             registrations: [],
             success: false,
         };
@@ -34,8 +31,6 @@ class CommunityManager extends Component {
         this.setState({
             [name]: value
         });
-        console.log("Contribution state",this.state);
-        
     }
 
     handleSubmit(e) {
@@ -43,7 +38,7 @@ class CommunityManager extends Component {
 
         //REGISTER NEW COMMUNITY TO AUTHOR
         let registerUrl = `${apiUrl}/authors`;
-        let data = { "communityId": this.props.communityId, "registrationKey": this.state.password, "userId": this.props.userId };
+        let data = { "communityId": this.state.communityId, "registrationKey": this.state.password, "userId": this.props.userId };
         let config = {
             headers: { Authorization: `Bearer ${this.props.token}` }
         };
@@ -75,9 +70,6 @@ class CommunityManager extends Component {
                         this.setState({
                             communityId : communityId,
                         })
-
-                        //SET VISIBLE COMMUNITYID
-                        this.props.setCommunityId(communityId);
                     }
                 }).catch(
                     error => {
@@ -102,9 +94,6 @@ class CommunityManager extends Component {
 
     enterCommunity(myCommunity) {
         let communityId = myCommunity.obj.communityId;
-        console.log("CommunityId", communityId);
-        console.log("viewId", this.props.viewId);
-        console.log("token", this.props.token);
         // SET COMMUNITYID
         sessionStorage.setItem('communityId', myCommunity.obj.communityId);
         this.props.setCommunityId(communityId);
@@ -126,11 +115,6 @@ class CommunityManager extends Component {
 
                     // SET VIEWID
                     sessionStorage.setItem('viewId',welcomeId);
-                    this.props.setViewId(welcomeId);
-                    this.props.fetchView(welcomeId);
-                    this.props.setView(result.data[0]);
-                    //SET VIEWS
-                    this.props.setViews(views);
                     //NAVIGATE TO VIEW
                     this.props.history.push({ pathname: `/view/${welcomeId}`});
                 }).catch(
@@ -183,10 +167,7 @@ class CommunityManager extends Component {
 const mapStateToProps = (state, ownProps) => {
     return {
         token: state.globals.token,
-        userId: state.globals.userId,
-        communityId: state.globals.communityId,
-        viewId: state.globals.viewId,
-        view: state.globals.view,
+        userId: state.globals.userId
     }
 }
 

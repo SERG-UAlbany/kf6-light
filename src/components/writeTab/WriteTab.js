@@ -15,6 +15,7 @@ class WriteTab extends React.Component {
         this.onNewAttachmentClick = this.onNewAttachmentClick.bind(this);
         this.closeAttachPanel = this.closeAttachPanel.bind(this);
         this.onNewInlineAttach = this.onNewInlineAttach.bind(this);
+        this.onAttachDelete = this.onAttachDelete.bind(this)
     }
 
     onScaffoldSelected(tagCreator, initialText){
@@ -29,6 +30,9 @@ class WriteTab extends React.Component {
     }
     closeAttachPanel()  {
         this.setState({attachPanel: false})
+    }
+    onAttachDelete(attachId) {
+        this.props.onChange({deleteAttach: attachId})
     }
     render() {
         const {note, onChange, onEditorSetup} = this.props;
@@ -64,6 +68,7 @@ class WriteTab extends React.Component {
                             attachments={note.attachments}
                             onNewAttachClick={this.onNewAttachmentClick}
                             onNewInlineAttach={this.onNewInlineAttach}
+                            onAttachDelete={this.onAttachDelete}
                         >
                         </AttachArea>
                     </Row>

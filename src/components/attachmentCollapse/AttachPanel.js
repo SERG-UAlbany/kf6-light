@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Modal, Button, Form, ProgressBar} from 'react-bootstrap'
 import { addNotification } from '../../store/notifier.js'
-import { fetchAttachments } from '../../store/noteReducer.js'
+import { fetchAttachments, fetchLinks } from '../../store/noteReducer.js'
 import { FileDrop } from 'react-file-drop';
 import {url as serverUrl} from '../../store/api.js'
 import './AttachPanel.css'
@@ -76,6 +76,7 @@ const AttachPanel = props => {
 
             await postLink(props.noteId, attachment._id, 'attach')
             //TODO updateFromConnections
+            dispatch(fetchLinks(props.noteId, 'from'))
             if (props.inlineAttach){
                 const data_mce_src = `${serverUrl}${newAttachment.data.url}`;
                 const title = newAttachment.title;
@@ -89,10 +90,8 @@ const AttachPanel = props => {
                     html += `<img src="${serverUrl}/manual_assets/kf6images/03-toolbar-attachment.png" alt="` + title + '">' + title + '</a>';
                 }
                 props.onNewInlineAttach(html)
-            } else {
-                dispatch(fetchAttachments(props.noteId))
             }
-
+            dispatch(fetchAttachments(props.noteId))
             //TODO googledrive
             /* if(newAttachment.data.type.indexOf('video') === 0 && $community.isPluginEnabled('googledrive')){
              *     $scope.save2GoogleDrive(userName, newAttachment);
