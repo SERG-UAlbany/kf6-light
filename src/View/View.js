@@ -4,7 +4,6 @@ import { DropdownButton, Dropdown, Button, Row, Col, Modal } from 'react-bootstr
 import { Form, FormGroup, Label, Input } from 'reactstrap';
 import Axios from 'axios';
 import { apiUrl } from '../store/api.js';
-import * as api from '../store/api.js';
 import { newNote, openContribution, setCheckedNotes } from '../store/noteReducer.js'
 import { connect } from 'react-redux'
 import DialogHandler from '../components/dialogHandler/DialogHandler.js'
@@ -263,7 +262,7 @@ class View extends Component {
 
                     break;
                 case "scaffold":
-                    const noteIds = this.props.supports.filter(support => support.from === query).map( support => support.to)
+                    const noteIds = this.props.supports.filter(support => support.from === query).map(support => support.to)
                     filteredResults = notes.filter(note => noteIds.includes(note._id))
                     break;
 
@@ -397,9 +396,9 @@ class View extends Component {
                         </Form>
                         {scaffolds}
                         {this.state.query === "" && !showScffold ?
-                         ( <ListOfNotes notes={this.props.viewNotes} hierarchy={hierarchy}/>)
-                        :
-                         ( <ListOfNotes notes={this.props.viewNotes} noteLinks={this.state.filteredData}/> )
+                            (<ListOfNotes notes={this.props.viewNotes} hierarchy={hierarchy} />)
+                            :
+                            (<ListOfNotes notes={this.props.viewNotes} noteLinks={this.state.filteredData} />)
                         }
                     </Col>
 

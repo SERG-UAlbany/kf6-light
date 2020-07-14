@@ -4,8 +4,9 @@ import { connect } from 'react-redux'
 import Axios from 'axios'
 import { Container, Col, Form, FormGroup, Label, Input, Button } from 'reactstrap'
 
-import { url, setToken } from '../store/api.js'
+import { url, setToken, setServer } from '../store/api'
 import { setGlobalToken, fetchLoggedUser } from '../store/globalsReducer'
+import { result } from 'lodash'
 
 class Login extends Component {
     constructor(props) {
@@ -13,7 +14,34 @@ class Login extends Component {
 
         this.state = {
             userName: '',
-            password: ''
+            password: '',
+            server: "https://kf6.ikit.org",
+            servers: [
+                {
+                    id: 0,
+                    key: "kf6.ikit.org",
+                    value: "https://kf6.ikit.org"
+
+                },
+                {
+                    id: 1,
+                    key: "kf6-stage.ikit.org",
+                    value: "https://kf6-stage.ikit.org"
+
+                },
+                {
+                    id: 2,
+                    key: "kf6-stage.rit.albany.edu",
+                    value: "https://kf6-stage.rit.albany.edu"
+
+                },
+                {
+                    id: 3,
+                    key: "localHost 9000",
+                    value: "http://localhost:9000"
+
+                },
+            ]
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -30,31 +58,39 @@ class Login extends Component {
         });
     }
 
-    handleSubmit(e) {
+    handleSubmit = async (e) => {
         e.preventDefault();
         let token = '';
+        let loginObj = {};
+        loginObj.userName = this.state.userName;
+        loginObj.password = this.state.password;
 
-        //LOGIN RETURNS TOKEN
-        Axios.post(`${url}/auth/local`, this.state)
-            .then((response) => {
-                token = response.data.token;
+        //SET SERVER IN API
+        let result = await setServer(this.state.server);
+        if (result) {
+            Axios.post(`${url}/auth/local`, loginObj)
+                .then((response) => {
+                    token = response.data.token;
 
-                //SET TOKEN
-                sessionStorage.setItem('token', token);
-                this.props.setGlobalToken(token);
-                /* this.props.setIsAuthenticated(); */
-                setToken(token); //set token on api header
-                this.props.fetchLoggedUser()
-                //NAVIGATE TO COMMUNITY MANAGER
-                this.props.history.push("/community-manager");
-            })
-            .catch((error) => {
-                if (error.message) {
-                    alert("Please enter Valid username and password");
+                    //SET TOKEN
+                    sessionStorage.setItem('token', token);
+                    this.props.setGlobalToken(token);
+                    /* this.props.setIsAuthenticated(); */
+                    setToken(token); //set token on api header
+                    this.props.fetchLoggedUser()
+                    //NAVIGATE TO COMMUNITY MANAGER
+                    this.props.history.push("/community-manager");
+                })
+                .catch((error) => {
+                    if (error.message) {
+                        alert("Please enter Valid username and password");
+                    }
                 }
-            }
 
-            );
+                );
+        }
+
+
     }
 
     render() {
@@ -75,6 +111,17 @@ class Login extends Component {
                             <FormGroup>
                                 <Label htmlFor="password">Password</Label>
                                 <Input type="password" id="password" placeholder="Enter Password" name="password" value={this.state.password} onChange={this.handleChange} />
+                            </FormGroup>
+                        </Col>
+                        <Col>
+                            <FormGroup>
+                                <Label>Server</Label>
+                                <Input type="select" id="server" name="server" value={this.state.server} onChange={this.handleChange} >
+                                    {this.state.servers.map((server) => {
+                                        return <option key={server.key} value={server.value}>{server.key}</option>
+                                    })}
+
+                                </Input>
                             </FormGroup>
                         </Col>
                         <Col className="mrg-1-top">

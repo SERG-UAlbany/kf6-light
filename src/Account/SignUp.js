@@ -120,7 +120,7 @@ class SignUp extends Component {
               </FormGroup>
             </Col>
             <Col className="mrg-2-top mrg-105-bot">
-                {recaptcha}
+              {recaptcha}
             </Col>
             <Col>
               <Button className="" disabled={!this.state.isVerified}>New Account</Button>

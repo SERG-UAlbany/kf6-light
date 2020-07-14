@@ -6,6 +6,7 @@ import Axios from 'axios';
 
 import './NoteContent.css';
 import { apiUrl } from '../../store/api.js';
+import * as api from '../../store/api.js';
 import { openContribution, updateCheckedNotes } from '../../store/noteReducer'
 import { createRiseAbove } from '../../store/riseAboveReducer'
 
@@ -25,11 +26,11 @@ class NoteContent extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
 
         this.handleRiseAbove = this.handleRiseAbove.bind(this);
+        this.getRiseAboveData = this.getRiseAboveData.bind(this);
 
     }
 
     componentDidMount() {
-
         //SET HEADER WITH TOKEN BEARER
         var config = {
             headers: { Authorization: `Bearer ${this.state.token}` }
@@ -133,6 +134,23 @@ class NoteContent extends Component {
         this.props.openContribution(contribId);
     }
 
+    //GET RISEABOVE DATA
+    getRiseAboveData = (riseAboveLink) => {
+        let noteLinks = [];
+        let riseAboveNotes = [];
+        api.getLinks(riseAboveLink, 'from', 'contains').then(res => {
+            noteLinks = res;
+            console.log("noteLinks", noteLinks);
+            noteLinks.forEach(noteLink => {
+                let note = {};
+                note._id = noteLink.to;
+                note.title = noteLink._to.title;
+                riseAboveNotes.push(note);
+            });
+        })
+        console.log("return", riseAboveNotes);
+        return riseAboveNotes;
+    }
     render() {
 
         return (
@@ -172,7 +190,17 @@ class NoteContent extends Component {
                 {this.props.checkedNotes.map(
                     (obj, i) => {
                         let data;
+                        let riseAboveNotes;
 
+                        if (obj.data && obj.data.riseabove) {
+                            let riseAboveLink = obj.data.riseabove.viewId;
+                            let notes = this.getRiseAboveData(riseAboveLink);
+                            riseAboveNotes = <Row>
+                                <Col>
+                                    {notes}
+                                </Col>
+                            </Row>
+                        }
                         if (this.props.query && obj.data.English) {
                             let innerHTML = obj.data.English;
                             let index = innerHTML.indexOf(this.props.query);
@@ -185,6 +213,8 @@ class NoteContent extends Component {
                             if (index >= 0) {
                                 data = innerHTML.substring(0, index) + "<span class='highlight'>" + innerHTML.substring(index, index + this.props.query.length) + "</span>" + innerHTML.substring(index + this.props.query.length);
                             }
+                        } else {
+                            data = obj.data.English ? obj.data.English : obj.data.body;
                         }
 
                         return (
@@ -201,9 +231,11 @@ class NoteContent extends Component {
                                     </Row>
                                     <Row>
                                         <Col>
+                                            {/* <Content openNote={this.openNote} content={data} riseAboveNotes={riseAboveNotes} /> */}
                                             <span className="pd-1" dangerouslySetInnerHTML={{ __html: data ? (data) : (obj.data.English ? obj.data.English : obj.data.body) }} />
                                         </Col>
                                     </Row>
+                                    {riseAboveNotes}
                                     <Row>
                                         <Col>
                                             <Button className="float-right mrg-1-left" variant="outline-info" onClick={() => this.props.buildOn(obj._id)}>BuildOn</Button>
