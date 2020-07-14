@@ -73,7 +73,7 @@ export const deleteLink = async (linkId) => {
 }
 
 export const linksSearch = async (communityId, query) => {
-    return (await axios.post(`${apiUrl}/links/${communityId}/search`, { "query": query})).data
+    return (await axios.post(`${apiUrl}/links/${communityId}/search`, { "query": query })).data
 }
 
 //Object
@@ -132,6 +132,10 @@ export const uploadFile = (file, onProgress) => {
         },
         onUploadProgress: onProgress,
     })
+}
+
+export const getLinkForObj = (objId) => {
+    return axios.get(`${apiUrl}/links/either/${objId}`)
 }
 
 // export default {url, apiUrl, postContribution, getCommunity,

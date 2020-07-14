@@ -7,6 +7,7 @@ import Axios from 'axios';
 import './NoteContent.css';
 import { apiUrl } from '../../store/api.js';
 import { openContribution, updateCheckedNotes } from '../../store/noteReducer'
+import { createRiseAbove } from '../../store/riseAboveReducer'
 
 class NoteContent extends Component {
     noteList = [];
@@ -22,6 +23,8 @@ class NoteContent extends Component {
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+
+        this.handleRiseAbove = this.handleRiseAbove.bind(this);
 
     }
 
@@ -106,6 +109,26 @@ class NoteContent extends Component {
 
     }
 
+    handleRiseAbove = (e) => {
+        let noOfNotes = this.props.checkedNotes.length;
+        //IF CHECKED NOTES
+        if (noOfNotes > 0) {
+            let confirmation = window.confirm("Are you sure to create riseabove using the selected " + noOfNotes + " object(s)?");
+            if (!confirmation) {
+                return;
+            }
+            //CREATE RISEABOVE
+            let view = this.props.view;
+            let communityId = this.props.communityId;
+            console.log("Communityid", communityId);
+            let author = this.props.author._id;
+            let notes = this.props.checkedNotes;
+            this.props.createRiseAbove(view, communityId, author, notes);
+        } else {
+            alert("Please select at least 1 note to create RiseAbove");
+        }
+    }
+
     openNote = (contribId) => {
         this.props.openContribution(contribId);
     }
@@ -116,7 +139,7 @@ class NoteContent extends Component {
             <>
                 <Form className="mrg-1-top">
                     <Row>
-                        <Col md="8">
+                        <Col md="6">
                             <FormGroup>
                                 {/* <Label>Select Community</Label> */}
                                 <Input type="select" name="viewId" onChange={this.handleChange}>{
@@ -127,8 +150,12 @@ class NoteContent extends Component {
                             </FormGroup>
                         </Col>
 
-                        <Col md="4">
+                        <Col md="3">
                             <Button onClick={this.handleSubmit} >Add to View</Button>
+                        </Col>
+
+                        <Col md="3">
+                            <Button onClick={this.handleRiseAbove} >create RiseAbove</Button>
                         </Col>
                     </Row>
                     <Row>
@@ -167,7 +194,7 @@ class NoteContent extends Component {
                                         <Col md="10" className="pd-1 primary-800 font-weight-bold">{obj.title}</Col>
                                         <Col md="2">
                                             <Button variant="outline-secondary" className="circular-border float-right"
-                                                    onClick={() => this.props.updateCheckedNotes({checked: false, noteId: obj._id})}>
+                                                onClick={() => this.props.updateCheckedNotes({ checked: false, noteId: obj._id })}>
                                                 <i className="fas fa-times"></i>
                                             </Button>
                                         </Col>
@@ -199,14 +226,18 @@ const mapStateToProps = (state, ownProps) => {
     return {
         viewId: state.globals.viewId,
         views: state.globals.views,
+        view: state.globals.view,
         checkedNotes: state.notes.checkedNotes.map(noteId => viewNotes[noteId]),
-        viewLinks: state.notes.viewLinks
+        viewLinks: state.notes.viewLinks,
+        author: state.globals.author,
+        communityId: state.globals.communityId
     }
 }
 
 const mapDispatchToProps = {
     openContribution,
-    updateCheckedNotes
+    updateCheckedNotes,
+    createRiseAbove
 }
 
 export default connect(
