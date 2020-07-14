@@ -8,7 +8,7 @@ import Annotator from '../annotator/Annotator'
 import { connect } from 'react-redux'
 import {editNote, removeDrawing, editSvgDialog, setAnnotationsLoaded,
         fetchAttachments, setWordCount, fetchRecords,
-        createAnnotation, deleteAnnotation, modifyAnnotation} from '../../store/noteReducer.js'
+        createAnnotation, deleteAnnotation, modifyAnnotation, deleteAttachment} from '../../store/noteReducer.js'
 import {openDrawDialog} from '../../store/dialogReducer.js'
 import { scaffoldWordCount } from '../../store/kftag.service.js'
 import { dateFormatOptions, fetchCommGroups } from '../../store/globalsReducer.js'
@@ -41,6 +41,9 @@ class Note extends React.Component {
             this.addSupport(true, initialText, tagCreator)
         }else if (note.attach){
             this.editor.insertContent(note.attach)
+        }else if (note.deleteAttach){
+            this.props.deleteAttachment(this.props.noteId, note.deleteAttach)
+            this.editor.dom.remove(this.editor.dom.select('.' + note.deleteAttach))
         }
         else{
             this.props.editNote({_id: this.props.noteId, ...note})
@@ -173,7 +176,8 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = { editNote, openDrawDialog, setWordCount,
                              removeDrawing, editSvgDialog, fetchAttachments, fetchRecords,
-                             deleteAnnotation, fetchCommGroups, createAnnotation, modifyAnnotation, setAnnotationsLoaded}
+                             deleteAnnotation, fetchCommGroups, createAnnotation, modifyAnnotation,
+                             setAnnotationsLoaded, deleteAttachment}
 
 export default connect(
     mapStateToProps,

@@ -4,7 +4,6 @@ import { DropdownButton, Dropdown, Button, Row, Col, Modal } from 'react-bootstr
 import { Form, FormGroup, Label, Input } from 'reactstrap';
 import Axios from 'axios';
 import { apiUrl } from '../store/api.js';
-import * as api from '../store/api.js';
 import { newNote, openContribution, setCheckedNotes } from '../store/noteReducer.js'
 import { connect } from 'react-redux'
 import DialogHandler from '../components/dialogHandler/DialogHandler.js'
