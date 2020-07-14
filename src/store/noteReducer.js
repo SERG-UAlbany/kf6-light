@@ -264,8 +264,10 @@ export const postContribution = (contribId, dialogId) => async (dispatch, getSta
         dispatch(fetchLinks(contribId, 'to'))
 
         const text = jq.html()
+        const prev_text = contrib.data.body
         contrib.data.body = text
         const newNote = await api.putObject(contrib, contrib.communityId, contrib._id)
+        newNote.data.body = prev_text
         dispatch(editNote(newNote))
         dispatch(addViewNote(newNote))
         if (dialogId !== undefined)
@@ -370,7 +372,18 @@ export const fetchViewNotes = (viewId) => async (dispatch) => {
 
     dispatch(setViewLinks(links))
     const notes = await Promise.all(links.map((filteredObj) => api.getObject(filteredObj.to)))
+
     dispatch(setViewNotes(notes))
+    notes.forEach(async note => {
+        const toLinks = (await api.getLinks(note._id, 'to')).filter((lnk) => lnk.type === 'supports')
+        if (toLinks.length > 0){
+            const noteBody = preProcess(note.data.body, toLinks, [])
+            let new_note = {...note}
+            new_note.data = {...note.data}
+            new_note.data.body = noteBody
+            dispatch(addViewNote(new_note))
+        }
+    })
 }
 
 

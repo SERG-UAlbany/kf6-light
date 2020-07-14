@@ -15,9 +15,6 @@ class CommunityManager extends Component {
             communitites: [],
             password: '',
             token: sessionStorage.getItem("token"),
-            // communityId: '',
-            // userId: sessionStorage.getItem("userId"),
-            // token: sessionStorage.getItem("token"),
             registrations: [],
             success: false,
         };
@@ -34,8 +31,6 @@ class CommunityManager extends Component {
         this.setState({
             [name]: value
         });
-        console.log("Contribution state",this.state);
-        
     }
 
     handleSubmit(e) {
@@ -102,9 +97,6 @@ class CommunityManager extends Component {
 
     enterCommunity(myCommunity) {
         let communityId = myCommunity.obj.communityId;
-        console.log("CommunityId", communityId);
-        console.log("viewId", this.props.viewId);
-        console.log("token", this.props.token);
         // SET COMMUNITYID
         sessionStorage.setItem('communityId', myCommunity.obj.communityId);
         this.props.setCommunityId(communityId);
@@ -126,10 +118,10 @@ class CommunityManager extends Component {
 
                     // SET VIEWID
                     sessionStorage.setItem('viewId',welcomeId);
-                    this.props.setViewId(welcomeId);
-                    this.props.fetchView(welcomeId);
-                    //SET VIEWS
-                    this.props.setViews(views);
+                    /* this.props.setViewId(welcomeId);
+                     * this.props.fetchView(welcomeId);
+                     * //SET VIEWS
+                     * this.props.setViews(views); */
                     //NAVIGATE TO VIEW
                     this.props.history.push({ pathname: `/view/${welcomeId}`});
                 }).catch(

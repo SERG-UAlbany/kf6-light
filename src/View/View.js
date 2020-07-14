@@ -378,6 +378,7 @@ class View extends Component {
                                 <Col md="8">
                                     <FormGroup>
                                         <Input
+                                            value={this.state.query}
                                             placeholder="Search Your Note"
                                             onChange={this.handleInputChange}
                                         />
