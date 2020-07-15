@@ -297,6 +297,10 @@ class View extends Component {
         this.open = value;
     }
 
+    goToCommunityManager = () => {
+        this.props.history.push("/community-manager");
+    }
+
     render() {
         const showScffold = !this.hideScaffold && this.state.filter === "scaffold";
         const hierarchy = this.getBuildOnHierarchy()
@@ -334,11 +338,10 @@ class View extends Component {
                                     <Dropdown.Item onClick={() => this.newView()}>
                                         new View
                                         </Dropdown.Item>
-
-                                    <Dropdown.Item onClick={() => this.newRiseAbove()}>
-                                        New RiseAbove
-                                        </Dropdown.Item>
                                 </DropdownButton>
+                            </Col>
+                            <Col md="12" sm="2" xs="2">
+                                <Button onClick={this.goToCommunityManager} className="circle-button" variant="outline-info"><i className="fa fa-arrow-left"></i></Button>
                             </Col>
 
 
