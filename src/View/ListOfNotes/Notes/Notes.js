@@ -25,16 +25,6 @@ class Notes extends Component {
             if (riseAboveData) { riseAboveData = Object.keys(riseAboveData).map(i => riseAboveData[i]) }
             console.log("Riseeeeeeee", riseAboveData);
             return riseAboveData
-
-            // if (riseAboveData && riseAboveData.length > 0) {
-            //     console.log("At keast going ing if");
-            //     riseAboveNotes = <Row> hey
-            //         {riseAboveData.map((note, i) => {
-            //         console.log("MAP MAP");
-            //         return <Col>{note.title}</Col>
-            //     })}
-            //     </Row>
-            // }
         }
     }
 
@@ -94,11 +84,11 @@ class Notes extends Component {
                                                         return <Row className="pd-05">
                                                             <Col md="10">{note.title}</Col>
                                                             <Col md="2">
-                                                                {/* <Form className="mrg-1-min pd-2-right">
+                                                                <Form className="mrg-1-min pd-2-right">
                                                                     <FormGroup>
-                                                                        <Input type="checkbox" checked={this.props.isChecked} ref={note._id} onChange={e => this.checkNote(e, note._id)} />
+                                                                        <Input type="checkbox" checked={this.props.isRiseAboveChecked} ref={note._id} onChange={e => this.checkNote(e, note._id)} />
                                                                     </FormGroup>
-                                                                </Form> */}
+                                                                </Form>
                                                             </Col>
                                                         </Row>
                                                     })}
@@ -107,6 +97,13 @@ class Notes extends Component {
                                         </Col>
                                     </Row>
                                 </div>
+                                {/* {riseAboveNotes.map((note, i) => {
+                                    return <Row>
+                                        <Col>
+                                            <ListOfNotes notes={note}></ListOfNotes>
+                                        </Col>
+                                    </Row>
+                                })} */}
                             </Collapse>)
                             : null
                         }
@@ -132,6 +129,7 @@ const mapStateToProps = (state, ownProps) => {
     return {
         author: (author && `${author.firstName} ${author.lastName}`) || 'NA',
         isChecked: state.notes.checkedNotes.includes(ownProps.note._id),
+        // isRiseAboveChecked: state.notes.riseAboveChecked,
         riseAboveViewNotes: state.notes.riseAboveViewNotes,
         riseAboveNotes: state.notes.riseAboveNotes
     }

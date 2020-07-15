@@ -191,16 +191,6 @@ class NoteContent extends Component {
                     (obj, i) => {
                         let data;
                         let riseAboveNotes;
-
-                        if (obj.data && obj.data.riseabove) {
-                            let riseAboveLink = obj.data.riseabove.viewId;
-                            let notes = this.getRiseAboveData(riseAboveLink);
-                            riseAboveNotes = <Row>
-                                <Col>
-                                    {notes}
-                                </Col>
-                            </Row>
-                        }
                         if (this.props.query && obj.data.English) {
                             let innerHTML = obj.data.English;
                             let index = innerHTML.indexOf(this.props.query);
