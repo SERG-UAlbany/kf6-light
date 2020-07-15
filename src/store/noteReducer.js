@@ -29,7 +29,9 @@ export const updateCheckedNotes = createAction('UPDATE_CHECKED_NOTES')
 export const setViewLinks = createAction('SET_VIEW_LINKS')
 export const setBuildsOn = createAction('SET_BUILDS_ON')
 export const setSupports = createAction('SET_SUPPORTS')
-const initState = {drawing: '', attachments: {}, viewNotes: {}, checkedNotes:[], viewLinks:[], buildsOn: [], supports: []}
+export const setRiseAboveViewNotes = createAction('SET_RISEABOVE_VIEW_NOTES')
+export const setRiseAboveNotes = createAction('SET_RISEABOVE_NOTES')
+const initState = { drawing: '', attachments: {}, viewNotes: {}, checkedNotes: [], viewLinks: [], buildsOn: [], supports: [], riseAboveNotes: {}, riseAboveViewNotes: [] }
 
 export const noteReducer = createReducer(initState, {
     [addNote]: (notes, action) => {
@@ -63,7 +65,7 @@ export const noteReducer = createReducer(initState, {
     },
     [setAttachments]: (state, action) => {
         let note = state[action.payload.contribId]
-        note.attachments = action.payload.attachments.map((att)=> att._id)
+        note.attachments = action.payload.attachments.map((att) => att._id)
         action.payload.attachments.forEach((att) => {
             state.attachments[att._id] = att
         })
@@ -74,9 +76,9 @@ export const noteReducer = createReducer(initState, {
     },
     [setLinks]: (state, action) => {
         let contrib = state[action.payload.contribId]
-        if (action.payload.direction === 'from'){
+        if (action.payload.direction === 'from') {
             contrib.fromLinks = action.payload.links
-        }else{
+        } else {
             contrib.toLinks = action.payload.links
         }
     },
@@ -110,13 +112,13 @@ export const noteReducer = createReducer(initState, {
             viewNotes[action.payload[i]._id] = action.payload[i]
         state.viewNotes = viewNotes
     },
-    [setCheckedNotes]:(state, action) => {
+    [setCheckedNotes]: (state, action) => {
         state.checkedNotes = action.payload
     },
     [updateCheckedNotes]: (state, action) => {
-        if (action.payload.checked){
+        if (action.payload.checked) {
             state.checkedNotes.push(action.payload.noteId)
-        }else{
+        } else {
             state.checkedNotes = state.checkedNotes.filter(id => id !== action.payload.noteId)
         }
     },
@@ -131,17 +133,26 @@ export const noteReducer = createReducer(initState, {
     },
     [setSupports]: (state, action) => {
         state.supports = action.payload
+    },
+    [setRiseAboveViewNotes]: (state, action) => {
+        state.riseAboveViewNotes = [...state.riseAboveViewNotes, action.payload]
+        console.log("state.riseAboveViewViewciew", state.riseAboveViewNotes);
+    },
+    [setRiseAboveNotes]: (state, action) => {
+        let viewId = action.payload.viewId
+        state.riseAboveNotes[viewId] = Object.assign({}, action.payload.notes);
+        console.log("state.riseAboveNotes", state.riseAboveNotes, action.payload.notes);
     }
 });
 
 const createNote = (communityId, authorId, contextMode, fromId, content) => {
-    if (!content){ content = ''}
-    if (contextMode && !contextMode.permission){
+    if (!content) { content = '' }
+    if (contextMode && !contextMode.permission) {
         window.alert('invalid mode object')
         return
     }
     let mode = {}
-    if (contextMode && contextMode.permission === 'private'){
+    if (contextMode && contextMode.permission === 'private') {
         mode.permission = contextMode.permission;
         mode.group = contextMode.group;
         mode._groupMembers = contextMode._groupMembers;
@@ -194,37 +205,40 @@ const createNote = (communityId, authorId, contextMode, fromId, content) => {
 }
 
 export const newNote = (view, communityId, authorId, buildson) => dispatch => {
-    const mode = {permission: view.permission, group: view.group, _groupMembers: view._groupMembers }
+    const mode = { permission: view.permission, group: view.group, _groupMembers: view._groupMembers }
 
     const newN = createNote(communityId, authorId, mode, buildson)
 
     return api.postContribution(communityId, newN).then((res) => {
-        const note = {attachments: [],
-                      fromLinks:[],
-                      toLinks:[],
-                      records: [],
-                      annos: {},
-                      group: null,
-                      ...res.data}
-        const pos = {x: 100, y:100}
+        const note = {
+            attachments: [],
+            fromLinks: [],
+            toLinks: [],
+            records: [],
+            annos: {},
+            group: null,
+            ...res.data
+        }
+        const pos = { x: 100, y: 100 }
 
-        if (!buildson){
+        if (!buildson) {
             api.postLink(view._id, note._id, 'contains', pos)
         }
         //TODO saveContainsLinktoITM x2
 
         dispatch(addNote(note))
 
-        dispatch(openDialog({title: 'New Note',
-                             confirmButton: 'create',
-                             noteId: note._id,
-                            }))
+        dispatch(openDialog({
+            title: 'New Note',
+            confirmButton: 'create',
+            noteId: note._id,
+        }))
     })
 
 }
 
 export const editSvgDialog = (noteId, svg) => dispatch => {
-    dispatch(editSvg({noteId, svg}))
+    dispatch(editSvg({ noteId, svg }))
     dispatch(openDrawDialog(noteId))
 }
 
@@ -233,7 +247,7 @@ export const attachmentUploaded = (noteId, attachment, inline, x, y) => dispatch
     return api.postLink(noteId, attachment._id, 'attach').then((res) => {
 
         // TODO dispatch(getLinksFrom(noteId))
-        dispatch(addAttachment({noteId, attachment}))
+        dispatch(addAttachment({ noteId, attachment }))
 
     });
 }
@@ -241,7 +255,7 @@ export const attachmentUploaded = (noteId, attachment, inline, x, y) => dispatch
 export const fetchAttachments = (contribId) => async dispatch => {
     const link_atts = await api.getLinks(contribId, 'from', 'attach')
     const attachments = await Promise.all(link_atts.map((attach) => api.getObject(attach.to)))
-    dispatch(setAttachments({contribId, attachments}))
+    dispatch(setAttachments({ contribId, attachments }))
 }
 
 export const postContribution = (contribId, dialogId) => async (dispatch, getState) => {
@@ -249,8 +263,8 @@ export const postContribution = (contribId, dialogId) => async (dispatch, getSta
     let contrib = state.notes[contribId]
     contrib = Object.assign({}, contrib)
     contrib.data = Object.assign({}, contrib.data)
-    if (!contrib.title){
-        addNotification({title: 'Error Saving Note!', type:'danger', message:'Title is required'})
+    if (!contrib.title) {
+        addNotification({ title: 'Error Saving Note!', type: 'danger', message: 'Title is required' })
         return
     }
     //TODO sync checking?
@@ -275,13 +289,13 @@ export const postContribution = (contribId, dialogId) => async (dispatch, getSta
             dispatch(closeDialog(dialogId))
         if (!wasActive) //To update builds on hierarchy
             dispatch(fetchBuildsOn(newNote.communityId))
-        addNotification({title: 'Saved!', type:'success', message:'Contribution updated!'})
+        addNotification({ title: 'Saved!', type: 'success', message: 'Contribution updated!' })
     }
 }
 
 export const fetchLinks = (contribId, direction) => async (dispatch) => {
     const links = await api.getLinks(contribId, direction)
-    dispatch(setLinks({contribId, direction, links}))
+    dispatch(setLinks({ contribId, direction, links }))
 }
 
 export const fetchRecords = (contribId) => async (dispatch, getState) => {
@@ -289,32 +303,33 @@ export const fetchRecords = (contribId) => async (dispatch, getState) => {
     const records = await api.getRecords(contribId)
     const formatter = new Intl.DateTimeFormat('default', dateFormatOptions)
     records.forEach((record) => {
-        if (authors[record.authorId]){
-            const author =  authors[record.authorId]
+        if (authors[record.authorId]) {
+            const author = authors[record.authorId]
             record['author'] = `${author.firstName} ${author.lastName}`
-        }else{
+        } else {
             record['author'] = 'NA'
         }
         record['date'] = formatter.format(new Date(record.timestamp))
     })
-    dispatch(setRecords({contribId, records}))
+    dispatch(setRecords({ contribId, records }))
 }
 
 export const openContribution = (contribId) => async (dispatch, getState) => {
 
     const [contrib, fromLinks, toLinks] = await Promise.all([api.getObject(contribId),
-                                                            api.getLinks(contribId, 'from'),
-                                                            api.getLinks(contribId, 'to')])
+    api.getLinks(contribId, 'from'),
+    api.getLinks(contribId, 'to')])
 
-    const note = {attachments: [], fromLinks, toLinks, records: [], annos: {}, ...contrib}
+    const note = { attachments: [], fromLinks, toLinks, records: [], annos: {}, ...contrib }
     const noteBody = preProcess(note.data.body, toLinks, fromLinks)
     note.data.body = noteBody
     dispatch(addNote(note))
     dispatch(fetchAttachments(contribId))
-    dispatch(openDialog({title: 'Edit Note',
-                         confirmButton: 'edit',
-                         noteId: note._id,
-                        }))
+    dispatch(openDialog({
+        title: 'Edit Note',
+        confirmButton: 'edit',
+        noteId: note._id,
+    }))
     //annotations
     const annoLinks = toLinks.filter((link) => link.type === 'annotates')
 
@@ -328,11 +343,11 @@ export const openContribution = (contribId) => async (dispatch, getState) => {
         )
     )
 
-    annotations.forEach((annot) => dispatch(setAnnotation({annotation: annot, contribId})) )
-    dispatch(setAnnotationsLoaded({contribId, value: 1}))
+    annotations.forEach((annot) => dispatch(setAnnotation({ annotation: annot, contribId })))
+    dispatch(setAnnotationsLoaded({ contribId, value: 1 }))
 
-    if (note.status === 'active'){
-         api.read(note.communityId, note._id)
+    if (note.status === 'active') {
+        api.read(note.communityId, note._id)
     }
 }
 
@@ -352,24 +367,24 @@ export const createAnnotation = (communityId, contribId, authorId, annotation) =
 
     annotation.linkId = link._id;
     annotation.modelId = ann._id;
-    dispatch(setAnnotation({contribId, annotation: ann}))
+    dispatch(setAnnotation({ contribId, annotation: ann }))
     // TODO save in store link
     // $scope.annoLinks[link._id] = link;
 }
 
 export const deleteAnnotation = (linkId, contribId, annoId) => async (dispatch) => {
     await api.deleteLink(linkId)
-    return dispatch(removeAnnotation({contribId, annoId}))
+    return dispatch(removeAnnotation({ contribId, annoId }))
 }
 
 export const modifyAnnotation = (annotation, communityId, contribId) => async (dispatch) => {
-    const anno_updated = await api.putObject(annotation, communityId, annotation._id )
-    return dispatch(setAnnotation({contribId, annotation: anno_updated}))
+    const anno_updated = await api.putObject(annotation, communityId, annotation._id)
+    return dispatch(setAnnotation({ contribId, annotation: anno_updated }))
 }
 
 export const fetchViewNotes = (viewId) => async (dispatch) => {
     const links = (await api.getLinks(viewId, 'from'))
-          .filter(obj => (obj._to.type === "Note" && obj._to.title !== "" && obj._to.status === "active"))
+        .filter(obj => (obj._to.type === "Note" && obj._to.title !== "" && obj._to.status === "active"))
 
     dispatch(setViewLinks(links))
     const notes = await Promise.all(links.map((filteredObj) => api.getObject(filteredObj.to)))
@@ -377,12 +392,29 @@ export const fetchViewNotes = (viewId) => async (dispatch) => {
     dispatch(setViewNotes(notes))
     notes.forEach(async note => {
         const toLinks = (await api.getLinks(note._id, 'to')).filter((lnk) => lnk.type === 'supports')
-        if (toLinks.length > 0){
+        if (toLinks.length > 0) {
             const noteBody = preProcess(note.data.body, toLinks, [])
-            let new_note = {...note}
-            new_note.data = {...note.data}
+            let new_note = { ...note }
+            new_note.data = { ...note.data }
             new_note.data.body = noteBody
             dispatch(addViewNote(new_note))
+        }
+    })
+
+    //RISEABOVE
+    notes.forEach(async note => {
+        if (note.data && note.data.riseabove) {
+            //SET NOTES INTO RISEABOVE LIST
+            dispatch(setRiseAboveViewNotes(note))
+            let viewId = note.data.riseabove.viewId
+            const riseAboveNoteLinks = (await api.getLinks(viewId, 'from'))
+                .filter(obj => (obj._to.type === "Note" && obj._to.title !== "" && obj._to.status === "active"))
+            const riseAboveNotes = await Promise.all(riseAboveNoteLinks.map((filteredObj) => api.getObject(filteredObj.to)))
+            let data = {
+                viewId: viewId,
+                notes: riseAboveNotes,
+            }
+            dispatch(setRiseAboveNotes(data))
         }
     })
 }
@@ -408,6 +440,6 @@ export const deleteAttachment = (contribId, attId) => async (dispatch, getState)
     let contrib = state.notes[contribId]
     const att_link = contrib.fromLinks.filter((lnk) => lnk.to === attId)[0]
     await api.deleteLink(att_link._id)
-    dispatch(removeAttachment({attId, noteId: contribId}))
+    dispatch(removeAttachment({ attId, noteId: contribId }))
     dispatch(fetchLinks(contribId, 'from'))
 }

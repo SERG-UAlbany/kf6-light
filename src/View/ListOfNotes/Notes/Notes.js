@@ -13,9 +13,29 @@ class Notes extends Component {
         this.state = {
             note: {},
             showNote: false,
-            open: false
+            open: false,
+            riseAboveData: {},
         };
         this.checkNote = this.checkNote.bind(this)
+    }
+
+    fetchRiseAboveNotes() {
+        if (this.props.note.data.riseabove) {
+            let riseAboveData = this.props.riseAboveNotes[this.props.note.data.riseabove.viewId]
+            if (riseAboveData) { riseAboveData = Object.keys(riseAboveData).map(i => riseAboveData[i]) }
+            console.log("Riseeeeeeee", riseAboveData);
+            return riseAboveData
+
+            // if (riseAboveData && riseAboveData.length > 0) {
+            //     console.log("At keast going ing if");
+            //     riseAboveNotes = <Row> hey
+            //         {riseAboveData.map((note, i) => {
+            //         console.log("MAP MAP");
+            //         return <Col>{note.title}</Col>
+            //     })}
+            //     </Row>
+            // }
+        }
     }
 
     componentDidMount() {
@@ -35,13 +55,7 @@ class Notes extends Component {
         const hasChildren = this.props.children && Object.keys(this.props.children).length !== 0;;
         const icon = this.state.open ? "fa-chevron-down" : "fa-chevron-right"
         const formatter = new Intl.DateTimeFormat('default', dateFormatOptions)
-        console.log("this.props.note.riseAboveNotes",this.props.note.riseAboveNotes);
-        const riseAboveNotes = this.props.note.riseAboveNotes ?
-            <>
-                {this.props.note.riseAboveNotes.map((note) => <li key={note._id}>{note.title}</li>)}
-            </>
-            : null;
-
+        let riseAboveNotes = this.fetchRiseAboveNotes()
         return (
             <div>
                 <Row className="mrg-05-top">
@@ -62,13 +76,23 @@ class Notes extends Component {
                                 </Form>
                             </Col>
                         </Row>
+                        {riseAboveNotes ?
+                            (<Row>
+                                <Col md="2"></Col>
+                                <Col md="6">
+                                    {riseAboveNotes.map((note, i) => {
+                                        return <Row>{note.title}</Row>
+                                    })}
+                                </Col>
+                            </Row>)
+                            : null
+                        }
                         <Row className="primary-600 sz-075 pd-05">
                             <Col><span> {this.props.author} </span>&nbsp; {formatter.format(new Date(this.props.note.created))}</Col>
                             <Col md="2">
                                 {/* <Button onClick={() => this.buildOn(this.props.oneHirarchy.to)}>BuildOn</Button> */}
                             </Col>
                         </Row>
-                        {riseAboveNotes}
                         {this.props.children ?
                             <Collapse in={this.state.open}>
                                 <Row>
@@ -90,7 +114,9 @@ const mapStateToProps = (state, ownProps) => {
     const author = state.users[ownProps.note.authors[0]]
     return {
         author: (author && `${author.firstName} ${author.lastName}`) || 'NA',
-        isChecked: state.notes.checkedNotes.includes(ownProps.note._id)
+        isChecked: state.notes.checkedNotes.includes(ownProps.note._id),
+        riseAboveViewNotes: state.notes.riseAboveViewNotes,
+        riseAboveNotes: state.notes.riseAboveNotes
     }
 }
 
