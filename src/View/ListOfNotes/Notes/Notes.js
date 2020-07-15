@@ -62,7 +62,7 @@ class Notes extends Component {
                     <Col className="mr-auto rounded mrg-1-bot">
                         <Row className="pd-05">
                             <Col md="10" className="primary-800 font-weight-bold">
-                                {hasChildren ?
+                                {hasChildren || riseAboveNotes ?
                                     <Button variant='link' onClick={() => this.setOpen(!this.open)} aria-controls="example-collapse-text" aria-expanded={this.state.open}>
                                         <i className={`fa ${icon}`}></i>
                                     </Button>
@@ -76,23 +76,40 @@ class Notes extends Component {
                                 </Form>
                             </Col>
                         </Row>
-                        {riseAboveNotes ?
-                            (<Row>
-                                <Col md="2"></Col>
-                                <Col md="6">
-                                    {riseAboveNotes.map((note, i) => {
-                                        return <Row>{note.title}</Row>
-                                    })}
-                                </Col>
-                            </Row>)
-                            : null
-                        }
                         <Row className="primary-600 sz-075 pd-05">
                             <Col><span> {this.props.author} </span>&nbsp; {formatter.format(new Date(this.props.note.created))}</Col>
                             <Col md="2">
                                 {/* <Button onClick={() => this.buildOn(this.props.oneHirarchy.to)}>BuildOn</Button> */}
                             </Col>
                         </Row>
+                        {riseAboveNotes ?
+                            (<Collapse in={this.state.open}>
+                                <div className="shadow p-3 mb-5 rounded">
+                                    <Row className="mrg-05-top">
+                                        <Col className="mr-auto rounded mrg-1-bot">
+                                            <Row>
+                                                <Col md="2"></Col>
+                                                <Col md="6">
+                                                    {riseAboveNotes.map((note, i) => {
+                                                        return <Row className="pd-05">
+                                                            <Col md="10">{note.title}</Col>
+                                                            <Col md="2">
+                                                                {/* <Form className="mrg-1-min pd-2-right">
+                                                                    <FormGroup>
+                                                                        <Input type="checkbox" checked={this.props.isChecked} ref={note._id} onChange={e => this.checkNote(e, note._id)} />
+                                                                    </FormGroup>
+                                                                </Form> */}
+                                                            </Col>
+                                                        </Row>
+                                                    })}
+                                                </Col>
+                                            </Row>
+                                        </Col>
+                                    </Row>
+                                </div>
+                            </Collapse>)
+                            : null
+                        }
                         {this.props.children ?
                             <Collapse in={this.state.open}>
                                 <Row>
