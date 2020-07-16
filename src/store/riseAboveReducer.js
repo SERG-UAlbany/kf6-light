@@ -80,27 +80,4 @@ export const createRiseAbove = (view, communityId, author, notes) => dispatch =>
         console.log("Error", error);
     });
 
-    //RESPONSE
-    // authors: ["5ec633bf9d463143d4866593"]
-    // comments: ""
-    // communityId: "5ec633bf9d463143d4866592"
-    // created: "2020-07-13T04:16:07.626Z"
-    // createdBy: ""
-    // docId: ""
-    // docShared: []
-    // favAuthors: []
-    // keywords: []
-    // langInNote: []
-    // modified: "2020-07-13T04:16:07.626Z"
-    // permission: "public"
-    // status: "active"
-    // title: "riseabove:"
-    // type: "View"
-    // visitorRole: false
-    // wordCount: 0
-    // __t: "KContribution"
-    // __v: 0
-    // _groupMembers: []
-    // _id: "5f0be007f671d71182755955"
-
 }

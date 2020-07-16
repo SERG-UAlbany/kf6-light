@@ -8,6 +8,7 @@ import './NoteContent.css';
 import { apiUrl } from '../../store/api.js';
 import * as api from '../../store/api.js';
 import { openContribution, updateCheckedNotes } from '../../store/noteReducer'
+import { fetchViewCommunityData } from '../../store/globalsReducer'
 import { createRiseAbove } from '../../store/riseAboveReducer'
 
 class NoteContent extends Component {
@@ -125,6 +126,7 @@ class NoteContent extends Component {
             let author = this.props.author._id;
             let notes = this.props.checkedNotes;
             this.props.createRiseAbove(view, communityId, author, notes);
+            this.props.fetchViewCommunityData(this.props.viewId)
         } else {
             alert("Please select at least 1 note to create RiseAbove");
         }
@@ -259,7 +261,8 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = {
     openContribution,
     updateCheckedNotes,
-    createRiseAbove
+    createRiseAbove,
+    fetchViewCommunityData
 }
 
 export default connect(
