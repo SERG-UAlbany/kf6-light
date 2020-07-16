@@ -72,41 +72,6 @@ class Notes extends Component {
                                 {/* <Button onClick={() => this.buildOn(this.props.oneHirarchy.to)}>BuildOn</Button> */}
                             </Col>
                         </Row>
-                        {riseAboveNotes.length ?
-                            (<Collapse in={this.state.open}>
-                                <div className="shadow p-3 mb-5 rounded">
-                                    <Row className="mrg-05-top">
-                                        <Col className="mr-auto rounded mrg-1-bot">
-                                            <Row>
-                                                <Col md="2"></Col>
-                                                <Col md="6">
-                                                    {riseAboveNotes.map((note, i) => {
-                                                        return <Row className="pd-05">
-                                                            <Col md="10">{note.title}</Col>
-                                                            <Col md="2">
-                                                                <Form className="mrg-1-min pd-2-right">
-                                                                    <FormGroup>
-                                                                        <Input type="checkbox" checked={this.props.isRiseAboveChecked} ref={note._id} onChange={e => this.checkNote(e, note._id)} />
-                                                                    </FormGroup>
-                                                                </Form>
-                                                            </Col>
-                                                        </Row>
-                                                    })}
-                                                </Col>
-                                            </Row>
-                                        </Col>
-                                    </Row>
-                                </div>
-                                {/* {riseAboveNotes.map((note, i) => {
-                                    return <Row>
-                                        <Col>
-                                            <ListOfNotes notes={note}></ListOfNotes>
-                                        </Col>
-                                    </Row>
-                                })} */}
-                            </Collapse>)
-                            : null
-                        }
                         {this.props.children ?
                             <Collapse in={this.state.open}>
                                 <Row>
