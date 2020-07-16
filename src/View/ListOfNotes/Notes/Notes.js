@@ -48,8 +48,8 @@ class Notes extends Component {
         let riseAboveNotes = this.fetchRiseAboveNotes()
         return (
             <div>
-                <Row className="mrg-05-top">
-                    <Col className="mr-auto rounded mrg-1-bot">
+                <Row>
+                    <Col className="mr-auto rounded">
                         <Row className="pd-05">
                             <Col md="10" className="primary-800 font-weight-bold">
                                 {hasChildren || riseAboveNotes.length ?
@@ -75,7 +75,8 @@ class Notes extends Component {
                         {this.props.children ?
                             <Collapse in={this.state.open}>
                                 <Row>
-                                    <Col>
+                                    <Col md="1"></Col>
+                                    <Col md="11">
                                         <ListOfNotes hierarchy={this.props.children}></ListOfNotes>
                                     </Col>
                                 </Row>
