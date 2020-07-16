@@ -4,7 +4,7 @@ import { Container, Col, Row, Form, FormGroup, Label, Input } from 'reactstrap';
 import { Button } from 'react-bootstrap';
 import { apiUrl } from '../store/api.js'
 import { connect } from 'react-redux'
-import { setCommunityId, setViewId, setViews, fetchView, setView} from '../store/globalsReducer.js'
+import { setCommunityId, setViewId, setViews, fetchView, setView } from '../store/globalsReducer.js'
 
 class CommunityManager extends Component {
 
@@ -66,9 +66,9 @@ class CommunityManager extends Component {
                     this.setState({
                         communitites: communityData,
                     })
-                    if(communityId){
+                    if (communityId) {
                         this.setState({
-                            communityId : communityId,
+                            communityId: communityId,
                         })
                     }
                 }).catch(
@@ -111,12 +111,14 @@ class CommunityManager extends Component {
                 result => {
                     let welcomeId = result.data[0]._id;
                     let views = result.data;
-                    console.log("views",views);
+                    console.log("views", views);
 
                     // SET VIEWID
-                    sessionStorage.setItem('viewId',welcomeId);
+                    sessionStorage.setItem('viewId', welcomeId);
+                    this.props.setViewId(welcomeId);
+
                     //NAVIGATE TO VIEW
-                    this.props.history.push({ pathname: `/view/${welcomeId}`});
+                    this.props.history.push({ pathname: `/view/${welcomeId}` });
                 }).catch(
                     error => {
                         alert(error);
