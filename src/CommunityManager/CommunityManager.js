@@ -116,7 +116,6 @@ class CommunityManager extends Component {
                     // SET VIEWID
                     sessionStorage.setItem('viewId', welcomeId);
                     this.props.setViewId(welcomeId);
-                    
                     //NAVIGATE TO VIEW
                     this.props.history.push({ pathname: `/view/${welcomeId}` });
                 }).catch(

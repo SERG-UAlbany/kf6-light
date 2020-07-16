@@ -20,12 +20,12 @@ class Notes extends Component {
     }
 
     fetchRiseAboveNotes() {
-        if (this.props.note.data.riseabove) {
-            let riseAboveData = this.props.riseAboveNotes[this.props.note.data.riseabove.viewId]
-            if (riseAboveData) { riseAboveData = Object.keys(riseAboveData).map(i => riseAboveData[i]) }
-            console.log("Riseeeeeeee", riseAboveData);
-            return riseAboveData
+        if (this.props.note.data.riseabove && this.props.riseAboveViewNotes[this.props.note._id]) {
+            return this.props.riseAboveViewNotes[this.props.note._id].map((noteId) => this.props.riseAboveNotes[noteId])
+            /* let riseAboveData = this.props.riseAboveNotes[this.props.note.data.riseabove.viewId] || []
+             * return riseAboveData */
         }
+        return []
     }
 
     componentDidMount() {
@@ -52,7 +52,7 @@ class Notes extends Component {
                     <Col className="mr-auto rounded mrg-1-bot">
                         <Row className="pd-05">
                             <Col md="10" className="primary-800 font-weight-bold">
-                                {hasChildren || riseAboveNotes ?
+                                {hasChildren || riseAboveNotes.length ?
                                     <Button variant='link' onClick={() => this.setOpen(!this.open)} aria-controls="example-collapse-text" aria-expanded={this.state.open}>
                                         <i className={`fa ${icon}`}></i>
                                     </Button>
@@ -72,46 +72,11 @@ class Notes extends Component {
                                 {/* <Button onClick={() => this.buildOn(this.props.oneHirarchy.to)}>BuildOn</Button> */}
                             </Col>
                         </Row>
-                        {riseAboveNotes ?
-                            (<Collapse in={this.state.open}>
-                                <div className="shadow p-3 mb-5 rounded">
-                                    <Row className="mrg-05-top">
-                                        <Col className="mr-auto rounded mrg-1-bot">
-                                            <Row>
-                                                <Col md="2"></Col>
-                                                <Col md="6">
-                                                    {riseAboveNotes.map((note, i) => {
-                                                        return <Row className="pd-05">
-                                                            <Col md="10">{note.title}</Col>
-                                                            <Col md="2">
-                                                                <Form className="mrg-1-min pd-2-right">
-                                                                    <FormGroup>
-                                                                        <Input type="checkbox" checked={this.props.isRiseAboveChecked} ref={note._id} onChange={e => this.checkNote(e, note._id)} />
-                                                                    </FormGroup>
-                                                                </Form>
-                                                            </Col>
-                                                        </Row>
-                                                    })}
-                                                </Col>
-                                            </Row>
-                                        </Col>
-                                    </Row>
-                                </div>
-                                {/* {riseAboveNotes.map((note, i) => {
-                                    return <Row>
-                                        <Col>
-                                            <ListOfNotes notes={note}></ListOfNotes>
-                                        </Col>
-                                    </Row>
-                                })} */}
-                            </Collapse>)
-                            : null
-                        }
                         {this.props.children ?
                             <Collapse in={this.state.open}>
                                 <Row>
                                     <Col>
-                                        <ListOfNotes hierarchy={this.props.children} notes={this.props.notes}></ListOfNotes>
+                                        <ListOfNotes hierarchy={this.props.children}></ListOfNotes>
                                     </Col>
                                 </Row>
                             </Collapse>

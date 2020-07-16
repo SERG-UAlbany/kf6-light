@@ -32,24 +32,6 @@ class NoteContent extends Component {
     }
 
     componentDidMount() {
-        //SET HEADER WITH TOKEN BEARER
-        var config = {
-            headers: { Authorization: `Bearer ${this.state.token}` }
-        };
-
-        //GET USER'S VIEWS
-        var viewUrl = `${apiUrl}/communities/${this.state.communityId}/views`;
-
-        Axios.get(viewUrl, config)
-            .then(
-                result => {
-                    this.setState({
-                        myViews: result.data
-                    })
-                }).catch(
-                    error => {
-                        // alert(error);
-                    });
     }
 
     handleChange(e) {
@@ -251,7 +233,10 @@ const mapStateToProps = (state, ownProps) => {
         viewId: state.globals.viewId,
         views: state.globals.views,
         view: state.globals.view,
-        checkedNotes: state.notes.checkedNotes.map(noteId => viewNotes[noteId]),
+        checkedNotes: state.notes.checkedNotes.map(
+            noteId => noteId in viewNotes ? //Find note in viewNotes or in riseAboveNotes
+                      viewNotes[noteId] : state.notes.riseAboveNotes[noteId]
+        ),
         viewLinks: state.notes.viewLinks,
         author: state.globals.author,
         communityId: state.globals.communityId

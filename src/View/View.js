@@ -61,6 +61,11 @@ class View extends Component {
         const hierarchy = {}
         for (let noteId in this.props.viewNotes) {
             hierarchy[noteId] = { children: {} }
+            if (noteId in this.props.riseAboveViewNotes){ //Add riseabove notes to hierarchy tree
+                this.props.riseAboveViewNotes[noteId].forEach((childId) => {
+                    hierarchy[noteId]['children'][childId] = {parent: noteId, children: {}}
+                })
+            }
         }
         this.props.buildsOn.forEach(note => {
             const parent = note.to
@@ -400,9 +405,9 @@ class View extends Component {
                         </Form>
                         {scaffolds}
                         {this.state.query === "" && !showScffold ?
-                            (<ListOfNotes notes={this.props.viewNotes} hierarchy={hierarchy} />)
+                            (<ListOfNotes hierarchy={hierarchy} />)
                             :
-                            (<ListOfNotes notes={this.props.viewNotes} noteLinks={this.state.filteredData} />)
+                            (<ListOfNotes noteLinks={this.state.filteredData} />)
                         }
                     </Col>
 
@@ -507,7 +512,8 @@ const mapStateToProps = (state, ownProps) => {
         checkedNotes: state.notes.checkedNotes,
         viewLinks: state.notes.viewLinks,
         buildsOn: state.notes.buildsOn,
-        supports: state.notes.supports
+        supports: state.notes.supports,
+        riseAboveViewNotes: state.notes.riseAboveViewNotes
     }
 }
 
