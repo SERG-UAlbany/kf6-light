@@ -20,12 +20,12 @@ class Notes extends Component {
     }
 
     fetchRiseAboveNotes() {
-        if (this.props.note.data.riseabove) {
-            let riseAboveData = this.props.riseAboveNotes[this.props.note.data.riseabove.viewId]
-            if (riseAboveData) { riseAboveData = Object.keys(riseAboveData).map(i => riseAboveData[i]) }
-            console.log("Riseeeeeeee", riseAboveData);
-            return riseAboveData
+        if (this.props.note.data.riseabove && this.props.riseAboveViewNotes[this.props.note._id]) {
+            return this.props.riseAboveViewNotes[this.props.note._id].map((noteId) => this.props.riseAboveNotes[noteId])
+            /* let riseAboveData = this.props.riseAboveNotes[this.props.note.data.riseabove.viewId] || []
+             * return riseAboveData */
         }
+        return []
     }
 
     componentDidMount() {
@@ -52,7 +52,7 @@ class Notes extends Component {
                     <Col className="mr-auto rounded mrg-1-bot">
                         <Row className="pd-05">
                             <Col md="10" className="primary-800 font-weight-bold">
-                                {hasChildren || riseAboveNotes ?
+                                {hasChildren || riseAboveNotes.length ?
                                     <Button variant='link' onClick={() => this.setOpen(!this.open)} aria-controls="example-collapse-text" aria-expanded={this.state.open}>
                                         <i className={`fa ${icon}`}></i>
                                     </Button>
@@ -72,7 +72,7 @@ class Notes extends Component {
                                 {/* <Button onClick={() => this.buildOn(this.props.oneHirarchy.to)}>BuildOn</Button> */}
                             </Col>
                         </Row>
-                        {riseAboveNotes ?
+                        {riseAboveNotes.length ?
                             (<Collapse in={this.state.open}>
                                 <div className="shadow p-3 mb-5 rounded">
                                     <Row className="mrg-05-top">
@@ -111,7 +111,7 @@ class Notes extends Component {
                             <Collapse in={this.state.open}>
                                 <Row>
                                     <Col>
-                                        <ListOfNotes hierarchy={this.props.children} notes={this.props.notes}></ListOfNotes>
+                                        <ListOfNotes hierarchy={this.props.children}></ListOfNotes>
                                     </Col>
                                 </Row>
                             </Collapse>

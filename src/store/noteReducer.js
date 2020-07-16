@@ -31,7 +31,7 @@ export const setBuildsOn = createAction('SET_BUILDS_ON')
 export const setSupports = createAction('SET_SUPPORTS')
 export const setRiseAboveViewNotes = createAction('SET_RISEABOVE_VIEW_NOTES')
 export const setRiseAboveNotes = createAction('SET_RISEABOVE_NOTES')
-const initState = { drawing: '', attachments: {}, viewNotes: {}, checkedNotes: [], viewLinks: [], buildsOn: [], supports: [], riseAboveNotes: {}, riseAboveViewNotes: [] }
+const initState = { drawing: '', attachments: {}, viewNotes: {}, checkedNotes: [], viewLinks: [], buildsOn: [], supports: [], riseAboveNotes: {}, riseAboveViewNotes: {} }
 
 export const noteReducer = createReducer(initState, {
     [addNote]: (notes, action) => {
@@ -135,13 +135,15 @@ export const noteReducer = createReducer(initState, {
         state.supports = action.payload
     },
     [setRiseAboveViewNotes]: (state, action) => {
-        state.riseAboveViewNotes = [...state.riseAboveViewNotes, action.payload]
-        console.log("state.riseAboveViewViewciew", state.riseAboveViewNotes);
+        state.riseAboveViewNotes[action.payload.noteId] = [...action.payload.notes]
+        // state.riseAboveViewNotes = [...state.riseAboveViewNotes, action.payload]
+        // console.log("state.riseAboveViewViewciew", state.riseAboveViewNotes);
     },
     [setRiseAboveNotes]: (state, action) => {
-        let viewId = action.payload.viewId
-        state.riseAboveNotes[viewId] = Object.assign({}, action.payload.notes);
-        console.log("state.riseAboveNotes", state.riseAboveNotes, action.payload.notes);
+        // let viewId = action.payload.viewId
+        // state.riseAboveNotes[viewId] = [...action.payload.notes]
+        // console.log("state.riseAboveNotes", state.riseAboveNotes, action.payload.notes);
+        action.payload.forEach(note => state.riseAboveNotes[note._id] = note)
     }
 });
 
@@ -405,16 +407,18 @@ export const fetchViewNotes = (viewId) => async (dispatch) => {
     notes.forEach(async note => {
         if (note.data && note.data.riseabove) {
             //SET NOTES INTO RISEABOVE LIST
-            dispatch(setRiseAboveViewNotes(note))
             let viewId = note.data.riseabove.viewId
-            const riseAboveNoteLinks = (await api.getLinks(viewId, 'from'))
-                .filter(obj => (obj._to.type === "Note" && obj._to.title !== "" && obj._to.status === "active"))
-            const riseAboveNotes = await Promise.all(riseAboveNoteLinks.map((filteredObj) => api.getObject(filteredObj.to)))
-            let data = {
-                viewId: viewId,
-                notes: riseAboveNotes,
-            }
-            dispatch(setRiseAboveNotes(data))
+            const riseAboveNoteIds = (await api.getLinks(viewId, 'from'))
+                  .filter(obj => (obj._to.type === "Note" && obj._to.title !== "" && obj._to.status === "active")).map(lnk => lnk.to)
+            const riseAboveNotes = await Promise.all(riseAboveNoteIds.map((noteId) => api.getObject(noteId)))
+            // let data = {
+            //     viewId: viewId,
+            //     notes: riseAboveNotes,
+            // }
+
+            dispatch(setRiseAboveNotes(riseAboveNotes))
+            dispatch(setRiseAboveViewNotes({noteId: note._id, notes: riseAboveNoteIds}))
+            // riseAboveNotes.forEach(note => dispatch(setRiseAboveViewNotes(note)))
         }
     })
 }

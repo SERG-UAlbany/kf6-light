@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Notes from './Notes/Notes';
-import * as api from '../../store/api';
+import { connect } from 'react-redux'
 class ListOfNotes extends Component {
 
     constructor(props) {
@@ -16,6 +16,8 @@ class ListOfNotes extends Component {
         for (let noteId in this.props.hierarchy) {
             if (noteId in this.props.notes)
                 notes.push(this.props.notes[noteId])
+            else if (noteId in this.props.riseAboveNotes) //Check if is from a riseabove
+                notes.push(this.props.riseAboveNotes[noteId])
         }
         //TODO sort them
         return notes.sort((a, b) => { return new Date(b.created) - new Date(a.created) })
@@ -37,4 +39,18 @@ class ListOfNotes extends Component {
     }
 
 }
-export default ListOfNotes;
+
+const mapStateToProps = (state, ownProps) => {
+    return {
+        notes: state.notes.viewNotes,
+        riseAboveNotes: state.notes.riseAboveNotes
+    }
+}
+
+const mapDispatchToProps = {
+}
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(ListOfNotes)
