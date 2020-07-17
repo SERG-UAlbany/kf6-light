@@ -93,7 +93,7 @@ class NoteContent extends Component {
 
     }
 
-    handleRiseAbove = (e) => {
+    handleRiseAbove = async (e) => {
         let noOfNotes = this.props.checkedNotes.length;
         //IF CHECKED NOTES
         if (noOfNotes > 0) {
@@ -107,8 +107,10 @@ class NoteContent extends Component {
             console.log("Communityid", communityId);
             let author = this.props.author._id;
             let notes = this.props.checkedNotes;
-            this.props.createRiseAbove(view, communityId, author, notes);
+            await this.props.createRiseAbove(view, communityId, author, notes);
             this.props.fetchViewCommunityData(this.props.viewId)
+
+
         } else {
             alert("Please select at least 1 note to create RiseAbove");
         }
@@ -174,7 +176,6 @@ class NoteContent extends Component {
                 {this.props.checkedNotes.map(
                     (obj, i) => {
                         let data;
-                        let riseAboveNotes;
                         if (this.props.query && obj.data.English) {
                             let innerHTML = obj.data.English;
                             let index = innerHTML.indexOf(this.props.query);
@@ -209,7 +210,6 @@ class NoteContent extends Component {
                                             <span className="pd-1" dangerouslySetInnerHTML={{ __html: data ? (data) : (obj.data.English ? obj.data.English : obj.data.body) }} />
                                         </Col>
                                     </Row>
-                                    {riseAboveNotes}
                                     <Row>
                                         <Col>
                                             <Button className="float-right mrg-1-left" variant="outline-info" onClick={() => this.props.buildOn(obj._id)}>BuildOn</Button>
@@ -235,7 +235,7 @@ const mapStateToProps = (state, ownProps) => {
         view: state.globals.view,
         checkedNotes: state.notes.checkedNotes.map(
             noteId => noteId in viewNotes ? //Find note in viewNotes or in riseAboveNotes
-                      viewNotes[noteId] : state.notes.riseAboveNotes[noteId]
+                viewNotes[noteId] : state.notes.riseAboveNotes[noteId]
         ),
         viewLinks: state.notes.viewLinks,
         author: state.globals.author,

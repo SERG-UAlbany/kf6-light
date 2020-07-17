@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Col, Row, Card, Button } from 'react-bootstrap';
-import { openContribution } from '../../store/noteReducer'
 import './RiseAboveView.css';
 
 class RiseAboveView extends Component {
@@ -10,7 +9,6 @@ class RiseAboveView extends Component {
         this.state = {
             riseAboveNotes: [],
         }
-        this.editNote = this.editNote.bind(this)
     }
     componentDidMount() {
         if (this.props.riseAboveViewId) {
@@ -20,9 +18,7 @@ class RiseAboveView extends Component {
             })
         }
     }
-    editNote = (noteId) => {
-        this.props.openContribution(noteId)
-    }
+
     render() {
         return (
             <Col>
@@ -34,7 +30,7 @@ class RiseAboveView extends Component {
                                 {this.state.riseAboveNotes ?
                                     (<>
                                         {this.state.riseAboveNotes.map((note, i) => {
-                                            return <Row key={i}><Button variant="light">{note.title}</Button></Row>
+                                            return <Row key={i}><Button variant="light" onClick={() => this.props.editNote(note._id)}>{note.title}</Button></Row>
                                             // return <Row key={i}><Button variant="light" onClick={() => this.editNote(note._id)}>{note.title}</Button></Row>
                                         })}
                                     </>)
@@ -56,7 +52,6 @@ const mapStateToProps = (state, ownProps) => {
 }
 
 const mapDispatchToProps = {
-    openContribution
 }
 
 export default connect(

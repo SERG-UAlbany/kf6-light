@@ -10,7 +10,7 @@ import { connect } from 'react-redux'
 import {
     editNote, removeDrawing, editSvgDialog, setAnnotationsLoaded,
     fetchAttachments, setWordCount, fetchRecords,
-    createAnnotation, deleteAnnotation, modifyAnnotation, deleteAttachment
+    createAnnotation, deleteAnnotation, modifyAnnotation, deleteAttachment, openContribution
 } from '../../store/noteReducer.js'
 import { openDrawDialog } from '../../store/dialogReducer.js'
 import { scaffoldWordCount } from '../../store/kftag.service.js'
@@ -32,6 +32,7 @@ class Note extends React.Component {
         this.onAnnotationCreated = this.onAnnotationCreated.bind(this)
         this.onAnnotationDeleted = this.onAnnotationDeleted.bind(this)
         this.onAnnotationUpdated = this.onAnnotationUpdated.bind(this)
+        this.editNote = this.editNote.bind(this)
     }
 
     componentDidMount() {
@@ -136,6 +137,10 @@ class Note extends React.Component {
         model.data = annotation;
         this.props.modifyAnnotation(model, this.props.note.communityId, this.props.note._id)
     }
+    
+    editNote = (noteId) => {
+        this.props.openContribution(noteId)
+    }
 
     // isARiseAboveNote() {
     //     if (this.props.riseAboveViewNotes[this.props.note._id]) {
@@ -188,7 +193,7 @@ class Note extends React.Component {
                                         </Annotator>
                                     </Col>
                                     <Col md="5">
-                                        <RiseAboveView riseAboveViewId={this.props.note._id} />
+                                        <RiseAboveView riseAboveViewId={this.props.note._id} editNote = {this.editNote}/>
                                     </Col>
                                     <Col></Col>
                                 </>)}
@@ -208,7 +213,6 @@ class Note extends React.Component {
                     <Tab eventKey='history' title='history'><History records={this.props.note.records} /></Tab>
                     <Tab eventKey='properties' title='properties'><Properties contribution={this.props.note} onChange={this.onNoteChange} /></Tab>
                 </Tabs>
-
             </div>
         );
     }
@@ -230,8 +234,7 @@ const mapDispatchToProps = {
     editNote, openDrawDialog, setWordCount,
     removeDrawing, editSvgDialog, fetchAttachments, fetchRecords,
     deleteAnnotation, fetchCommGroups, createAnnotation, modifyAnnotation,
-    setAnnotationsLoaded, deleteAttachment
-}
+    setAnnotationsLoaded, deleteAttachment, openContribution}
 
 export default connect(
     mapStateToProps,
