@@ -30,7 +30,7 @@ class RiseAboveView extends Component {
                                 {this.state.riseAboveNotes ?
                                     (<>
                                         {this.state.riseAboveNotes.map((note, i) => {
-                                            return <Row key={i}><Button variant="light" onClick={() => this.props.editNote(note._id)}>{note.title}</Button></Row>
+                                            return <Row key={i}><Button variant="light" className="min-width-10 rounded-pill pd-05" onClick={() => this.props.editNote(note._id)}>{note.title}</Button></Row>
                                             // return <Row key={i}><Button variant="light" onClick={() => this.editNote(note._id)}>{note.title}</Button></Row>
                                         })}
                                     </>)

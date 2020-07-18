@@ -285,3 +285,7 @@ body {
 .circular-border{
   border-radius: 50%;
 }
+
+.min-width-10{
+  min-width: 10rem !important;
+}
