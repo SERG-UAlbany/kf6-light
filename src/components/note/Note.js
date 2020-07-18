@@ -21,7 +21,8 @@ class Note extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            riseAboveNotes: false
+            riseAboveNotes: false,
+            selectedTab: "write"
         }
         this.onEditorSetup = this.onEditorSetup.bind(this)
         this.onDrawingToolOpen = this.onDrawingToolOpen.bind(this)
@@ -39,7 +40,8 @@ class Note extends React.Component {
         if (this.props.riseAboveViewNotes[this.props.note._id]) {
             this.setState({
                 // riseAboveNotes: this.props.riseAboveViewNotes[this.props.note._id].map((noteId) => this.props.riseAboveNotes[noteId])
-                riseAboveNotes: true
+                riseAboveNotes: true,
+                selectedTab: "read"
             })
         }
     }
@@ -107,6 +109,7 @@ class Note extends React.Component {
     }
 
     onTabSelected(tab) {
+        this.setState({selectedTab: tab })
         if (tab === 'history') { //Refresh records
             this.props.fetchRecords(this.props.note._id)
         } if (tab === 'author') { //Refresh groups, and authors?
@@ -142,25 +145,15 @@ class Note extends React.Component {
         this.props.openContribution(noteId)
     }
 
-    // isARiseAboveNote() {
-    //     if (this.props.riseAboveViewNotes[this.props.note._id]) {
-    //         return true;
-    //         // return this.props.riseAboveViewNotes[this.props.note._id].map((noteId) => this.props.riseAboveNotes[noteId])
-    //     }
-    //     return []
-    // }
-
     render() {
         const formatter = new Intl.DateTimeFormat('default', dateFormatOptions)
-        // let isRiseAbove;
-        // isRiseAbove = this.isARiseAboveNote()
         return (
             <div>
                 <div className='contrib-info'>
                     Created By: {this.props.author.firstName} {this.props.author.lastName} <br />
                     Last modified: {formatter.format(new Date(this.props.note.modified))}
                 </div>
-                <Tabs defaultActiveKey="write" transition={false} onSelect={this.onTabSelected}>
+                <Tabs activeKey={this.state.selectedTab} transition={false} onSelect={this.onTabSelected}>
                     <Tab eventKey="read" title="read">
                         <Row>
                             {!this.state.riseAboveNotes ?
