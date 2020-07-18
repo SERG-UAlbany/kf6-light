@@ -15,7 +15,7 @@ class Login extends Component {
         this.state = {
             userName: '',
             password: '',
-            server: "https://kf6.ikit.org",
+            server: localStorage.getItem("server") ? localStorage.getItem("server") : "kf6.ikit.org",
             servers: [
                 {
                     id: 0,
@@ -98,9 +98,20 @@ class Login extends Component {
             <Container>
                 <div className="mrg-4-top">
                     <Col>
-                        <h3>Login</h3>
+                        <h3>Login</h3>  
                     </Col>
                     <Form onSubmit={this.handleSubmit} className="form">
+                        <Col>
+                            <FormGroup>
+                                <Label>Server</Label>
+                                <Input type="select" id="server" name="server" value={this.state.server} onChange={this.handleChange} >
+                                            {this.state.servers.map((server) => {
+                                        return <option key={server.key} value={server.value}>{server.key}</option>
+                                    })}
+
+                                </Input>
+                            </FormGroup>
+                        </Col>
                         <Col>
                             <FormGroup>
                                 <Label htmlFor="userName">Username</Label>
@@ -111,17 +122,6 @@ class Login extends Component {
                             <FormGroup>
                                 <Label htmlFor="password">Password</Label>
                                 <Input type="password" id="password" placeholder="Enter Password" name="password" value={this.state.password} onChange={this.handleChange} />
-                            </FormGroup>
-                        </Col>
-                        <Col>
-                            <FormGroup>
-                                <Label>Server</Label>
-                                <Input type="select" id="server" name="server" value={this.state.server} onChange={this.handleChange} >
-                                    {this.state.servers.map((server) => {
-                                        return <option key={server.key} value={server.value}>{server.key}</option>
-                                    })}
-
-                                </Input>
                             </FormGroup>
                         </Col>
                         <Col className="mrg-1-top">

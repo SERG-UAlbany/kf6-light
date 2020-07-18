@@ -2,12 +2,12 @@ import axios from 'axios';
 
 // export const url = 'https://kf6.ikit.org';
 // export const url = 'https://kf6-stage.ikit.org';
-export let url = sessionStorage.getItem("server");
+export let url = localStorage.getItem("server");
 export let apiUrl = `${url}/api`;
 
 export function setServer(server) {
     //SET SERVER ON SESSION STORAGE
-    sessionStorage.setItem("server", server);
+    localStorage.setItem("server", server);
     url = server;
     apiUrl = `${url}/api`;
     return url;
