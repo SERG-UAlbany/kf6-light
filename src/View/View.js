@@ -61,11 +61,11 @@ class View extends Component {
         const hierarchy = {}
         for (let noteId in this.props.viewNotes) {
             hierarchy[noteId] = { children: {} }
-            if (noteId in this.props.riseAboveViewNotes){ //Add riseabove notes to hierarchy tree
-                this.props.riseAboveViewNotes[noteId].forEach((childId) => {
-                    hierarchy[noteId]['children'][childId] = {parent: noteId, children: {}}
-                })
-            }
+            // if (noteId in this.props.riseAboveViewNotes){ //Add riseabove notes to hierarchy tree
+            //     this.props.riseAboveViewNotes[noteId].forEach((childId) => {
+            //         hierarchy[noteId]['children'][childId] = {parent: noteId, children: {}}
+            //     })
+            // }
         }
         this.props.buildsOn.forEach(note => {
             const parent = note.to

@@ -19,14 +19,14 @@ class Notes extends Component {
         this.checkNote = this.checkNote.bind(this)
     }
 
-    fetchRiseAboveNotes() {
-        if (this.props.note.data.riseabove && this.props.riseAboveViewNotes[this.props.note._id]) {
-            return this.props.riseAboveViewNotes[this.props.note._id].map((noteId) => this.props.riseAboveNotes[noteId])
-            /* let riseAboveData = this.props.riseAboveNotes[this.props.note.data.riseabove.viewId] || []
-             * return riseAboveData */
-        }
-        return []
-    }
+    // fetchRiseAboveNotes() {
+    //     if (this.props.note.data.riseabove && this.props.riseAboveViewNotes[this.props.note._id]) {
+    //         return this.props.riseAboveViewNotes[this.props.note._id].map((noteId) => this.props.riseAboveNotes[noteId])
+    //         /* let riseAboveData = this.props.riseAboveNotes[this.props.note.data.riseabove.viewId] || []
+    //          * return riseAboveData */
+    //     }
+    //     return []
+    // }
 
     componentDidMount() {
     }
@@ -45,14 +45,14 @@ class Notes extends Component {
         const hasChildren = this.props.children && Object.keys(this.props.children).length !== 0;;
         const icon = this.state.open ? "fa-chevron-down" : "fa-chevron-right"
         const formatter = new Intl.DateTimeFormat('default', dateFormatOptions)
-        let riseAboveNotes = this.fetchRiseAboveNotes()
+        // let riseAboveNotes = this.fetchRiseAboveNotes()
         return (
             <div>
                 <Row>
                     <Col className="mr-auto rounded">
                         <Row className="pd-05">
                             <Col md="10" className="primary-800 font-weight-bold">
-                                {hasChildren || riseAboveNotes.length ?
+                                {hasChildren ?
                                     <Button variant='link' onClick={() => this.setOpen(!this.open)} aria-controls="example-collapse-text" aria-expanded={this.state.open}>
                                         <i className={`fa ${icon}`}></i>
                                     </Button>
