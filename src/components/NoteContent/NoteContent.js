@@ -27,7 +27,8 @@ class NoteContent extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
 
         this.handleRiseAbove = this.handleRiseAbove.bind(this);
-        this.getRiseAboveData = this.getRiseAboveData.bind(this);
+        this.getRiseAboveNotes = this.getRiseAboveNotes.bind(this);
+        this.editNote = this.editNote.bind(this);
 
     }
 
@@ -120,23 +121,19 @@ class NoteContent extends Component {
         this.props.openContribution(contribId);
     }
 
-    //GET RISEABOVE DATA
-    getRiseAboveData = (riseAboveLink) => {
-        let noteLinks = [];
-        let riseAboveNotes = [];
-        api.getLinks(riseAboveLink, 'from', 'contains').then(res => {
-            noteLinks = res;
-            console.log("noteLinks", noteLinks);
-            noteLinks.forEach(noteLink => {
-                let note = {};
-                note._id = noteLink.to;
-                note.title = noteLink._to.title;
-                riseAboveNotes.push(note);
-            });
-        })
-        console.log("return", riseAboveNotes);
-        return riseAboveNotes;
+    getRiseAboveNotes = (riseAboveId) => {
+        if (this.props.riseAboveViewNotes[riseAboveId]) {
+            let riseAboveNotes = this.props.riseAboveViewNotes[riseAboveId].map((noteId) => this.props.riseAboveNotes[noteId])
+            console.log("riseAboveNotes RETURN", riseAboveNotes);
+            return riseAboveNotes;
+        }
+        return null;
     }
+
+    editNote = (noteId) => {
+        this.props.openContribution(noteId)
+    }
+
     render() {
 
         return (
@@ -175,6 +172,20 @@ class NoteContent extends Component {
                 </Form>
                 {this.props.checkedNotes.map(
                     (obj, i) => {
+                        let riseAboveNotes = this.getRiseAboveNotes(obj._id);
+                        let RiseAboveNotes;
+                        if (riseAboveNotes) {
+                            RiseAboveNotes = <Row>
+                                <Col className="pd-1-left">
+                                    <Row className="sz-1 primary-800 font-weight-bold" >RiseAbove Notes</Row>
+                                    {riseAboveNotes.map((note, i) => {
+                                        return <Row key={i}>
+                                            <Button variant="light" className="min-width-10 rounded-pill pd-05" onClick={() => this.editNote(note._id)}>{note.title}</Button>
+                                        </Row>
+                                    })}
+                                </Col>
+                            </Row>
+                        }
                         let data;
                         if (this.props.query && obj.data.English) {
                             let innerHTML = obj.data.English;
@@ -210,6 +221,7 @@ class NoteContent extends Component {
                                             <span className="pd-1" dangerouslySetInnerHTML={{ __html: data ? (data) : (obj.data.English ? obj.data.English : obj.data.body) }} />
                                         </Col>
                                     </Row>
+                                    {RiseAboveNotes}
                                     <Row>
                                         <Col>
                                             <Button className="float-right mrg-1-left" variant="outline-info" onClick={() => this.props.buildOn(obj._id)}>BuildOn</Button>
@@ -239,7 +251,9 @@ const mapStateToProps = (state, ownProps) => {
         ),
         viewLinks: state.notes.viewLinks,
         author: state.globals.author,
-        communityId: state.globals.communityId
+        communityId: state.globals.communityId,
+        riseAboveViewNotes: state.notes.riseAboveViewNotes,
+        riseAboveNotes: state.notes.riseAboveNotes,
     }
 }
 
