@@ -53,8 +53,9 @@ class View extends Component {
         this.onCloseDialog = this.onCloseDialog.bind(this);
         this.onConfirmDrawDialog = this.onConfirmDrawDialog.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
-        this.filterResults = this.filterResults.bind(this)
-        this.getScaffoldSupports = this.getScaffoldSupports.bind(this)
+        this.filterResults = this.filterResults.bind(this);
+        this.getScaffoldSupports = this.getScaffoldSupports.bind(this);
+        this.clearSearch = this.clearSearch.bind(this);
     }
 
     getBuildOnHierarchy() {
@@ -285,6 +286,12 @@ class View extends Component {
         });
     };
 
+    clearSearch() {
+        this.setState({
+            query: "",
+            filteredData: this.filterResults(null),
+        });
+    };
 
     handleFilter = (e) => {
         let value = e.target.value;
@@ -382,7 +389,7 @@ class View extends Component {
                     <Col md="5" sm="12" className="mrg-6-top pd-2-right v-scroll">
                         <Form className="mrg-1-bot">
                             <Row>
-                                <Col md="8">
+                                <Col md="6">
                                     <FormGroup className="has-search">
                                         <span className="fa fa-search form-control-feedback"></span>
                                         <Input
@@ -393,7 +400,7 @@ class View extends Component {
                                         />
                                     </FormGroup>
                                 </Col>
-                                <Col md="4">
+                                <Col md="3">
                                     <FormGroup>
                                         <Input type="select" name="filter" id="filter" onChange={this.handleFilter}>
                                             <option key="title" value="title">Search By Title</option>
@@ -402,6 +409,9 @@ class View extends Component {
                                             <option key="author" value="author">Search By Author</option>
                                         </Input>
                                     </FormGroup>
+                                </Col>
+                                <Col md="3">
+                                    <Button onClick={this.clearSearch}>Clear Search</Button>
                                 </Col>
                             </Row>
                         </Form>
