@@ -8,6 +8,7 @@ import { newNote, openContribution, setCheckedNotes } from '../store/noteReducer
 import { connect } from 'react-redux'
 import DialogHandler from '../components/dialogHandler/DialogHandler.js'
 import NoteContent from '../components/NoteContent/NoteContent'
+import ScaffoldSelect from '../components/scaffold/ScaffoldSelect'
 import ListOfNotes from './ListOfNotes/ListOfNotes'
 import { fetchView, fetchCommunity, setCommunityId, setViewId, fetchViewCommunityData } from '../store/globalsReducer.js'
 import { fetchAuthors } from '../store/userReducer.js';
@@ -56,6 +57,7 @@ class View extends Component {
         this.filterResults = this.filterResults.bind(this);
         this.getScaffoldSupports = this.getScaffoldSupports.bind(this);
         this.clearSearch = this.clearSearch.bind(this);
+        this.onScaffoldSelected = this.onScaffoldSelected.bind(this)
     }
 
     getBuildOnHierarchy() {
@@ -203,13 +205,11 @@ class View extends Component {
 
     }
 
-    filterNotes = (query) => {
-        console.log("filterNotes", query);
+    onScaffoldSelected = (support) => {
         this.setState({
-            filteredData: this.filterResults(query)
+            filteredData: this.filterResults(support.to)
         });
     }
-
 
     changeView(viewObj) {
         // console.log("viewId",viewObj.obj._id);
@@ -319,16 +319,7 @@ class View extends Component {
         /* const filteredResults = this.filterResults() */
         let scaffolds;
         if (showScffold) {
-            const supports = this.getScaffoldSupports()
-            scaffolds = <Row>
-                <Col>
-                    {supports.map((obj, i) => {
-                        return <Row key={i}>
-                            <Button variant='link' onClick={() => this.filterNotes(obj.to)} className="scaffold-text">{obj._to.title}</Button>
-                        </Row>
-                    })}
-                </Col>
-            </Row>
+            scaffolds = <ScaffoldSelect initVal={0} onScaffoldSelected={this.onScaffoldSelected} returnSupport={true}/>
         }
 
         return (

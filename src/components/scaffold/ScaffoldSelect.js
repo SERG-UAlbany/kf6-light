@@ -25,6 +25,10 @@ class ScaffoldSelect extends React.Component {
     }
 
     scaffoldSelected = (scaffoldId, support) => {
+        if (this.props.returnSupport){
+            this.props.onScaffoldSelected(support)
+            return
+        }
         const scaffold = this.props.items[scaffoldId];
         let addhyphen = true;
         let initialText = '';
