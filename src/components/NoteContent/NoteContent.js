@@ -28,6 +28,7 @@ class NoteContent extends Component {
 
         this.handleRiseAbove = this.handleRiseAbove.bind(this);
         this.getRiseAboveNotes = this.getRiseAboveNotes.bind(this);
+        this.openNote = this.openNote.bind(this);
         this.editNote = this.editNote.bind(this);
 
     }
@@ -117,7 +118,7 @@ class NoteContent extends Component {
         }
     }
 
-    openNote = (contribId) => {
+    editNote = (contribId) => {
         this.props.openContribution(contribId);
     }
 
@@ -130,8 +131,8 @@ class NoteContent extends Component {
         return null;
     }
 
-    editNote = (noteId) => {
-        this.props.openContribution(noteId)
+    openNote = (noteId) => {
+        this.props.openContribution(noteId, "read")
     }
 
     render() {
@@ -180,7 +181,7 @@ class NoteContent extends Component {
                                     <Row className="sz-1 primary-800 font-weight-bold" >RiseAbove Notes</Row>
                                     {riseAboveNotes.map((note, i) => {
                                         return <Row key={i}>
-                                            <Button variant="light" className="min-width-10 rounded-pill pd-05" onClick={() => this.editNote(note._id)}>{note.title}</Button>
+                                            <Button variant="light" className="min-width-10 rounded-pill pd-05" onClick={() => this.openNote(note._id)}>{note.title}</Button>
                                         </Row>
                                     })}
                                 </Col>
@@ -225,7 +226,7 @@ class NoteContent extends Component {
                                     <Row>
                                         <Col>
                                             <Button className="float-right mrg-1-left" variant="outline-info" onClick={() => this.props.buildOn(obj._id)}>BuildOn</Button>
-                                            <Button className="float-right" variant="outline-info" onClick={() => this.openNote(obj._id)}>Edit Note</Button>
+                                            <Button className="float-right" variant="outline-info" onClick={() => this.editNote(obj._id)}>Edit Note</Button>
                                         </Col>
                                     </Row>
                                 </Col>

@@ -22,7 +22,7 @@ class Note extends React.Component {
         super(props)
         this.state = {
             riseAboveNotes: false,
-            selectedTab: "write"
+            selectedTab: this.props.mode ? this.props.mode : "write",
         }
         this.onEditorSetup = this.onEditorSetup.bind(this)
         this.onDrawingToolOpen = this.onDrawingToolOpen.bind(this)
@@ -37,13 +37,13 @@ class Note extends React.Component {
     }
 
     componentDidMount() {
-        if (this.props.riseAboveViewNotes[this.props.note._id]) {
-            this.setState({
-                // riseAboveNotes: this.props.riseAboveViewNotes[this.props.note._id].map((noteId) => this.props.riseAboveNotes[noteId])
-                riseAboveNotes: true,
-                selectedTab: "read"
-            })
-        }
+        // if (this.props.riseAboveViewNotes[this.props.note._id]) {
+        //     this.setState({
+        //         // riseAboveNotes: this.props.riseAboveViewNotes[this.props.note._id].map((noteId) => this.props.riseAboveNotes[noteId])
+        //         riseAboveNotes: true,
+        //         selectedTab: "read"
+        //     })
+        // }
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {

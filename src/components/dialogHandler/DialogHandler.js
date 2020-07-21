@@ -59,7 +59,7 @@ const DialogHandler = props => {
                         onConfirm={()=> onDialogConfirm(elt)}
                         confirmButton={elt.confirmButton}>
 
-                    <Note key={elt.noteId} dlgId={elt.id} noteId={elt.noteId} />
+                    <Note key={elt.noteId} dlgId={elt.id} noteId={elt.noteId} mode={elt.mode}/>
                 </Dialog>
             )
         }

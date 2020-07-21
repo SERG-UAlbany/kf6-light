@@ -234,6 +234,7 @@ export const newNote = (view, communityId, authorId, buildson) => dispatch => {
             title: 'New Note',
             confirmButton: 'create',
             noteId: note._id,
+            mode: "write", // new note should open in write tab
         }))
     })
 
@@ -316,7 +317,7 @@ export const fetchRecords = (contribId) => async (dispatch, getState) => {
     dispatch(setRecords({ contribId, records }))
 }
 
-export const openContribution = (contribId) => async (dispatch, getState) => {
+export const openContribution = (contribId, mode) => async (dispatch, getState) => {
 
     const [contrib, fromLinks, toLinks] = await Promise.all([api.getObject(contribId),
     api.getLinks(contribId, 'from'),
@@ -331,6 +332,7 @@ export const openContribution = (contribId) => async (dispatch, getState) => {
         title: 'Edit Note',
         confirmButton: 'edit',
         noteId: note._id,
+        mode: mode, // read or write tab
     }))
     //annotations
     const annoLinks = toLinks.filter((link) => link.type === 'annotates')
