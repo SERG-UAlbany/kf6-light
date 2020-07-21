@@ -383,8 +383,10 @@ class View extends Component {
                         <Form className="mrg-1-bot">
                             <Row>
                                 <Col md="8">
-                                    <FormGroup>
+                                    <FormGroup className="has-search">
+                                        <span className="fa fa-search form-control-feedback"></span>
                                         <Input
+                                            className="form-control"
                                             value={this.state.query}
                                             placeholder="Search Your Note"
                                             onChange={this.handleInputChange}
