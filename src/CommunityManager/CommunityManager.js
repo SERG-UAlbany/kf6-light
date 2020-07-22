@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import Axios from 'axios';
 import { Container, Col, Row, Form, FormGroup, Label, Input } from 'reactstrap';
 import { Button } from 'react-bootstrap';
-import { apiUrl } from '../store/api.js'
+import { BallBeat } from 'react-pure-loaders';
 import { connect } from 'react-redux'
+import { apiUrl } from '../store/api.js'
 import { setCommunityId, setViewId, setViews, fetchView, setView } from '../store/globalsReducer.js'
 
 class CommunityManager extends Component {
@@ -17,6 +18,7 @@ class CommunityManager extends Component {
             token: sessionStorage.getItem("token"),
             registrations: [],
             success: false,
+            loading: true,
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -65,6 +67,7 @@ class CommunityManager extends Component {
                     let communityId = communityData[0]._id;
                     this.setState({
                         communitites: communityData,
+                        loading: false,
                     })
                     if (communityId) {
                         this.setState({
@@ -127,41 +130,62 @@ class CommunityManager extends Component {
 
     render() {
         return (
-            <Container>
-                <div className="mrg-4-top">
+            <>
+                {
+                    this.state.loading ? (
+                        //SHOW LOADING UNTIL COMMUNITITES ARE GOT
+                        < Container >
+                            <div className="mrg-16-top mrg-auto d-flex justify-content-center">
+                                <BallBeat
+                                    color={'#000000'}
+                                    loading={true}
+                                />
+                            </div>
+                        </Container>
+                    )
+                        :
+                        (
+                            < Container >
+                                <div className="mrg-4-top">
 
-                    <Container className="mrg-2-top">
-                        <h6>My Knowledge Building Communities</h6>
-                        {this.state.registrations.map((obj, id) => {
-                            return <Row key={id} value={obj.communityId} className="mrg-05-top">
-                                <Col>{obj._community.title}</Col>
-                                <Col><Button variant="outline-secondary" onClick={() => this.enterCommunity({ obj })}>Enter Community</Button></Col>
-                            </Row>
-                        })}
-                    </Container>
+                                    <Container className="mrg-2-top">
+                                        <h6>My Knowledge Building Communities</h6>
+                                        {
+                                            this.state.registrations.map((obj, id) => {
+                                                return <Row key={id} value={obj.communityId} className="mrg-05-top">
+                                                    <Col>{obj._community.title}</Col>
+                                                    <Col><Button variant="outline-secondary" onClick={() => this.enterCommunity({ obj })}>Enter Community</Button></Col>
+                                                </Row>
+                                            })
+                                        }
+                                    </Container >
 
-                    <Form onSubmit={this.handleSubmit} className="form mrg-1-top">
-                        <Col>
-                            <FormGroup>
-                                <Label>Register Community</Label>
-                                <Input type="select" name="communityId" id="communityId" value={this.state.communityId} onChange={this.handleChange}>{
-                                    this.state.communitites.map((obj) => {
-                                        return <option key={obj._id} value={obj._id}>{obj.title}</option>
-                                    })
-                                }</Input>
-                            </FormGroup>
-                            <FormGroup>
-                                <Label>Registration Key</Label>
-                                <Input type="password" name="password" placeholder="Enter Registration Key" id="password" value={this.state.password} onChange={this.handleChange} />
-                            </FormGroup>
-                        </Col>
-                        <Col>
-                            <Button variant="secondary" onClick={this.handleSubmit}>Submit</Button>
-                        </Col>
-                    </Form>
+                                    <Form onSubmit={this.handleSubmit} className="form mrg-1-top">
+                                        <Col>
+                                            <FormGroup>
+                                                <Label>Register Community</Label>
+                                                <Input type="select" name="communityId" id="communityId" value={this.state.communityId} onChange={this.handleChange}>{
+                                                    this.state.communitites.map((obj) => {
+                                                        return <option key={obj._id} value={obj._id}>{obj.title}</option>
+                                                    })
+                                                }</Input>
+                                            </FormGroup>
+                                            <FormGroup>
+                                                <Label>Registration Key</Label>
+                                                <Input type="password" name="password" placeholder="Enter Registration Key" id="password" value={this.state.password} onChange={this.handleChange} />
+                                            </FormGroup>
+                                        </Col>
+                                        <Col>
+                                            <Button variant="secondary" onClick={this.handleSubmit}>Submit</Button>
+                                        </Col>
+                                    </Form>
 
-                </div>
-            </Container>);
+                                </div >
+                            </Container >
+                        )
+                }
+            </>
+        );
     }
 }
 

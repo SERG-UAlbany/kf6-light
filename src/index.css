@@ -75,6 +75,14 @@ body {
   margin-top: 6rem !important;
 }
 
+.mrg-16-top{
+  margin-top: 16rem !important;
+}
+
+.mrg-32-top{
+  margin-top: 32rem !important;
+}
+
 .mrg-1-bot{
   margin-bottom: 1rem !important;
 }
