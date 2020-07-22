@@ -67,7 +67,6 @@ class CommunityManager extends Component {
                     let communityId = communityData[0]._id;
                     this.setState({
                         communitites: communityData,
-                        loading: false,
                     })
                     if (communityId) {
                         this.setState({
@@ -85,8 +84,10 @@ class CommunityManager extends Component {
             .then(
                 result => {
                     let userRegistrations = result.data;
+                    userRegistrations = userRegistrations.sort((a, b) => a._community.title.localeCompare(b._community.title));
                     this.setState({
                         registrations: userRegistrations,
+                        loading: false,
                     })
                 }).catch(
                     error => {
@@ -160,7 +161,7 @@ class CommunityManager extends Component {
                                         }
                                     </Container >
 
-                                    <Form onSubmit={this.handleSubmit} className="form mrg-1-top">
+                                    <Form onSubmit={this.handleSubmit} className="form mrg-1-top mrg-1-bot">
                                         <Col>
                                             <FormGroup>
                                                 <Label>Register Community</Label>
