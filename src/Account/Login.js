@@ -37,8 +37,8 @@ class Login extends Component {
                 },
                 {
                     id: 3,
-                    key: "localHost 9000",
-                    value: "http://localhost:9000"
+                    key: "kf.rdc.nie.edu.sg",
+                    value: "https://kf.rdc.nie.edu.sg"
 
                 },
             ]
