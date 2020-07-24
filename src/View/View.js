@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { DropdownButton, Dropdown, Button, Row, Col, Modal } from 'react-bootstrap';
 import { Form, FormGroup, Label, Input } from 'reactstrap';
 import Axios from 'axios';
-import { apiUrl } from '../store/api.js';
+import { apiUrl, url } from '../store/api.js';
 import { newNote, openContribution, setCheckedNotes } from '../store/noteReducer.js'
 import { connect } from 'react-redux'
 import DialogHandler from '../components/dialogHandler/DialogHandler.js'
@@ -313,13 +313,17 @@ class View extends Component {
         this.props.history.push("/community-manager");
     }
 
+    goToServer = () => {
+        window.open(`${url}/view/${this.props.viewId}`, "_blank");
+    }
+
     render() {
         const showScffold = !this.hideScaffold && this.state.filter === "scaffold";
         const hierarchy = this.getBuildOnHierarchy()
         /* const filteredResults = this.filterResults() */
         let scaffolds;
         if (showScffold) {
-            scaffolds = <ScaffoldSelect initVal={0} onScaffoldSelected={this.onScaffoldSelected} returnSupport={true}/>
+            scaffolds = <ScaffoldSelect initVal={0} onScaffoldSelected={this.onScaffoldSelected} returnSupport={true} />
         }
 
         return (
@@ -345,6 +349,10 @@ class View extends Component {
                             </Col>
                             <Col md="12" sm="2" xs="2">
                                 <Button onClick={this.goToCommunityManager} className="circle-button" variant="outline-info"><i className="fa fa-arrow-left"></i></Button>
+                            </Col>
+
+                            <Col md="12" sm="2" xs="2">
+                                <Button onClick={this.goToServer} className="circle-button" variant="outline-info"><i className="fa fa-globe"></i></Button>
                             </Col>
 
 
