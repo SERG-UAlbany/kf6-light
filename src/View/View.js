@@ -45,15 +45,11 @@ class View extends Component {
         this.onScaffoldSelected = this.onScaffoldSelected.bind(this)
     }
 
+    // GET BUILDON HIERARCHY
     getBuildOnHierarchy() {
         const hierarchy = {}
         for (let noteId in this.props.viewNotes) {
             hierarchy[noteId] = { children: {} }
-            // if (noteId in this.props.riseAboveViewNotes){ //Add riseabove notes to hierarchy tree
-            //     this.props.riseAboveViewNotes[noteId].forEach((childId) => {
-            //         hierarchy[noteId]['children'][childId] = {parent: noteId, children: {}}
-            //     })
-            // }
         }
         this.props.buildsOn.forEach(note => {
             const parent = note.to
@@ -74,6 +70,7 @@ class View extends Component {
         return final_h
     }
 
+    // GET SCAFFOLD SUPPORTS
     getScaffoldSupports() {
         let supports = []
         this.props.scaffolds.forEach(scaffold => {
@@ -83,6 +80,7 @@ class View extends Component {
     }
 
     componentDidMount() {
+        // FETCH VIEW-COMMUNITY DATA
         if (this.props.viewId) {
             this.props.fetchViewCommunityData(this.props.viewId)
         }
@@ -98,6 +96,7 @@ class View extends Component {
         }
     }
 
+    // SET VALUES
     handleChangeView = (e) => {
         let target = e.target;
         let name = target.name;
@@ -108,6 +107,7 @@ class View extends Component {
         });
     }
 
+    // SUBMIT VIEW
     handleSubmitView(e) {
         e.preventDefault();
         var config = {
@@ -127,8 +127,7 @@ class View extends Component {
         Axios.post(addViewUrl, query, config)
             .then(
                 result => {
-                    // console.log("Successful",result);
-
+                    alert("view added");
                 }
             ).catch(
                 error => {
@@ -139,19 +138,15 @@ class View extends Component {
     }
 
     newView() {
-        // console.log("New View onclick works");
         this.setState({
             showView: true,
-            showRiseAbove: false,
             showModel: true,
         })
     }
 
     newRiseAbove() {
-        // console.log("New RiseAbove onclick works");
         this.setState({
             showView: false,
-            showRiseAbove: true,
             showModel: true,
         })
     }
@@ -164,28 +159,18 @@ class View extends Component {
 
     }
 
-    handleShowNoteContent(value) {
-        this.setState({
-            showView: false,
-            showNote: false,
-            showRiseAbove: false,
-        });
-
-    }
-
+    // FILTER RESULTS ON SCAFFOLD SELECT
     onScaffoldSelected = (support) => {
         this.setState({
             filteredData: this.filterResults(support.to)
         });
     }
 
+    // CHANGE VIEW
     changeView(viewObj) {
-        // console.log("viewId",viewObj.obj._id);
-        this.setState({
-            viewId: viewObj.obj._id,
-        })
-        sessionStorage.setItem("viewId", viewObj.obj._id);
-        sessionStorage.setItem("viewTitle", viewObj.obj.title);
+
+        let viewId = viewObj.obj._id;
+        this.props.history.push(`/view/${viewId}`);
         this.handleShow(false);
         window.location.reload();
 

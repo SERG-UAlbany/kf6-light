@@ -6,7 +6,6 @@ import Axios from 'axios';
 
 import './NoteContent.css';
 import { apiUrl } from '../../store/api.js';
-import * as api from '../../store/api.js';
 import { openContribution, updateCheckedNotes } from '../../store/noteReducer'
 import { fetchViewCommunityData } from '../../store/globalsReducer'
 import { createRiseAbove } from '../../store/riseAboveReducer'
@@ -47,6 +46,7 @@ class NoteContent extends Component {
 
     }
 
+    // CREATE VIEW->NOTE LINK
     handleSubmit = (e) => {
         if (this.props.viewId === this.state.addView) {
             this.setState({
@@ -77,7 +77,6 @@ class NoteContent extends Component {
                 };
                 Axios.post(url, query, config).then(
                     res => {
-                        // console.log("AZIOX POST DONE");
                         this.setState({ visible: true }, () => {
                             window.setTimeout(() => {
                                 this.setState({ visible: false })
@@ -88,10 +87,7 @@ class NoteContent extends Component {
                 );
             });
         }
-
-
-
-        // POST LINKS ALERT THEY'RE ADDED TO VIEW TITLE
+        // TODO POST LINKS ALERT THEY'RE ADDED TO VIEW TITLE
 
     }
 
@@ -124,7 +120,6 @@ class NoteContent extends Component {
     getRiseAboveNotes = (riseAboveId) => {
         if (this.props.riseAboveViewNotes[riseAboveId]) {
             let riseAboveNotes = this.props.riseAboveViewNotes[riseAboveId].map((noteId) => this.props.riseAboveNotes[noteId])
-            console.log("riseAboveNotes RETURN", riseAboveNotes);
             return riseAboveNotes;
         }
         return null;
@@ -142,7 +137,6 @@ class NoteContent extends Component {
                     <Row>
                         <Col md="6">
                             <FormGroup>
-                                {/* <Label>Select Community</Label> */}
                                 <Input type="select" name="viewId" onChange={this.handleChange}>{
                                     this.props.views.map((obj, i) => {
                                         return <option key={i} value={obj._id}> {obj.title} </option>
@@ -217,7 +211,6 @@ class NoteContent extends Component {
                                     </Row>
                                     <Row>
                                         <Col>
-                                            {/* <Content openNote={this.openNote} content={data} riseAboveNotes={riseAboveNotes} /> */}
                                             <span className="pd-1" dangerouslySetInnerHTML={{ __html: data ? (data) : (obj.data.English ? obj.data.English : obj.data.body) }} />
                                         </Col>
                                     </Row>

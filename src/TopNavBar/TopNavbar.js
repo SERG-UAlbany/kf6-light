@@ -24,7 +24,7 @@ class TopNavbar extends Component {
     /* e.persist(); */
     const viewId = e.target.value;
     this.props.setViewId(viewId);
-    //EMPTY CHECKEDNOTES
+    //TODO EMPTY CHECKEDNOTES
     this.props.history.push(`/view/${viewId}`)
   }
 

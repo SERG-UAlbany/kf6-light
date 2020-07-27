@@ -16,10 +16,8 @@ class ListOfNotes extends Component {
         for (let noteId in this.props.hierarchy) {
             if (noteId in this.props.notes)
                 notes.push(this.props.notes[noteId])
-            // else if (noteId in this.props.riseAboveNotes) //Check if is from a riseabove
-            //     notes.push(this.props.riseAboveNotes[noteId])
         }
-        //TODO sort them
+        //SORT THEM
         return notes.sort((a, b) => { return new Date(b.created) - new Date(a.created) })
 
     }

@@ -5,7 +5,7 @@ import { Button } from 'react-bootstrap';
 import { BallBeat } from 'react-pure-loaders';
 import { connect } from 'react-redux'
 import { apiUrl } from '../store/api.js'
-import { setCommunityId, setViewId, setViews, fetchView, setView } from '../store/globalsReducer.js'
+import { setCommunityId, setViewId } from '../store/globalsReducer.js'
 
 class CommunityManager extends Component {
 
@@ -200,9 +200,6 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = {
     setCommunityId,
     setViewId,
-    setViews,
-    fetchView,
-    setView
 }
 
 export default connect(

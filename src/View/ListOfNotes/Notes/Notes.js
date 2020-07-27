@@ -19,15 +19,6 @@ class Notes extends Component {
         this.checkNote = this.checkNote.bind(this)
     }
 
-    // fetchRiseAboveNotes() {
-    //     if (this.props.note.data.riseabove && this.props.riseAboveViewNotes[this.props.note._id]) {
-    //         return this.props.riseAboveViewNotes[this.props.note._id].map((noteId) => this.props.riseAboveNotes[noteId])
-    //         /* let riseAboveData = this.props.riseAboveNotes[this.props.note.data.riseabove.viewId] || []
-    //          * return riseAboveData */
-    //     }
-    //     return []
-    // }
-
     componentDidMount() {
     }
 
@@ -45,7 +36,6 @@ class Notes extends Component {
         const hasChildren = this.props.children && Object.keys(this.props.children).length !== 0;;
         const icon = this.state.open ? "fa-chevron-down" : "fa-chevron-right"
         const formatter = new Intl.DateTimeFormat('default', dateFormatOptions)
-        // let riseAboveNotes = this.fetchRiseAboveNotes()
         return (
             <div>
                 <Row>
@@ -95,7 +85,6 @@ const mapStateToProps = (state, ownProps) => {
     return {
         author: (author && `${author.firstName} ${author.lastName}`) || 'NA',
         isChecked: state.notes.checkedNotes.includes(ownProps.note._id),
-        // isRiseAboveChecked: state.notes.riseAboveChecked,
         riseAboveViewNotes: state.notes.riseAboveViewNotes,
         riseAboveNotes: state.notes.riseAboveNotes
     }
