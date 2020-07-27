@@ -16,27 +16,14 @@ import './View.css';
 
 class View extends Component {
 
-    myRegistrations = [];
-    myCommunityId = '';
-    show = false;
-    myTempTo = [];
-    noteContnetNew = [];
-    open = false;
-
     //TOKEN
     token = sessionStorage.getItem('token');
 
     constructor(props) {
         super(props);
-        // GET communityId AND welcomeId IN myState
-        // this.myState= this.props.location.state;
-
-        //COMMUNITY-ID
-        // this.myCommunityId = this.myState.communityId;
 
         this.state = {
             showView: false,
-            showCommunity: false,
             addView: '',
             showRiseAbove: false,
             showModel: false,
@@ -47,8 +34,6 @@ class View extends Component {
         };
 
         this.getBuildOnHierarchy = this.getBuildOnHierarchy.bind(this)
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
         this.handleSubmitView = this.handleSubmitView.bind(this);
         this.handleChangeView = this.handleChangeView.bind(this);
         this.onCloseDialog = this.onCloseDialog.bind(this);
@@ -113,23 +98,6 @@ class View extends Component {
         }
     }
 
-    handleChange = (e) => {
-        let target = e.target;
-        let name = target.name;
-        let value = target.value;
-
-        this.setState({
-            [name]: value
-        });
-    }
-
-    handleSubmit(e) {
-        e.preventDefault();
-        // console.log('The form was submitted with:');
-        // console.log(this.state.communitySelect);
-        // console.log('ADD view:',this.state.addView);
-    }
-
     handleChangeView = (e) => {
         let target = e.target;
         let name = target.name;
@@ -149,7 +117,7 @@ class View extends Component {
         var addViewUrl = `${apiUrl}/contributions/${this.props.communityId}`;
 
         var query = {
-            "authors": [sessionStorage.getItem("userId")],
+            "authors": [this.props.author._id],
             "communityId": this.props.communityId,
             "permission": "public",
             "status": "active",
@@ -305,10 +273,6 @@ class View extends Component {
         this.props.newNote(this.props.view, this.props.communityId, this.props.author._id, buildOn);
     }
 
-    setOpen = (value) => {
-        this.open = value;
-    }
-
     goToCommunityManager = () => {
         this.props.history.push("/community-manager");
     }
@@ -335,6 +299,7 @@ class View extends Component {
                     <Col md="1" sm="12" className="pd-6-top">
 
                         <Row className="mrg-025">
+                            {/* NEW NOTE ICON */}
                             <Col md="12" sm="2" xs="2">
                                 <DropdownButton drop="right" variant="outline-info" title={<i className="fas fa-plus-circle"></i>}>
 
@@ -347,44 +312,20 @@ class View extends Component {
                                         </Dropdown.Item>
                                 </DropdownButton>
                             </Col>
+                            {/* BACK ICON */}
                             <Col md="12" sm="2" xs="2">
                                 <Button onClick={this.goToCommunityManager} className="circle-button" variant="outline-info"><i className="fa fa-arrow-left"></i></Button>
                             </Col>
-
+                            {/* GOTO SERVER ICON */}
                             <Col md="12" sm="2" xs="2">
                                 <Button onClick={this.goToServer} className="circle-button" variant="outline-info"><i className="fa fa-globe"></i></Button>
                             </Col>
-
-
-                            {/* <Toolbar></Toolbar>*/}
-                            {/* <Col md="12" sm="2" xs="2">
-                                <DropdownButton drop="right" variant="outline-info" title={<i className="fa fa-pencil"></i>}>
-
-                                </DropdownButton>
-                                </Col>
-                                <Col md="12" sm="2" xs="2">
-                                <DropdownButton drop="right" variant="outline-info" title={<i className="fas fa-file"></i>}>
-
-                                </DropdownButton>
-                                </Col>
-                                <Col md="12" sm="2" xs="2">
-                                <DropdownButton drop="right" variant="outline-info" title={<i className="fas fa-hammer"></i>}>
-
-                                </DropdownButton>
-                                </Col>
-
-                                <Col md="12" sm="2" xs="2">
-                                <DropdownButton drop="right" variant="outline-info" title={<i className="fas fa-edit"></i>}>
-
-                                </DropdownButton>
-                                </Col> */}
 
                         </Row>
                     </Col>
 
 
                     {/* NOTES */}
-
                     <Col md="5" sm="12" className="mrg-6-top pd-2-right v-scroll">
                         <Form className="mrg-1-bot">
                             <Row>
@@ -472,25 +413,6 @@ class View extends Component {
                                         <Col><Link onClick={() => this.changeView({ obj })}> {obj.title} </Link></Col>
                                     </Row>
                                 })}
-                            </Modal.Body>
-                        </>) : null}
-
-                    {this.state.showRiseAbove ? (
-                        <>
-                            <Modal.Header closeButton>
-                                <Modal.Title>
-                                    <Row>
-                                        <Col>New RiseAbove</Col>
-                                    </Row>
-                                </Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body style={{ 'max-height': 'calc(100vh - 210px)', 'overflow-y': 'auto' }}>
-                                <Form onSubmit={this.handleSubmit}>
-                                    <Label htmlFor="riseAboveTitle" style={{ fontSize: "1rem" }}>RiseAbove Title</Label>
-                                    <Input type="text" id="riseAboveTitle" placeholder="Enter RiseAbove Title" name="riseAboveTitle" value={this.state.riseAboveTitle} onChange={this.handleChange} />
-
-                                    <Button className="mrg-1-top" onClick={this.handleSubmit}>Submit</Button>
-                                </Form>
                             </Modal.Body>
                         </>) : null}
 

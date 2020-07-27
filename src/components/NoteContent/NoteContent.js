@@ -106,7 +106,6 @@ class NoteContent extends Component {
             //CREATE RISEABOVE
             let view = this.props.view;
             let communityId = this.props.communityId;
-            console.log("Communityid", communityId);
             let author = this.props.author._id;
             let notes = this.props.checkedNotes;
             await this.props.createRiseAbove(view, communityId, author, notes);

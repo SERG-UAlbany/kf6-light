@@ -6,7 +6,6 @@ import { Container, Col, Form, FormGroup, Label, Input, Button } from 'reactstra
 
 import { url, setToken, setServer } from '../store/api'
 import { setGlobalToken, fetchLoggedUser } from '../store/globalsReducer'
-import { result } from 'lodash'
 
 class Login extends Component {
     constructor(props) {
@@ -41,6 +40,12 @@ class Login extends Component {
                     value: "https://kf.rdc.nie.edu.sg"
 
                 },
+                // {
+                //     id: 4,
+                //     key: "localhost 9000",
+                //     value: "http://localhost:9000"
+
+                // },
             ]
         };
 
@@ -75,9 +80,10 @@ class Login extends Component {
                     //SET TOKEN
                     sessionStorage.setItem('token', token);
                     this.props.setGlobalToken(token);
-                    /* this.props.setIsAuthenticated(); */
                     setToken(token); //set token on api header
+
                     this.props.fetchLoggedUser()
+
                     //NAVIGATE TO COMMUNITY MANAGER
                     this.props.history.push("/community-manager");
                 })
@@ -98,14 +104,14 @@ class Login extends Component {
             <Container>
                 <div className="mrg-4-top">
                     <Col>
-                        <h3>Login</h3>  
+                        <h3>Login</h3>
                     </Col>
                     <Form onSubmit={this.handleSubmit} className="form">
                         <Col>
                             <FormGroup>
                                 <Label>Server</Label>
                                 <Input type="select" id="server" name="server" value={this.state.server} onChange={this.handleChange} >
-                                            {this.state.servers.map((server) => {
+                                    {this.state.servers.map((server) => {
                                         return <option key={server.key} value={server.value}>{server.key}</option>
                                     })}
 

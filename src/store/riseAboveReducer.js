@@ -49,23 +49,18 @@ export const createRiseAbove = (view, communityId, author, notes) => dispatch =>
             noteResponse.title = "Riseabove"
             console.log("noteResponse noteResponse", noteResponse);
             api.putObject(noteResponse, communityId, riseAboveNoteId).then(putResponse => {
-                console.log("putResponse", putResponse);
                 //POST API LINKS
                 let pos = { x: 200, y: 200 }
                 api.postLink(viewId, riseAboveNoteId, 'contains', pos).then(res => {
-                    console.log("NOTE LINK PSTED");
                     notes.forEach(note => {
-                        console.log("Mari note", note._id);
                         let pos = { x: 20, y: 20 }
                         api.postLink(riseAboveId, note._id, 'contains', pos).then(res => {
-                            console.log("LINK PAN POST THIA");
                             //EITHER AND THEN DELETE
                             api.getLinkForObj(note._id).then(linkRes => {
                                 let links = linkRes.data;
                                 let link = links.filter(obj => {
                                     return obj.from.includes(viewId)
                                 })
-                                console.log("DELETE LINK", link[0]._id);
                                 api.deleteLink(link[0]._id);
                             })
                         })

@@ -15,7 +15,7 @@ class SignUp extends Component {
       email: '',
       userName: '',
       password: '',
-      registrationKey: '',
+      // registrationKey: '', //For users who can't use Google ReCaptcha
       isVerified: false,
     };
 
@@ -30,7 +30,6 @@ class SignUp extends Component {
     let name = target.name;
     let value = target.value;
 
-    //NAME IS ATTRIBUTE NAME AND VALUE IS ATTRIBUTE VALUE
     this.setState({
       [name]: value
     });
@@ -40,9 +39,7 @@ class SignUp extends Component {
   handleSubmit(e) {
     e.preventDefault();
 
-    console.log('The form was submitted with:');
-    console.log(this.state);
-
+    //POST NEW USER
     Axios.post(
       `${apiUrl}/users`,
       this.state)
@@ -52,17 +49,17 @@ class SignUp extends Component {
 
         //SET TOKEN
         sessionStorage.setItem('token', this.token);
-        //NAVIGATE TO COMMUNITY MANAGER TEMP
+        //NAVIGATE TO COMMUNITY MANAGER
         this.props.history.push('/community-manager')
       })
       .catch((error) => {
         if (error.message) {
-          console.log(error.message);
           alert("Enter Valid Username and Password");
         }
       });
   }
 
+  //RECAPTCHA CALLBACK
   verifyCallback() {
     this.setState({
       isVerified: true,
@@ -71,7 +68,7 @@ class SignUp extends Component {
   }
 
   callback() {
-    console.log("Callback");
+    // console.log("Callback");
   }
 
   render() {
