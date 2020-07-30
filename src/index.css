@@ -10,6 +10,11 @@ body {
   padding: 0;
 }
 
+span { 
+  display:block;
+  word-wrap:break-word !important;
+}
+
 /* MARGIN */
 
 .mrg-025 {
