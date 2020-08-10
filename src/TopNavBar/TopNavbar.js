@@ -66,7 +66,7 @@ class TopNavbar extends Component {
         {isLoggedIn ? (
           <>
             <Nav className="ml-auto">
-              <Nav.Link href="/change-password"><i className="fas fa-cog white"></i></Nav.Link>
+              <Nav.Link href="/#/change-password"><i className="fas fa-cog white"></i></Nav.Link>
               <Nav.Link className="white mr-auto"> {userName} </Nav.Link>
               <Button variant="outline-secondary" className='ml-2' href="/" onClick={this.logout}>Logout</Button>
             </Nav>
