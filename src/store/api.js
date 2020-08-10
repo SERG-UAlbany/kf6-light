@@ -145,6 +145,10 @@ export const getLinkForObj = (objId) => {
     return axios.get(`${apiUrl}/links/either/${objId}`)
 }
 
+export const goToServer = (body) => {
+    return axios.get(`${url}/auth/jwt`, {params: body})
+}
+
 // export default {url, apiUrl, postContribution, getCommunity,
 //                 getLinks, getObject, createAttachment,
 //                 getAuthor, uploadFile, putObject,

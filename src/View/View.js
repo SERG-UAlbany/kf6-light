@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { DropdownButton, Dropdown, Button, Row, Col, Modal } from 'react-bootstrap';
 import { Form, FormGroup, Label, Input } from 'reactstrap';
 import Axios from 'axios';
-import { apiUrl, url } from '../store/api.js';
+import { apiUrl, url, goToServer } from '../store/api.js';
 import { newNote, openContribution, setCheckedNotes } from '../store/noteReducer.js'
 import { connect } from 'react-redux'
 import DialogHandler from '../components/dialogHandler/DialogHandler.js'
@@ -263,7 +263,16 @@ class View extends Component {
     }
 
     goToServer = () => {
-        window.open(`${url}/view/${this.props.viewId}`, "_blank");
+        // window.open(`${url}/view/${this.props.viewId}`, "_blank");
+        let body = {
+            redirectUrl : `${url}/view/${this.props.viewId}`
+        }
+        goToServer(body).then(result=>{
+            console.log("result goto server", result.config.params.redirectUrl);
+            if(result.config.params.redirectUrl){
+                window.location.href = result.config.params.redirectUrl;
+            }
+        })
     }
 
     render() {

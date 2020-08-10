@@ -15,38 +15,6 @@ class Login extends Component {
             userName: '',
             password: '',
             server: localStorage.getItem("server") ? localStorage.getItem("server") : "kf6.ikit.org",
-            servers: [
-                {
-                    id: 0,
-                    key: "kf6.ikit.org",
-                    value: "https://kf6.ikit.org"
-
-                },
-                {
-                    id: 1,
-                    key: "kf6-stage.ikit.org",
-                    value: "https://kf6-stage.ikit.org"
-
-                },
-                {
-                    id: 2,
-                    key: "kf6-stage.rit.albany.edu",
-                    value: "https://kf6-stage.rit.albany.edu"
-
-                },
-                {
-                    id: 3,
-                    key: "kf.rdc.nie.edu.sg",
-                    value: "https://kf.rdc.nie.edu.sg"
-
-                },
-                // {
-                //     id: 4,
-                //     key: "localhost 9000",
-                //     value: "http://localhost:9000"
-
-                // },
-            ]
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -111,7 +79,7 @@ class Login extends Component {
                             <FormGroup>
                                 <Label>Server</Label>
                                 <Input type="select" id="server" name="server" value={this.state.server} onChange={this.handleChange} >
-                                    {this.state.servers.map((server) => {
+                                    {this.props.servers.map((server) => {
                                         return <option key={server.key} value={server.value}>{server.key}</option>
                                     })}
 
@@ -144,7 +112,8 @@ class Login extends Component {
 }
 const mapStateToProps = (state, ownProps) => {
     return {
-        token: state.globals.token
+        token: state.globals.token,
+        servers: state.globals.servers,
     }
 }
 

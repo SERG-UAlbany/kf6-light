@@ -34,7 +34,39 @@ const initState = {
     userId: '',
     isAuthenticated: sessionStorage.getItem("token") ? true: false,
     communities: [],
-    userCommunities: []
+    userCommunities: [],
+    servers: [
+        {
+            id: 0,
+            key: "kf6.ikit.org",
+            value: "https://kf6.ikit.org"
+
+        },
+        {
+            id: 1,
+            key: "kf6-stage.ikit.org",
+            value: "https://kf6-stage.ikit.org"
+
+        },
+        {
+            id: 2,
+            key: "kf6-stage.rit.albany.edu",
+            value: "https://kf6-stage.rit.albany.edu"
+
+        },
+        {
+            id: 3,
+            key: "kf.rdc.nie.edu.sg",
+            value: "https://kf.rdc.nie.edu.sg"
+
+        },
+        // {
+        //     id: 4,
+        //     key: "localhost 9000",
+        //     value: "http://localhost:9000"
+
+        // },
+    ]
 }
 
 export const globalsReducer = createReducer(initState, {

@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom'
+import { connect } from 'react-redux'
 import Axios from 'axios';
 import { Container, Col, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import Recaptcha from 'react-recaptcha';
-import { apiUrl } from '../store/api.js';
+import { apiUrl, setToken, setServer } from '../store/api.js';
+import { setGlobalToken, fetchLoggedUser } from '../store/globalsReducer'
 
 class SignUp extends Component {
   constructor() {
@@ -17,6 +19,7 @@ class SignUp extends Component {
       password: '',
       // registrationKey: '', //For users who can't use Google ReCaptcha
       isVerified: false,
+      server: localStorage.getItem("server") ? localStorage.getItem("server") : "kf6.ikit.org",
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -36,27 +39,47 @@ class SignUp extends Component {
   }
 
   //HANDLE SUBMIT
-  handleSubmit(e) {
+  handleSubmit = async (e) => {
     e.preventDefault();
+    let signUpObj = {
+      firstName: this.state.firstName,
+      lastName: this.state.lastName,
+      email: this.state.email,
+      userName: this.state.userName,
+      password: this.state.password,
+      isVerified: false,
+    }
 
-    //POST NEW USER
-    Axios.post(
-      `${apiUrl}/users`,
-      this.state)
-      .then((response) => {
-        console.log(response.data.token);
-        this.token = response.data.token;
+    let result = await setServer(this.state.server);
+    if (result) {
+      //POST NEW USER
+      Axios.post(
+        `${apiUrl}/users`,
+        signUpObj)
+        .then((response) => {
+          console.log(response.data.token);
+          let token = response.data.token;
 
-        //SET TOKEN
-        sessionStorage.setItem('token', this.token);
-        //NAVIGATE TO COMMUNITY MANAGER
-        this.props.history.push('/community-manager')
-      })
-      .catch((error) => {
-        if (error.message) {
-          alert("Enter Valid Username and Password");
-        }
-      });
+          //SET TOKEN
+          sessionStorage.setItem('token', token);
+          this.props.setGlobalToken(token);
+          setToken(token); //set token on api header
+
+          //FETCH LOGED USER
+          this.props.fetchLoggedUser()
+
+          //NAVIGATE TO COMMUNITY MANAGER
+          this.props.history.push('/community-manager')
+        })
+        .catch((error) => {
+          if (error.message) {
+            alert("Enter Valid Username and Password", error);
+          }
+        });
+
+    }
+
+
   }
 
   //RECAPTCHA CALLBACK
@@ -84,7 +107,18 @@ class SignUp extends Component {
           <Col>
             <h3>SignUp</h3>
           </Col>
-          <Form onSubmit={this.handleSubmit} class="form">
+          <Form onSubmit={this.handleSubmit} className="form">
+            <Col>
+              <FormGroup>
+                <Label>Server</Label>
+                <Input type="select" id="server" name="server" value={this.state.server} onChange={this.handleChange} >
+                  {this.props.servers.map((server) => {
+                    return <option key={server.key} value={server.value}>{server.key}</option>
+                  })}
+
+                </Input>
+              </FormGroup>
+            </Col>
             <Col>
               <FormGroup>
                 <Label htmlFor="firstName">First Name</Label>
@@ -131,4 +165,18 @@ class SignUp extends Component {
   }
 }
 
-export default SignUp;
+const mapStateToProps = (state, ownProps) => {
+  return {
+    servers: state.globals.servers,
+  }
+}
+
+const mapDispatchToProps = {
+  setGlobalToken,
+  fetchLoggedUser,
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(SignUp);
