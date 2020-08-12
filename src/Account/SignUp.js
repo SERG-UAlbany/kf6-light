@@ -19,6 +19,7 @@ class SignUp extends Component {
       password: '',
       // registrationKey: '', //For users who can't use Google ReCaptcha
       isVerified: false,
+      registrationKey: '',
       server: localStorage.getItem("server") ? localStorage.getItem("server") : "kf6.ikit.org",
     };
 
@@ -48,6 +49,10 @@ class SignUp extends Component {
       userName: this.state.userName,
       password: this.state.password,
       isVerified: false,
+    }
+
+    if (this.state.server === "https://kf.rdc.nie.edu.sg" || this.state.server === "https://kf6-stage.rit.albany.edu") {
+      signUpObj = { ...signUpObj, registrationKey: this.state.registrationKey }
     }
 
     let result = await setServer(this.state.server);
@@ -96,11 +101,34 @@ class SignUp extends Component {
 
   render() {
     const siteKey = "6LfcR60ZAAAAALR4zc7tMUf8g_et0e1LIVM8oEv_";
-    const recaptcha = <Recaptcha
-      sitekey={siteKey}
-      render="explicit"
-      verifyCallback={this.verifyCallback}
-    />
+    // RECAPTCHA
+    let registrationCheckPoint = <>
+      <Col className="mrg-2-top mrg-105-bot">
+        <Recaptcha
+          sitekey={siteKey}
+          render="explicit"
+          verifyCallback={this.verifyCallback}
+        />
+      </Col>
+      <Col>
+        <Button className="" disabled={!this.state.isVerified}>New Account</Button>
+      </Col>
+    </>
+    // REGISTRATION KEY
+    if (this.state.server === "https://kf.rdc.nie.edu.sg" || this.state.server === "https://kf6-stage.rit.albany.edu") {
+      registrationCheckPoint =
+        <>
+          <Col className="mrg-2-top mrg-105-bot">
+            <FormGroup>
+              <Label htmlFor="registrationKey">Registration Key</Label>
+              <Input type="password" id="registrationKey" placeholder="Enter Registration Key" name="registrationKey" value={this.state.registrationKey} onChange={this.handleChange} />
+            </FormGroup>
+          </Col>
+          <Col>
+            <Button className="" disabled={this.state.registrationKey === ''}>New Account</Button>
+          </Col>
+        </>
+    }
     return (
       <Container>
         <div className="mrg-4-top">
@@ -149,18 +177,13 @@ class SignUp extends Component {
                 <Input type="password" id="password" placeholder="Enter Password" name="password" value={this.state.password} onChange={this.handleChange} />
               </FormGroup>
             </Col>
-            <Col className="mrg-2-top mrg-105-bot">
-              {recaptcha}
-            </Col>
-            <Col>
-              <Button className="" disabled={!this.state.isVerified}>New Account</Button>
-            </Col>
+            {registrationCheckPoint}
             <Col className="mrg-1-top">
               <Link to="/" className="FormField__Link">If you already have an account, please Signin</Link>
             </Col>
           </Form>
         </div>
-      </Container>
+      </Container >
     );
   }
 }

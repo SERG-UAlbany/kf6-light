@@ -60,8 +60,14 @@ const initState = {
             value: "https://kf.rdc.nie.edu.sg"
 
         },
+        {
+            id: 4,
+            key: "kf.rdc.nie.edu.sg",
+            value: "https://kf6.rit.albany.edu"
+
+        },
         // {
-        //     id: 4,
+        //     id: 5,
         //     key: "localhost 9000",
         //     value: "http://localhost:9000"
 
