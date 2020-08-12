@@ -115,7 +115,6 @@ class CommunityManager extends Component {
                 result => {
                     let welcomeId = result.data[0]._id;
                     let views = result.data;
-                    console.log("views", views);
 
                     // SET VIEWID
                     sessionStorage.setItem('viewId', welcomeId);

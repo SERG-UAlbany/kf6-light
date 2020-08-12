@@ -1,7 +1,7 @@
 import { createAction, createReducer } from '@reduxjs/toolkit'
-import { getObject, getCommunity, getGroups, getUser, getAuthor, getCommunityViews, getCommunities,  getUserCommunities} from './api.js'
+import { getObject, getCommunity, getGroups, getUser, getAuthor, getCommunityViews, getCommunities, getUserCommunities } from './api.js'
 import { fetchAuthors } from './userReducer.js';
-import { fetchScaffolds } from  './scaffoldReducer.js'
+import { fetchScaffolds } from './scaffoldReducer.js'
 import { fetchViewNotes, fetchBuildsOn, setCheckedNotes, fetchSupports } from './noteReducer.js'
 export const setGlobalToken = createAction('SET_TOKEN')
 export const setCommunity = createAction('SET_COMMUNITY')
@@ -32,7 +32,7 @@ const initState = {
     views: [],
     community: null,
     userId: '',
-    isAuthenticated: sessionStorage.getItem("token") ? true: false,
+    isAuthenticated: sessionStorage.getItem("token") ? true : false,
     communities: [],
     userCommunities: [],
     servers: [
@@ -62,7 +62,7 @@ const initState = {
         },
         {
             id: 4,
-            key: "kf.rdc.nie.edu.sg",
+            key: "kf.rit.albany.edu",
             value: "https://kf6.rit.albany.edu"
 
         },

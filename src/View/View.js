@@ -262,19 +262,6 @@ class View extends Component {
         this.props.history.push("/community-manager");
     }
 
-    goToServer = () => {
-        // window.open(`${url}/view/${this.props.viewId}`, "_blank");
-        let body = {
-            redirectUrl : `${url}/view/${this.props.viewId}`
-        }
-        goToServer(body).then(result=>{
-            console.log("result goto server", result.config.params.redirectUrl);
-            if(result.config.params.redirectUrl){
-                window.location.href = result.config.params.redirectUrl;
-            }
-        })
-    }
-
     render() {
         const showScffold = !this.hideScaffold && this.state.filter === "scaffold";
         const hierarchy = this.getBuildOnHierarchy()
@@ -312,7 +299,7 @@ class View extends Component {
                             </Col>
                             {/* GOTO SERVER ICON */}
                             <Col md="12" sm="2" xs="2">
-                                <Button onClick={this.goToServer} className="circle-button" variant="outline-info"><i className="fa fa-globe"></i></Button>
+                                <Button href={`${url}/auth/jwt?token=${this.token}&redirectUrl=/view/${this.props.viewId}`} target="_blank" className="circle-button" variant="outline-info"><i className="fa fa-globe"></i></Button>
                             </Col>
 
                         </Row>
