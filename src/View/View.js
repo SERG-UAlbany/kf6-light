@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from "react-router-dom";
-import { DropdownButton, Dropdown, Button, Row, Col, Modal } from 'react-bootstrap';
+import { DropdownButton, Dropdown, Button, Row, Col, Modal, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Form, FormGroup, Label, Input } from 'reactstrap';
 import Axios from 'axios';
 import { apiUrl, url, goToServer } from '../store/api.js';
@@ -262,6 +262,12 @@ class View extends Component {
         this.props.history.push("/community-manager");
     }
 
+    renderTooltip = (props) => (
+        <Tooltip id="button-tooltip" {...props}>
+            {props.message}
+        </Tooltip>
+    );
+
     render() {
         const showScffold = !this.hideScaffold && this.state.filter === "scaffold";
         const hierarchy = this.getBuildOnHierarchy()
@@ -295,11 +301,26 @@ class View extends Component {
                             </Col>
                             {/* BACK ICON */}
                             <Col md="12" sm="2" xs="2">
-                                <Button onClick={this.goToCommunityManager} className="circle-button" variant="outline-info"><i className="fa fa-arrow-left"></i></Button>
+                                <OverlayTrigger
+                                    placement="right"
+                                    delay={{ show: 250, hide: 400 }}
+                                    overlay={this.renderTooltip({ message: "go to Communities" })}
+                                >
+                                    <Button onClick={this.goToCommunityManager} className="circle-button" variant="outline-info"><i className="fa fa-arrow-left"></i></Button>
+                                </OverlayTrigger>
                             </Col>
                             {/* GOTO SERVER ICON */}
                             <Col md="12" sm="2" xs="2">
-                                <Button href={`${url}/auth/jwt?token=${this.token}&redirectUrl=/view/${this.props.viewId}`} target="_blank" className="circle-button" variant="outline-info"><i className="fa fa-globe"></i></Button>
+                                <OverlayTrigger
+                                    placement="right"
+                                    delay={{ show: 250, hide: 400 }}
+                                    overlay={this.renderTooltip({ message: "go to Server" })}
+                                >
+                                    <Button href={`${url}/auth/jwt?token=${this.token}&redirectUrl=/view/${this.props.viewId}`} target="_blank" className="circle-button pad" variant="outline-info">
+                                        <i className="fa fa-globe"></i>
+                                    </Button>
+                                </OverlayTrigger>
+
                             </Col>
 
                         </Row>
