@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from "react-router-dom";
 import { DropdownButton, Dropdown, Button, Row, Col, Modal, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { Form, FormGroup, Label, Input } from 'reactstrap';
+import { Form, FormGroup, Label, Input, InputGroup, InputGroupAddon, InputGroupText } from 'reactstrap';
 import Axios from 'axios';
 import { apiUrl, url, goToServer } from '../store/api.js';
 import { newNote, openContribution, setCheckedNotes } from '../store/noteReducer.js'
@@ -331,18 +331,27 @@ class View extends Component {
                     <Col md="5" sm="12" className="mrg-6-top pd-2-right v-scroll">
                         <Form className="mrg-1-bot">
                             <Row>
-                                <Col md="6">
-                                    <FormGroup className="has-search">
-                                        <span className="fa fa-search form-control-feedback"></span>
+                                <Col md="8">
+                                    <InputGroup>
+                                        <InputGroupAddon addonType="prepend">
+                                            <InputGroupText>
+                                                <i className="fa fa-search"></i>
+                                            </InputGroupText>
+                                        </InputGroupAddon>
                                         <Input
                                             className="form-control"
                                             value={this.state.query}
                                             placeholder="Search Your Note"
                                             onChange={this.handleInputChange}
                                         />
-                                    </FormGroup>
+                                        <InputGroupAddon addonType="append">
+                                            <InputGroupText style={{ cursor: "pointer" }} onClick={this.clearSearch} >
+                                                <i className="fa fa-refresh"></i>
+                                            </InputGroupText>
+                                        </InputGroupAddon>
+                                    </InputGroup>
                                 </Col>
-                                <Col md="3">
+                                <Col md="4">
                                     <FormGroup>
                                         <Input type="select" name="filter" id="filter" onChange={this.handleFilter}>
                                             <option key="title" value="title">Search By Title</option>
@@ -351,9 +360,6 @@ class View extends Component {
                                             <option key="author" value="author">Search By Author</option>
                                         </Input>
                                     </FormGroup>
-                                </Col>
-                                <Col md="3">
-                                    <Button onClick={this.clearSearch}>Clear Search</Button>
                                 </Col>
                             </Row>
                         </Form>
