@@ -304,7 +304,7 @@ class View extends Component {
                                 <OverlayTrigger
                                     placement="right"
                                     delay={{ show: 250, hide: 400 }}
-                                    overlay={this.renderTooltip({ message: "go to Communities" })}
+                                    overlay={this.renderTooltip({ message: "Exit Community" })}
                                 >
                                     <Button onClick={this.goToCommunityManager} className="circle-button" variant="outline-info"><i className="fa fa-arrow-left"></i></Button>
                                 </OverlayTrigger>
@@ -314,7 +314,7 @@ class View extends Component {
                                 <OverlayTrigger
                                     placement="right"
                                     delay={{ show: 250, hide: 400 }}
-                                    overlay={this.renderTooltip({ message: "go to Server" })}
+                                    overlay={this.renderTooltip({ message: "Graphical View" })}
                                 >
                                     <Button href={`${url}/auth/jwt?token=${this.token}&redirectUrl=/view/${this.props.viewId}`} target="_blank" className="circle-button pad" variant="outline-info">
                                         <i className="fa fa-globe"></i>
