@@ -113,8 +113,8 @@ class NoteContent extends Component {
         }
     }
 
-    editNote = (contribId) => {
-        this.props.openContribution(contribId);
+    editNote = (contribId, mode) => {
+        this.props.openContribution(contribId, mode);
     }
 
     getRiseAboveNotes = (riseAboveId) => {
@@ -195,6 +195,14 @@ class NoteContent extends Component {
                             }
                         } else {
                             data = obj.data.English ? obj.data.English : obj.data.body;
+                        } 
+                        
+                        // EDIT BUTTON
+                        let EditNoteButton;
+                        if (this.props.author.role == "manager") {
+                            EditNoteButton = <Button className="float-right" variant="outline-info" onClick={() => this.editNote(obj._id, "write")}>Edit Note</Button>
+                        } else {
+                            EditNoteButton = <Button className="float-right" variant="outline-info" onClick={() => this.editNote(obj._id, "read")}>Read Note</Button>
                         }
 
                         return (
@@ -218,7 +226,7 @@ class NoteContent extends Component {
                                     <Row>
                                         <Col>
                                             <Button className="float-right mrg-1-left" variant="outline-info" onClick={() => this.props.buildOn(obj._id)}>BuildOn</Button>
-                                            <Button className="float-right" variant="outline-info" onClick={() => this.editNote(obj._id)}>Edit Note</Button>
+                                            {EditNoteButton}
                                         </Col>
                                     </Row>
                                 </Col>
