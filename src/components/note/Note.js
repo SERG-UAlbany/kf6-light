@@ -118,7 +118,7 @@ class Note extends React.Component {
     }
 
     onAnnotationCreated(annotation) {
-        this.props.createAnnotation(this.props.note.communityId, this.props.note._id, this.props.author._id, annotation)
+        this.props.createAnnotation(this.props.note.communityId, this.props.note._id, this.props.noteAuthor._id, annotation)
     }
 
     onAnnotationDeleted(annotation) {
@@ -150,7 +150,7 @@ class Note extends React.Component {
         return (
             <div>
                 <div className='contrib-info'>
-                    Created By: {this.props.author.firstName} {this.props.author.lastName} <br />
+                    Created By: {this.props.noteAuthor.firstName} {this.props.noteAuthor.lastName} <br />
                     Last modified: {formatter.format(new Date(this.props.note.modified))}
                 </div>
                 <Tabs activeKey={this.state.selectedTab} transition={false} onSelect={this.onTabSelected}>
@@ -162,7 +162,7 @@ class Note extends React.Component {
                                         content={this.props.note.data.body}
                                         annots={this.props.note.annos}
                                         annotsFetched={this.props.note.annotsFetched}
-                                        author={this.props.author}
+                                        author={this.props.noteAuthor}
                                         onCreate={this.onAnnotationCreated}
                                         onUpdate={this.onAnnotationUpdated}
                                         onDelete={this.onAnnotationDeleted}
@@ -177,7 +177,7 @@ class Note extends React.Component {
                                             content={this.props.note.data.body}
                                             annots={this.props.note.annos}
                                             annotsFetched={this.props.note.annotsFetched}
-                                            author={this.props.author}
+                                            author={this.props.noteAuthor}
                                             onCreate={this.onAnnotationCreated}
                                             onUpdate={this.onAnnotationUpdated}
                                             onDelete={this.onAnnotationDeleted}
@@ -192,14 +192,20 @@ class Note extends React.Component {
                                 </>)}
                         </Row>
                     </Tab>
-                    <Tab eventKey="write" title="write">
-                        <WriteTab
-                            note={this.props.note}
-                            onScaffoldSelected={this.scaffoldSelected}
-                            onChange={this.onNoteChange}
-                            onEditorSetup={this.onEditorSetup}
-                        ></WriteTab>
-                    </Tab>
+                    {
+                        this.props.editable?
+
+                        <Tab eventKey="write" title="write">
+                            <WriteTab
+                                note={this.props.note}
+                                onScaffoldSelected={this.scaffoldSelected}
+                                onChange={this.onNoteChange}
+                                onEditorSetup={this.onEditorSetup}
+                            ></WriteTab>
+                        </Tab>
+                        :
+                        ''
+                    }
                     <Tab eventKey="author" title="author(s)">
                         <AuthorTab contribId={this.props.noteId} />
                     </Tab>
@@ -217,9 +223,11 @@ const mapStateToProps = (state, ownProps) => {
         note: note,
         drawing: state.notes.drawing,
         drawTool: state.dialogs.drawTool,
-        author: note && (state.users[note.authors[0]] || 'NA'),
+        noteAuthor: note && (state.users[note.authors[0]] || 'NA'),
         riseAboveViewNotes: state.notes.riseAboveViewNotes,
-        riseAboveNotes: state.notes.riseAboveNotes
+        riseAboveNotes: state.notes.riseAboveNotes,
+        currentAuthor: state.globals.author,
+        editable: false || (note && note.authors.includes(state.globals.author._id))
     }
 }
 
