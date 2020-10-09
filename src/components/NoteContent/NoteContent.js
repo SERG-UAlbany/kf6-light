@@ -199,7 +199,7 @@ class NoteContent extends Component {
                         
                         // EDIT BUTTON
                         let EditNoteButton;
-                        if (this.props.author.role == "manager") {
+                        if (this.props.author.role === "manager" || obj.authors.includes(this.props.author._id)) {
                             EditNoteButton = <Button className="float-right" variant="outline-info" onClick={() => this.editNote(obj._id, "write")}>Edit Note</Button>
                         } else {
                             EditNoteButton = <Button className="float-right" variant="outline-info" onClick={() => this.editNote(obj._id, "read")}>Read Note</Button>

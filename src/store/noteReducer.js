@@ -332,7 +332,7 @@ export const openContribution = (contribId, mode) => async (dispatch, getState) 
         title: 'Edit Note',
         confirmButton: 'edit',
         noteId: note._id,
-        mode: mode, // read or write tab
+        mode: mode || "write", // read or write tab
     }))
     //annotations
     const annoLinks = toLinks.filter((link) => link.type === 'annotates')

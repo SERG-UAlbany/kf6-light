@@ -193,7 +193,7 @@ class Note extends React.Component {
                         </Row>
                     </Tab>
                     {
-                        this.props.editable?
+                        this.props.mode !== "read" ?
 
                         <Tab eventKey="write" title="write">
                             <WriteTab

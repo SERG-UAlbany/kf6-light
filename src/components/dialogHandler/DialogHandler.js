@@ -57,7 +57,8 @@ const DialogHandler = props => {
                         style={{zIndex: elt.zIndex}}
                         onClose={()=>onDialogClose(elt)}
                         onConfirm={()=> onDialogConfirm(elt)}
-                        confirmButton={elt.confirmButton}>
+                        confirmButton={elt.confirmButton}
+                        editable={elt.mode==="write"}>
 
                     <Note key={elt.noteId} dlgId={elt.id} noteId={elt.noteId} mode={elt.mode}/>
                 </Dialog>

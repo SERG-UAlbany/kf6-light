@@ -35,6 +35,7 @@ const Dialog = props => {
                     <Card.Footer className="dlg-card-footer py-0">
                         <Button size='sm' className="dlg-confirm-button"
                             onClick={props.onConfirm}
+                            disabled={!props.editable}
                         >
                             {props.confirmButton}
                         </Button>
