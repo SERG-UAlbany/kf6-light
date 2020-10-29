@@ -331,12 +331,15 @@ class View extends Component {
                     <Col md="5" sm="12" className="mrg-6-top pd-2-right v-scroll">
                         <Form className="mrg-1-bot">
                             <Row>
-                                <Col md="8">
+                                <Col>
                                     <InputGroup>
                                         <InputGroupAddon addonType="prepend">
-                                            <InputGroupText>
-                                                <i className="fa fa-search"></i>
-                                            </InputGroupText>
+                                            <Input type="select" name="filter" id="filter" onChange={this.handleFilter}>
+                                                <option key="title" value="title">Search By Title</option>
+                                                <option key="scaffold" value="scaffold">Search By Scaffold</option>
+                                                <option key="content" value="content">Search By Content</option>
+                                                <option key="author" value="author">Search By Author</option>
+                                            </Input>
                                         </InputGroupAddon>
                                         <Input
                                             className="form-control"
@@ -344,22 +347,19 @@ class View extends Component {
                                             placeholder="Search Your Note"
                                             onChange={this.handleInputChange}
                                         />
+
+                                        <InputGroupAddon addonType="append">
+                                            <InputGroupText>
+                                                <i className="fa fa-search"></i>
+                                            </InputGroupText>
+                                        </InputGroupAddon>
+
                                         <InputGroupAddon addonType="append">
                                             <InputGroupText style={{ cursor: "pointer" }} onClick={this.clearSearch} >
                                                 <i className="fa fa-refresh"></i>
                                             </InputGroupText>
                                         </InputGroupAddon>
                                     </InputGroup>
-                                </Col>
-                                <Col md="4">
-                                    <FormGroup>
-                                        <Input type="select" name="filter" id="filter" onChange={this.handleFilter}>
-                                            <option key="title" value="title">Search By Title</option>
-                                            <option key="scaffold" value="scaffold">Search By Scaffold</option>
-                                            <option key="content" value="content">Search By Content</option>
-                                            <option key="author" value="author">Search By Author</option>
-                                        </Input>
-                                    </FormGroup>
                                 </Col>
                             </Row>
                         </Form>
