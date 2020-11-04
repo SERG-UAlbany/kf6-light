@@ -5,7 +5,8 @@ import { Form, FormGroup, Input, Alert } from 'reactstrap';
 import Axios from 'axios';
 
 import './NoteContent.css';
-import { apiUrl } from '../../store/api.js';
+import { apiUrl } from '../../store/api.js'
+import * as access from '../../store/access'
 import { openContribution, updateCheckedNotes } from '../../store/noteReducer'
 import { fetchViewCommunityData } from '../../store/globalsReducer'
 import { createRiseAbove } from '../../store/riseAboveReducer'
@@ -199,7 +200,7 @@ class NoteContent extends Component {
                         
                         // EDIT BUTTON
                         let EditNoteButton;
-                        if (this.props.author.role === "manager" || obj.authors.includes(this.props.author._id)) {
+                        if (access.isEditable(obj, this.props.author) === true) {
                             EditNoteButton = <Button className="float-right" variant="outline-info" onClick={() => this.editNote(obj._id, "write")}>Edit Note</Button>
                         } else {
                             EditNoteButton = <Button className="float-right" variant="outline-info" onClick={() => this.editNote(obj._id, "read")}>Read Note</Button>
