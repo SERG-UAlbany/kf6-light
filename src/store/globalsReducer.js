@@ -62,7 +62,7 @@ const initState = {
         },
         {
             id: 4,
-            key: "kf.rit.albany.edu",
+            key: "kf6.rit.albany.edu",
             value: "https://kf6.rit.albany.edu"
 
         },
