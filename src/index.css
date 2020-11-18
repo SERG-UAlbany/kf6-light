@@ -16,6 +16,10 @@ span {
 
 /* MARGIN */
 
+.mrg-0 {
+  margin: 0rem !important;
+}
+
 .mrg-025 {
   margin: 0.25rem !important;
 }
@@ -85,6 +89,10 @@ span {
 
 .mrg-32-top{
   margin-top: 32rem !important;
+}
+
+.mrg-0-bot{
+  margin-bottom: 0rem !important;
 }
 
 .mrg-1-bot{
@@ -304,4 +312,10 @@ span {
 
 .min-width-10{
   min-width: 10rem !important;
+}
+
+
+.fixed-height{
+  max-height: 40vh !important;
+  overflow-y: scroll !important;
 }

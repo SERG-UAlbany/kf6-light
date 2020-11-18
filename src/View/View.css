@@ -31,6 +31,11 @@
     overflow-y: scroll !important;
 }
 
+.v-scroll-mobile{
+    height: 40vh !important;
+    overflow-y: scroll !important;
+}
+
 .mrg-1-min{
     margin-top: -1rem !important;
 }

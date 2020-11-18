@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 import ReactNotification from 'react-notifications-component';
+import  { BreakpointProvider } from 'react-socks';
 
 import Login from './Account/Login';
 import SignUp from './Account/SignUp';
@@ -30,28 +31,30 @@ function App() {
     })
 
     return (
-        <div>
-            <ReactNotification />
-            <Router>
-                <TopNavbar></TopNavbar>
-                <Switch>
-                    <Route exact path="/" component={Login}>
-                    </Route>
-                    <Route path="/signup" component={SignUp}>
-                    </Route>
-                    <Route path="/community-manager" component={CommunityManager}>
-                    </Route>
-                    <Route path="/view/:viewId" component={View}>
-                    </Route>
-                    <Route path="/new-note" component={NewNote}>
-                    </Route>
-                    <Route path="/change-password" component={ChangePassword}>
-                    </Route>
-                    <Route path="/test" component={TestComponent}>
-                    </Route>
-                </Switch>
-            </Router>
-        </div>
+        <BreakpointProvider>
+            <div>
+                <ReactNotification />
+                <Router>
+                    <TopNavbar></TopNavbar>
+                    <Switch>
+                        <Route exact path="/" component={Login}>
+                        </Route>
+                        <Route path="/signup" component={SignUp}>
+                        </Route>
+                        <Route path="/community-manager" component={CommunityManager}>
+                        </Route>
+                        <Route path="/view/:viewId" component={View}>
+                        </Route>
+                        <Route path="/new-note" component={NewNote}>
+                        </Route>
+                        <Route path="/change-password" component={ChangePassword}>
+                        </Route>
+                        <Route path="/test" component={TestComponent}>
+                        </Route>
+                    </Switch>
+                </Router>
+            </div>
+        </BreakpointProvider>
     );
 }
 

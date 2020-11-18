@@ -11,7 +11,8 @@ import NoteContent from '../components/NoteContent/NoteContent'
 import ScaffoldSelect from '../components/scaffold/ScaffoldSelect'
 import ListOfNotes from './ListOfNotes/ListOfNotes'
 import { fetchView, fetchCommunity, setCommunityId, setViewId, fetchViewCommunityData } from '../store/globalsReducer.js'
-import { fetchAuthors } from '../store/userReducer.js';
+import { fetchAuthors } from '../store/userReducer.js'
+import {Breakpoint} from 'react-socks'
 import './View.css';
 
 class View extends Component {
@@ -280,6 +281,7 @@ class View extends Component {
         return (
             <>
                 <DialogHandler />
+                <Breakpoint medium up>
 
                 <div className="row min-width">
                     {/* LEFT NAVBAR */}
@@ -385,7 +387,116 @@ class View extends Component {
 
 
 
+                </Breakpoint>
+                
+                <Breakpoint small down>
 
+                <div className="row min-width">
+                    {/* LEFT NAVBAR */}
+                    <Col md="1" sm="12" className="pd-6-top">
+
+                        <Row className="mrg-025">
+                            {/* NEW NOTE ICON */}
+                            <Col md="12" sm="2" xs="2">
+                                <DropdownButton drop="right" variant="outline-info" title={<i className="fas fa-plus-circle"></i>}>
+
+                                    <Dropdown.Item onClick={() => this.props.newNote(this.props.view, this.props.communityId, this.props.author._id)}>
+                                        New Note
+                                        </Dropdown.Item>
+
+                                    <Dropdown.Item onClick={() => this.newView()}>
+                                        new View
+                                        </Dropdown.Item>
+                                </DropdownButton>
+                            </Col>
+                            {/* BACK ICON */}
+                            <Col md="12" sm="2" xs="2">
+                                <OverlayTrigger
+                                    placement="right"
+                                    delay={{ show: 250, hide: 400 }}
+                                    overlay={this.renderTooltip({ message: "Exit Community" })}
+                                >
+                                    <Button onClick={this.goToCommunityManager} className="circle-button" variant="outline-info"><i className="fa fa-arrow-left"></i></Button>
+                                </OverlayTrigger>
+                            </Col>
+                            {/* GOTO SERVER ICON */}
+                            <Col md="12" sm="2" xs="2">
+                                <OverlayTrigger
+                                    placement="right"
+                                    delay={{ show: 250, hide: 400 }}
+                                    overlay={this.renderTooltip({ message: "Graphical View" })}
+                                >
+                                    <Button href={`${url}/auth/jwt?token=${this.token}&redirectUrl=/view/${this.props.viewId}`} target="_blank" className="circle-button pad" variant="outline-info">
+                                        <i className="fa fa-globe"></i>
+                                    </Button>
+                                </OverlayTrigger>
+
+                            </Col>
+
+                        </Row>
+                    </Col>
+
+
+                    {/* NOTES */}
+                    <Col md="5" sm="12" className="mrg-05-top pd-2-right v-scroll-mobile primary-bg-50">
+                        <Form className="mrg-1-bot">
+                            <Row>
+                                <Col>
+                                    <InputGroup>
+                                        <InputGroupAddon addonType="prepend">
+                                            <Input type="select" name="filter" id="filter" onChange={this.handleFilter}>
+                                                <option key="title" value="title">Search By Title</option>
+                                                <option key="scaffold" value="scaffold">Search By Scaffold</option>
+                                                <option key="content" value="content">Search By Content</option>
+                                                <option key="author" value="author">Search By Author</option>
+                                            </Input>
+                                        </InputGroupAddon>
+                                        <Input
+                                            className="form-control"
+                                            value={this.state.query}
+                                            placeholder="Search Your Note"
+                                            onChange={this.handleInputChange}
+                                        />
+
+                                        <InputGroupAddon addonType="append">
+                                            <InputGroupText>
+                                                <i className="fa fa-search"></i>
+                                            </InputGroupText>
+                                        </InputGroupAddon>
+
+                                        <InputGroupAddon addonType="append">
+                                            <InputGroupText style={{ cursor: "pointer" }} onClick={this.clearSearch} >
+                                                <i className="fa fa-refresh"></i>
+                                            </InputGroupText>
+                                        </InputGroupAddon>
+                                    </InputGroup>
+                                </Col>
+                            </Row>
+                        </Form>
+                        {scaffolds}
+                        {this.state.query === "" && !showScffold ?
+                            (<ListOfNotes hierarchy={hierarchy} />)
+                            :
+                            (<ListOfNotes noteLinks={this.state.filteredData} />)
+                        }
+                    </Col>
+
+                    {/* NOTE CONTENT */}
+                    {this.props.checkedNotes.length ?
+                        (<>
+                            <Col md="5" sm="12" className="mrg-05-top v-scroll-mobile">
+                                <NoteContent query={this.state.query} buildOn={this.buildOn} />
+                            </Col>
+                        </>)
+                        : null
+                    }
+
+                </div>
+
+
+
+                </Breakpoint>
+                
                 {/* MODEL */}
                 <Modal show={this.state.showModel} onHide={() => this.handleShow(false)}>
 
@@ -430,8 +541,6 @@ class View extends Component {
                     </Button>
                     </Modal.Footer>
                 </Modal>
-
-
 
             </>
         );
