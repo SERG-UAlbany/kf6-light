@@ -5,9 +5,10 @@ import { Form, FormGroup, Input } from 'reactstrap';
 import { Button, Collapse } from 'react-bootstrap';
 import ListOfNotes from '../ListOfNotes.js'
 import { dateFormatOptions } from '../../../store/globalsReducer'
-import { updateCheckedNotes } from '../../../store/noteReducer'
+import { newNote, updateCheckedNotes, openContribution } from '../../../store/noteReducer'
 import { Breakpoint } from 'react-socks';
-import {url} from '../../../store/api'
+import { url } from '../../../store/api'
+import * as access from '../../../store/access'
 
 class Notes extends Component {
     constructor(props) {
@@ -20,9 +21,19 @@ class Notes extends Component {
             isCheckedMobile: false,
         };
         this.checkNote = this.checkNote.bind(this)
+        this.editNote = this.editNote.bind(this);
+        this.buildOn = this.buildOn.bind(this);
     }
 
     componentDidMount() {
+    }
+
+    buildOn = (buildOn) => {
+        this.props.newNote(this.props.view, this.props.communityId, this.props.authorObj._id, buildOn);
+    }
+
+    editNote = (contribId, mode) => {
+        this.props.openContribution(contribId, mode);
     }
 
     setOpen = (value) => {
@@ -39,9 +50,6 @@ class Notes extends Component {
         this.setState({
             isCheckedMobile: e.target.checked
         })
-        console.log("e",e.target.checked);
-        console.log("this.state.isCheckedMobile",this.state.isCheckedMobile);
-        console.log("this.props.note",note);
     }
 
     render() {
@@ -51,16 +59,29 @@ class Notes extends Component {
         let NoteMobile;
         let data = this.props.note.data.body;
         while (data.includes("src=\"\/attachments")) {
-            data = data.replace("src=\"\/attachments","src=\""+url+"\/attachments");    
+            data = data.replace("src=\"\/attachments", "src=\"" + url + "\/attachments");
         }
 
-        if(this.state.isCheckedMobile){
+        let EditNoteButton;
+        if (access.isEditable(this.props.note, this.props.authorObj) === true) {
+            EditNoteButton = <Button className="float-right" variant="outline-info" onClick={() => this.editNote(this.props.note._id, "write")}>Edit Note</Button>
+        } else {
+            EditNoteButton = <Button className="float-right" variant="outline-info" onClick={() => this.editNote(this.props.note._id, "read")}>Read Note</Button>
+        }
+
+        if (this.state.isCheckedMobile) {
             NoteMobile = <div>
                 <Row>
-                    <Col dangerouslySetInnerHTML={{ __html: data}}></Col>
+                    <Col>
+                        <Row dangerouslySetInnerHTML={{ __html: data }}></Row>
+                        <Row>
+                            <Button className="float-right mrg-1-left mrg-1-right" variant="outline-info" onClick={() => this.buildOn(this.props.note._id)}>BuildOn</Button>
+                            {EditNoteButton}
+                        </Row>
+                    </Col>
                 </Row>
             </div>
-        }       
+        }
 
         return (
             <>
@@ -159,12 +180,17 @@ const mapStateToProps = (state, ownProps) => {
         author: (author && `${author.firstName} ${author.lastName}`) || 'NA',
         isChecked: state.notes.checkedNotes.includes(ownProps.note._id),
         riseAboveViewNotes: state.notes.riseAboveViewNotes,
-        riseAboveNotes: state.notes.riseAboveNotes
+        riseAboveNotes: state.notes.riseAboveNotes,
+        view: state.globals.view,
+        communityId: state.globals.communityId,
+        authorObj: state.globals.author,
     }
 }
 
 const mapDispatchToProps = {
-    updateCheckedNotes
+    updateCheckedNotes,
+    openContribution,
+    newNote,
 }
 
 export default connect(

@@ -106,6 +106,10 @@ span {
   margin-left: 1rem !important;
 }
 
+.mrg-1-right{
+  margin-right: 1rem !important;
+}
+
 /* PADDING */
 .pd-0 {
   padding: 0rem !important;
