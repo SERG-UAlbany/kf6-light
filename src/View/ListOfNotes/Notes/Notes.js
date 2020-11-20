@@ -7,6 +7,7 @@ import ListOfNotes from '../ListOfNotes.js'
 import { dateFormatOptions } from '../../../store/globalsReducer'
 import { updateCheckedNotes } from '../../../store/noteReducer'
 import { Breakpoint } from 'react-socks';
+import {url} from '../../../store/api'
 
 class Notes extends Component {
     constructor(props) {
@@ -48,10 +49,15 @@ class Notes extends Component {
         const icon = this.state.open ? "fa-chevron-down" : "fa-chevron-right"
         const formatter = new Intl.DateTimeFormat('default', dateFormatOptions)
         let NoteMobile;
+        let data = this.props.note.data.body;
+        while (data.includes("src=\"\/attachments")) {
+            data = data.replace("src=\"\/attachments","src=\""+url+"\/attachments");    
+        }
+
         if(this.state.isCheckedMobile){
             NoteMobile = <div>
                 <Row>
-                    <Col dangerouslySetInnerHTML={{ __html: this.props.note.data.body}}></Col>
+                    <Col dangerouslySetInnerHTML={{ __html: data}}></Col>
                 </Row>
             </div>
         }       
