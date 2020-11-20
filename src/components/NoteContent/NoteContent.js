@@ -198,7 +198,7 @@ class NoteContent extends Component {
                             data = obj.data.English ? obj.data.English : obj.data.body;
                         }
                         
-                        while (data.includes("src=\"\/attachments")) {
+                        while(data && data.includes("src=\"\/attachments")) {
                             data = data.replace("src=\"\/attachments","src=\""+url+"\/attachments");    
                         }
 
