@@ -4,6 +4,7 @@ import * as annotPlugins from './annotator.service'
 import './annotator.css'
 import store from '../../store/store';
 import { Provider } from 'react-redux';
+import {url} from '../../store/api'
 /*global $*/
 class Annotator extends React.Component {
 
@@ -131,9 +132,14 @@ class Annotator extends React.Component {
     }
 
     render() {
+        let data = this.props.content;
+        while(data && data.includes("src=\"\/attachments")){
+            data = data.replace("src=\"\/attachments","src=\""+url+"\/attachments");
+        }
+
         return (
             <div ref={this.contentRef}>
-                <div dangerouslySetInnerHTML={{__html: this.props.content}}>
+                <div dangerouslySetInnerHTML={{__html: data}}>
                 </div>
             </div>
         )

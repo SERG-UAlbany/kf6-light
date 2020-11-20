@@ -5,7 +5,7 @@ import { Form, FormGroup, Input, Alert } from 'reactstrap';
 import Axios from 'axios';
 
 import './NoteContent.css';
-import { apiUrl } from '../../store/api.js'
+import { url, apiUrl } from '../../store/api.js'
 import * as access from '../../store/access'
 import { openContribution, updateCheckedNotes } from '../../store/noteReducer'
 import { fetchViewCommunityData } from '../../store/globalsReducer'
@@ -196,8 +196,12 @@ class NoteContent extends Component {
                             }
                         } else {
                             data = obj.data.English ? obj.data.English : obj.data.body;
-                        } 
+                        }
                         
+                        while (data.includes("src=\"\/attachments")) {
+                            data = data.replace("src=\"\/attachments","src=\""+url+"\/attachments");    
+                        }
+
                         // EDIT BUTTON
                         let EditNoteButton;
                         if (access.isEditable(obj, this.props.author) === true) {

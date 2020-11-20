@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { DropdownButton, Dropdown, Button, Row, Col, Modal, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Form, FormGroup, Label, Input, InputGroup, InputGroupAddon, InputGroupText } from 'reactstrap';
 import Axios from 'axios';
-import { apiUrl, url, getCommunity, putCommunity, postLink, getViews } from '../store/api.js';
+import { apiUrl, getCommunity, putCommunity, postLink, getViews } from '../store/api.js';
 import { newNote, openContribution, setCheckedNotes } from '../store/noteReducer.js'
 import { connect } from 'react-redux'
 import DialogHandler from '../components/dialogHandler/DialogHandler.js'

@@ -4,6 +4,7 @@ import AttachPanel from '../attachmentCollapse/AttachPanel.js'
 import {Container, Row, Col, Form} from 'react-bootstrap'
 import ScaffoldSelect from '../scaffold/ScaffoldSelect'
 import AttachArea from '../attachmentArea/AttachArea.js'
+import {url} from '../../store/api'
 
 import './WriteTab.css';
 class WriteTab extends React.Component {
@@ -36,6 +37,10 @@ class WriteTab extends React.Component {
     }
     render() {
         const {note, onChange, onEditorSetup} = this.props;
+        let data = note.data.body;
+        while(data && data.includes("src=\"\/attachments")){
+            data = data.replace("src=\"\/attachments","src=\""+url+"\/attachments");
+        }
         return (
             <Container className='write-container p-0'>
                     <Row>
@@ -54,7 +59,7 @@ class WriteTab extends React.Component {
                             <ScaffoldSelect initVal={0} onScaffoldSelected={this.onScaffoldSelected}/>
                         </Col>
                         <Col md={10}>
-                            <MCEditor value={note.data.body}
+                            <MCEditor value={data}
                                       onEditorSetup={onEditorSetup}
                                       onEditorChange={(content, editor) => onChange({ data: {body: content}})}/>
                             <div className='wordcount-bar text-right'>{note.wordCount} words</div>
