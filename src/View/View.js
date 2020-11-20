@@ -295,6 +295,8 @@ class View extends Component {
             scaffolds = <ScaffoldSelect initVal={0} onScaffoldSelected={this.onScaffoldSelected} returnSupport={true} />
         }
 
+        let knowledgeForumUrl = "https://knowledgeforum.org/html/KBSIConference.html?viewId="+ this.props.viewId;
+
         return (
             <>
                 <DialogHandler />
@@ -335,7 +337,10 @@ class View extends Component {
                                         delay={{ show: 250, hide: 400 }}
                                         overlay={this.renderTooltip({ message: "Graphical View" })}
                                     >
-                                        <Button href={`${url}/auth/jwt?token=${this.token}&redirectUrl=/view/${this.props.viewId}`} target="_blank" className="circle-button pad" variant="outline-info">
+                                        {/* <Button href={`${url}/auth/jwt?token=${this.token}&redirectUrl=/view/${this.props.viewId}`} target="_blank" className="circle-button pad" variant="outline-info">
+                                            <i className="fa fa-globe"></i>
+                                        </Button> */}
+                                        <Button href={knowledgeForumUrl} target="_blank" className="circle-button pad" variant="outline-info">
                                             <i className="fa fa-globe"></i>
                                         </Button>
                                     </OverlayTrigger>
@@ -443,7 +448,10 @@ class View extends Component {
                                         delay={{ show: 250, hide: 400 }}
                                         overlay={this.renderTooltip({ message: "Graphical View" })}
                                     >
-                                        <Button href={`${url}/auth/jwt?token=${this.token}&redirectUrl=/view/${this.props.viewId}`} target="_blank" className="circle-button pad" variant="outline-info">
+                                        {/* <Button href={`${url}/auth/jwt?token=${this.token}&redirectUrl=/view/${this.props.viewId}`} target="_blank" className="circle-button pad" variant="outline-info">
+                                            <i className="fa fa-globe"></i>
+                                        </Button> */}
+                                        <Button href={knowledgeForumUrl} target="_blank" className="circle-button pad" variant="outline-info">
                                             <i className="fa fa-globe"></i>
                                         </Button>
                                     </OverlayTrigger>
@@ -455,7 +463,7 @@ class View extends Component {
 
 
                         {/* NOTES */}
-                        <Col md="5" sm="12" className="mrg-05-top pd-2-right v-scroll-mobile primary-bg-50">
+                        <Col md="5" sm="12" className="mrg-05-top pd-2-right primary-bg-50">
                             <Form className="mrg-1-bot">
                                 <Row>
                                     <Col>
@@ -497,17 +505,6 @@ class View extends Component {
                                 (<ListOfNotes noteLinks={this.state.filteredData} />)
                             }
                         </Col>
-
-                        {/* NOTE CONTENT */}
-                        {this.props.checkedNotes.length ?
-                            (<>
-                                <Col md="5" sm="12" className="mrg-05-top v-scroll-mobile">
-                                    <NoteContent query={this.state.query} buildOn={this.buildOn} />
-                                </Col>
-                            </>)
-                            : null
-                        }
-
                     </div>
 
 

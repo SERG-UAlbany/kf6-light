@@ -6,6 +6,7 @@ import { Button, Collapse } from 'react-bootstrap';
 import ListOfNotes from '../ListOfNotes.js'
 import { dateFormatOptions } from '../../../store/globalsReducer'
 import { updateCheckedNotes } from '../../../store/noteReducer'
+import { Breakpoint } from 'react-socks';
 
 class Notes extends Component {
     constructor(props) {
@@ -15,6 +16,7 @@ class Notes extends Component {
             showNote: false,
             open: false,
             riseAboveData: {},
+            isCheckedMobile: false,
         };
         this.checkNote = this.checkNote.bind(this)
     }
@@ -32,49 +34,114 @@ class Notes extends Component {
         this.props.updateCheckedNotes({ noteId, checked: evt.target.checked })
     }
 
+    updateNoteMobile = (e, note) => {
+        this.setState({
+            isCheckedMobile: e.target.checked
+        })
+        console.log("e",e.target.checked);
+        console.log("this.state.isCheckedMobile",this.state.isCheckedMobile);
+        console.log("this.props.note",note);
+    }
+
     render() {
         const hasChildren = this.props.children && Object.keys(this.props.children).length !== 0;;
         const icon = this.state.open ? "fa-chevron-down" : "fa-chevron-right"
         const formatter = new Intl.DateTimeFormat('default', dateFormatOptions)
-        return (
-            <div>
+        let NoteMobile;
+        if(this.state.isCheckedMobile){
+            NoteMobile = <div>
                 <Row>
-                    <Col className="mr-auto rounded">
-                        <Row className="pd-05">
-                            <Col md="10" className="primary-800 font-weight-bold">
-                                {hasChildren ?
-                                    <Button variant='link' onClick={() => this.setOpen(!this.open)} aria-controls="example-collapse-text" aria-expanded={this.state.open}>
-                                        <i className={`fa ${icon}`}></i>
-                                    </Button>
-                                    : null}
-                                {this.props.note.title}</Col>
-                            <Col md="2">
-                                <Form className="mrg-1-min pd-2-right">
-                                    <FormGroup>
-                                        <Input type="checkbox" checked={this.props.isChecked} ref={this.props.note._id} onChange={e => this.checkNote(e, this.props.note._id)} />
-                                    </FormGroup>
-                                </Form>
-                            </Col>
-                        </Row>
-                        <Row className="primary-600 sz-075 pd-05">
-                            <Col><span> {this.props.author} </span>&nbsp; {formatter.format(new Date(this.props.note.created))}</Col>
-                            <Col md="2">
-                                {/* <Button onClick={() => this.buildOn(this.props.oneHirarchy.to)}>BuildOn</Button> */}
-                            </Col>
-                        </Row>
-                        {this.props.children ?
-                            <Collapse in={this.state.open}>
-                                <Row>
-                                    <Col md="1"></Col>
-                                    <Col md="11">
-                                        <ListOfNotes hierarchy={this.props.children}></ListOfNotes>
-                                    </Col>
-                                </Row>
-                            </Collapse>
-                            : null}
-                    </Col>
+                    <Col dangerouslySetInnerHTML={{ __html: this.props.note.data.body}}></Col>
                 </Row>
             </div>
+        }       
+
+        return (
+            <>
+                <Breakpoint medium up>
+                    <div>
+                        <Row>
+                            <Col className="mr-auto rounded">
+                                <Row className="pd-05">
+                                    <Col md="10" className="primary-800 font-weight-bold">
+                                        {hasChildren ?
+                                            <Button variant='link' onClick={() => this.setOpen(!this.open)} aria-controls="example-collapse-text" aria-expanded={this.state.open}>
+                                                <i className={`fa ${icon}`}></i>
+                                            </Button>
+                                            : null}
+                                        {this.props.note.title}</Col>
+                                    <Col md="2">
+                                        <Form className="mrg-1-min pd-2-right">
+                                            <FormGroup>
+                                                <Input type="checkbox" checked={this.props.isChecked} ref={this.props.note._id} onChange={e => this.checkNote(e, this.props.note._id)} />
+                                            </FormGroup>
+                                        </Form>
+                                    </Col>
+                                </Row>
+                                <Row className="primary-600 sz-075 pd-05">
+                                    <Col><span> {this.props.author} </span>&nbsp; {formatter.format(new Date(this.props.note.created))}</Col>
+                                    <Col md="2">
+                                        {/* <Button onClick={() => this.buildOn(this.props.oneHirarchy.to)}>BuildOn</Button> */}
+                                    </Col>
+                                </Row>
+                                {this.props.children ?
+                                    <Collapse in={this.state.open}>
+                                        <Row>
+                                            <Col md="1"></Col>
+                                            <Col md="11">
+                                                <ListOfNotes hierarchy={this.props.children}></ListOfNotes>
+                                            </Col>
+                                        </Row>
+                                    </Collapse>
+                                    : null}
+                            </Col>
+                        </Row>
+                    </div>
+                </Breakpoint>
+
+                {/* MOBILE SCREEN */}
+                <Breakpoint small down>
+                    <div>
+                        <Row>
+                            <Col className="mr-auto rounded">
+                                <Row className="pd-05">
+                                    <Col md="10" className="primary-800 font-weight-bold">
+                                        {hasChildren ?
+                                            <Button variant='link' onClick={() => this.setOpen(!this.open)} aria-controls="example-collapse-text" aria-expanded={this.state.open}>
+                                                <i className={`fa ${icon}`}></i>
+                                            </Button>
+                                            : null}
+                                        {this.props.note.title}</Col>
+                                    <Col md="2">
+                                        <Form className="mrg-1-min pd-2-right">
+                                            <FormGroup>
+                                                <Input type="checkbox" checked={this.state.isCheckedMobile} ref={this.props.note._id} onChange={e => this.updateNoteMobile(e, this.props.note)} />
+                                            </FormGroup>
+                                        </Form>
+                                    </Col>
+                                </Row>
+                                <Row className="primary-600 sz-075 pd-05">
+                                    <Col><span> {this.props.author} </span>&nbsp; {formatter.format(new Date(this.props.note.created))}</Col>
+                                    <Col md="2">
+                                        {/* <Button onClick={() => this.buildOn(this.props.oneHirarchy.to)}>BuildOn</Button> */}
+                                    </Col>
+                                </Row>
+                                {this.props.children ?
+                                    <Collapse in={this.state.open}>
+                                        <Row>
+                                            <Col md="1"></Col>
+                                            <Col md="11">
+                                                <ListOfNotes hierarchy={this.props.children}></ListOfNotes>
+                                            </Col>
+                                        </Row>
+                                    </Collapse>
+                                    : null}
+                            </Col>
+                        </Row>
+                        {NoteMobile}
+                    </div>
+                </Breakpoint>
+            </>
         )
     }
 
