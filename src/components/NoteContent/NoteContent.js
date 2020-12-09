@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Button, Row, Col, } from 'react-bootstrap';
 import { Form, FormGroup, Input, Alert } from 'reactstrap';
+import { dateFormatOptions } from '../../store/globalsReducer'
 import Axios from 'axios';
 
 import './NoteContent.css';
@@ -131,7 +132,7 @@ class NoteContent extends Component {
     }
 
     render() {
-
+        const formatter = new Intl.DateTimeFormat('default', dateFormatOptions)
         return (
             <>
                 <Form className="mrg-1-top">
@@ -197,9 +198,9 @@ class NoteContent extends Component {
                         } else {
                             data = obj.data.English ? obj.data.English : obj.data.body;
                         }
-                        
-                        while(data && data.includes("src=\"\/attachments")) {
-                            data = data.replace("src=\"\/attachments","src=\""+url+"\/attachments");    
+
+                        while (data && data.includes("src=\"\/attachments")) {
+                            data = data.replace("src=\"\/attachments", "src=\"" + url + "\/attachments");
                         }
 
                         // EDIT BUTTON
@@ -230,8 +231,9 @@ class NoteContent extends Component {
                                     {RiseAboveNotes}
                                     <Row>
                                         <Col>
-                                            <Button className="float-right mrg-1-left" variant="outline-info" onClick={() => this.props.buildOn(obj._id)}>BuildOn</Button>
-                                            {EditNoteButton}
+                                            <Col><div className="primary-600 sz-075 pd-05 float-left">{this.props.users[obj.authors[0]].firstName + " "+ this.props.users[obj.authors[0]].lastName } &nbsp; {formatter.format(new Date(obj.created))}</div></Col>
+                                            <Col><Button className="float-right mrg-1-left" variant="outline-info" onClick={() => this.props.buildOn(obj._id)}>BuildOn</Button></Col>
+                                            <Col>{EditNoteButton}</Col>
                                         </Col>
                                     </Row>
                                 </Col>
@@ -247,6 +249,7 @@ class NoteContent extends Component {
 
 const mapStateToProps = (state, ownProps) => {
     const viewNotes = state.notes.viewNotes
+    const users = state.users
     return {
         viewId: state.globals.viewId,
         views: state.globals.views,
@@ -260,6 +263,7 @@ const mapStateToProps = (state, ownProps) => {
         communityId: state.globals.communityId,
         riseAboveViewNotes: state.notes.riseAboveViewNotes,
         riseAboveNotes: state.notes.riseAboveNotes,
+        users: users,
     }
 }
 
