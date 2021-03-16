@@ -14,6 +14,7 @@ import { fetchView, fetchCommunity, setCommunityId, setViewId, fetchViewCommunit
 import { fetchAuthors } from '../store/userReducer.js'
 import { Breakpoint } from 'react-socks'
 import './View.css';
+import * as access from '../store/access'
 
 class View extends Component {
 
@@ -286,6 +287,16 @@ class View extends Component {
         </Tooltip>
     );
 
+    createNewNote = () => {
+        if(access.isEditable(this.props.view, this.props.author) === true){
+            this.props.newNote(this.props.view, this.props.communityId, this.props.author._id)
+        } else {
+            alert("No Permission to create a New Note")
+        }
+        
+        
+    }
+
     render() {
         const showScffold = !this.hideScaffold && this.state.filter === "scaffold";
         const hierarchy = this.getBuildOnHierarchy()
@@ -311,7 +322,7 @@ class View extends Component {
                                 <Col md="12" sm="2" xs="2">
                                     <DropdownButton drop="right" variant="outline-info" title={<i className="fas fa-plus-circle"></i>}>
 
-                                        <Dropdown.Item onClick={() => this.props.newNote(this.props.view, this.props.communityId, this.props.author._id)}>
+                                        <Dropdown.Item onClick={() => this.createNewNote()}>
                                             New Note
                                         </Dropdown.Item>
 
