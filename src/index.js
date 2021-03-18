@@ -6,17 +6,13 @@ import App from './App';
 import store from './store/store';
 import { Provider } from 'react-redux';
 import * as serviceWorker from './serviceWorker';
-
-/* ReactDOM.render(
- *   <React.StrictMode>
- *     <App />
- *   </React.StrictMode>,
- *   document.getElementById('root')
- * ); */
+import WebSocketProvider from './WebSocket.js'
 
 ReactDOM.render(
     <Provider store={store}>
-        <App />
+        <WebSocketProvider>
+            <App />
+        </WebSocketProvider>
     </Provider>,
     document.getElementById('root')
 );

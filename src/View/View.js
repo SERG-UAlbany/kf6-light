@@ -15,6 +15,7 @@ import { fetchAuthors } from '../store/userReducer.js'
 import { Breakpoint } from 'react-socks'
 import './View.css';
 import * as access from '../store/access'
+import { WebSocketContext } from '../WebSocket.js'
 
 class View extends Component {
 
@@ -85,16 +86,36 @@ class View extends Component {
         // FETCH VIEW-COMMUNITY DATA
         if (this.props.viewId) {
             this.props.fetchViewCommunityData(this.props.viewId)
+            if (this.props.socketStatus){
+                this.context.subscribeToView(this.props.viewId);
+                this.context.syncUpdates('link');
+            }
         }
         const viewId = this.props.match.params.viewId //Get viewId from url param
         this.props.setViewId(viewId)
         this.setState(this.props.location.state);
     }
 
-
     componentDidUpdate(prevProps, prevState) {
         if (this.props.viewId && this.props.viewId !== prevProps.viewId) {
             this.props.fetchViewCommunityData(this.props.viewId)
+            if (prevProps.viewId && this.props.socketStatus){//Changing view, update socket sync updates
+                this.context.emit('unsubscribe', `linkfrom:${this.props.viewId}`);
+                this.context.subscribeToView(this.props.viewId);
+            }
+        }
+
+        if (this.props.viewId && this.props.socketStatus && !prevProps.socketStatus){
+            this.context.subscribeToView(this.props.viewId);
+            this.context.syncUpdates('link');
+        }
+    }
+
+    componentWillUnmount(){
+        this.props.setViewId(null);
+        if (this.props.socketStatus){
+            this.context.unsyncUpdates('link');
+            this.context.emit('unsubscribe', `linkfrom:${this.props.viewId}`);
         }
     }
 
@@ -571,6 +592,7 @@ class View extends Component {
         );
     }
 }
+View.contextType = WebSocketContext;
 
 const mapStateToProps = (state, ownProps) => {
     return {
@@ -588,7 +610,8 @@ const mapStateToProps = (state, ownProps) => {
         viewLinks: state.notes.viewLinks,
         buildsOn: state.notes.buildsOn,
         supports: state.notes.supports,
-        riseAboveViewNotes: state.notes.riseAboveViewNotes
+        riseAboveViewNotes: state.notes.riseAboveViewNotes,
+        socketStatus: state.globals.socketStatus
     }
 }
 

@@ -6,18 +6,21 @@ import { withRouter } from 'react-router'
 
 import { removeToken } from '../store/api.js'
 import { setViewId, setGlobalToken } from '../store/globalsReducer'
+import { WebSocketContext } from '../WebSocket.js'
 
 class TopNavbar extends Component {
 
   constructor(props) {
-    super(props);
-    this.handleChange = this.handleChange.bind(this);
+      super(props);
+      this.handleChange = this.handleChange.bind(this);
+      this.logout = this.logout.bind(this);
   }
 
   logout() {
-    sessionStorage.clear();
-    removeToken()//remove token from api header
-    setGlobalToken(null)//Remove token from store
+      sessionStorage.clear();
+      removeToken()//remove token from api header
+      setGlobalToken(null)//Remove token from store
+      this.context.disconnect();//Disconnect socket connection
   }
 
   handleChange(e) {
@@ -84,6 +87,7 @@ class TopNavbar extends Component {
     );
   }
 }
+TopNavbar.contextType = WebSocketContext;
 
 const mapStateToProps = (state, ownProps) => {
   return {

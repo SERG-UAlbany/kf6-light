@@ -6,6 +6,7 @@ import { Container, Col, Form, FormGroup, Label, Input, Button } from 'reactstra
 
 import { url, setToken, setServer } from '../store/api'
 import { setGlobalToken, fetchLoggedUser } from '../store/globalsReducer'
+import {WebSocketContext} from '../WebSocket.js'
 
 class Login extends Component {
     constructor(props) {
@@ -52,6 +53,7 @@ class Login extends Component {
 
                     this.props.fetchLoggedUser()
 
+                    this.context.openConnection();
                     //NAVIGATE TO COMMUNITY MANAGER
                     this.props.history.push("/community-manager");
                 })
@@ -110,6 +112,8 @@ class Login extends Component {
         );
     }
 }
+Login.contextType = WebSocketContext;
+
 const mapStateToProps = (state, ownProps) => {
     return {
         token: state.globals.token,

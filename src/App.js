@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 import ReactNotification from 'react-notifications-component';
@@ -15,6 +15,7 @@ import TestComponent from './components/test/TestComponent';
 import { setToken } from './store/api.js';
 import { useDispatch } from 'react-redux';
 import { fetchLoggedUser } from './store/globalsReducer.js'
+import { WebSocketContext } from './WebSocket.js'
 
 import 'react-notifications-component/dist/theme.css'
 import './App.css';
@@ -22,11 +23,14 @@ import './App.css';
 function App() {
 
     const dispatch = useDispatch();
+    const ws = useContext(WebSocketContext);
+
     useEffect(() => {
         const token = sessionStorage.getItem('token');
         if (token) {
             setToken(token)
             dispatch(fetchLoggedUser())
+            ws.openConnection();
         }
     })
 

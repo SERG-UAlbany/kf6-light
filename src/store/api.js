@@ -4,6 +4,7 @@ import axios from 'axios';
 // export const url = 'https://kf6-stage.ikit.org';
 export let url = localStorage.getItem("server");
 export let apiUrl = `${url}/api`;
+export const WS_BASE = '/socket.io-client';
 
 export function setServer(server) {
     //SET SERVER ON SESSION STORAGE
@@ -77,6 +78,10 @@ export const getLinks = async (objectId, direction, type) => {
 
 export const postLink = async (fromId, toId, type, data) => {
     return (await axios.post(`${apiUrl}/links`, { from: fromId, to: toId, type: type, data: data })).data
+}
+
+export const putLink = async (linkId, link) => {
+    return (await axios.put(`${apiUrl}/links/${linkId}`, link)).data
 }
 
 export const deleteLink = async (linkId) => {
